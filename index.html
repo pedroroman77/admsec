@@ -1912,6 +1912,16 @@ function renderMas(){
     bt.addEventListener("click",function(){ponerTema(o[0]);renderMas();});seg.appendChild(bt);
   });
   liT.appendChild(seg);ul.appendChild(liT);
+  if(esAppPC()){
+    var liV=el("li",{class:"fila-tema"}),gV=el("span",{class:"gl"});gV.innerHTML=ico("calendario");liV.appendChild(gV);
+    var dV=el("div",{class:"tema-txt"});dV.appendChild(el("strong",null,"Tamaño de la ventana"));liV.appendChild(dV);
+    var segV=el("div",{class:"segmentado seg-tema"}),actV=modoVentana();
+    [["movil","Móvil"],["grande","Grande"]].forEach(function(o){
+      var bt=el("button",{type:"button","aria-pressed":String(actV===o[0])},o[1]);
+      bt.addEventListener("click",function(){try{localStorage.setItem("cs_ventana",o[0]);}catch(e){}ajustarVentana(o[0]);renderMas();});segV.appendChild(bt);
+    });
+    liV.appendChild(segV);ul.appendChild(liV);
+  }
   sec("Pruebas","sec-pruebas");
   it("prueba","Cargar prueba (1 mes)","Manuales y tareas de ejemplo",cargarPrueba,"prueba");
   it("historial","Cargar prueba de atrasadas","12 tareas de las dos últimas semanas",cargarPruebaAtrasadas,"prueba");
@@ -2415,6 +2425,17 @@ function guardarArchivo(nombre,mime,texto,okMsg){
   }catch(e){toast("La descarga no está disponible aquí.");return false;}
 }
 window.admsecAviso=function(m){toast(m);};
+/* PC: la app instalada se abre con tamaño de móvil (se puede cambiar en Más → Apariencia) */
+function esAppPC(){try{return !window.AdmSecAndroid&&window.matchMedia("(display-mode: standalone)").matches&&screen.availWidth>=900;}catch(e){return false;}}
+function modoVentana(){try{return localStorage.getItem("cs_ventana")||"movil";}catch(e){return "movil";}}
+function ajustarVentana(m){
+  if(!esAppPC()) return;
+  try{
+    if(m==="grande"){var W=Math.min(1280,screen.availWidth-80),H=Math.min(860,screen.availHeight-60);window.resizeTo(W,H);window.moveTo(Math.round((screen.availWidth-W)/2),Math.round((screen.availHeight-H)/2));}
+    else{var w=430,h=Math.min(900,screen.availHeight-40);window.resizeTo(w,h);window.moveTo(screen.availWidth-w-16,Math.max(0,Math.round((screen.availHeight-h)/2)));}
+  }catch(e){}
+}
+window.addEventListener("load",function(){ajustarVentana(modoVentana());});
 if("serviceWorker" in navigator && (location.protocol==="https:"||location.hostname==="localhost") && !window.AdmSecAndroid){
   window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});
 }
