@@ -1,0 +1,2664 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>AdmSec+</title>
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#132D60">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="192x192" href="iconos/icono-192.png">
+<link rel="apple-touch-icon" href="iconos/icono-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="AdmSec+">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+:root{
+  --bg:#FFFFFF; --surface:#F3F6F7; --ink:#20303A; --muted:#67808E;
+  --red:#CB333B; --red-dark:#A7262E; --red-soft:rgba(203,51,59,.10);
+  --slate:#425563; --slate-deep:#2C3B47;
+  --naranja:#D9710C; --naranja-soft:rgba(217,113,12,.12);
+  --verde:#2E7D46; --verde-soft:rgba(46,125,70,.12);
+  --line:rgba(66,85,99,.18); --line-soft:rgba(66,85,99,.09);
+  --pri:#132D60; --pri-ink:#132D60; --pri-soft:rgba(19,45,96,.08); --pri-line:rgba(19,45,96,.35);
+  --top:env(safe-area-inset-top,0px); --bot:env(safe-area-inset-bottom,0px);
+  --nav:3.9rem;
+  box-sizing:border-box; color-scheme:light dark;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F171C; --surface:#182329; --ink:#E7EDF0; --muted:#94A8B3;
+    --red:#E4616A; --red-dark:#CB333B; --red-soft:rgba(228,97,106,.14);
+    --slate:#8AA3B2; --slate-deep:#132029;
+    --naranja:#F0954A; --naranja-soft:rgba(240,149,74,.16);
+    --verde:#5FBF7D; --verde-soft:rgba(95,191,125,.16);
+    --line:rgba(231,237,240,.16); --line-soft:rgba(231,237,240,.08);
+    --pri:#3D62A6; --pri-ink:#A9C1EE; --pri-soft:rgba(169,193,238,.13); --pri-line:rgba(169,193,238,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F171C; --surface:#182329; --ink:#E7EDF0; --muted:#94A8B3;
+  --red:#E4616A; --red-dark:#CB333B; --red-soft:rgba(228,97,106,.14);
+  --slate:#8AA3B2; --slate-deep:#132029;
+  --naranja:#F0954A; --naranja-soft:rgba(240,149,74,.16);
+  --verde:#5FBF7D; --verde-soft:rgba(95,191,125,.16);
+  --line:rgba(231,237,240,.16); --line-soft:rgba(231,237,240,.08);
+    --pri:#3D62A6; --pri-ink:#A9C1EE; --pri-soft:rgba(169,193,238,.13); --pri-line:rgba(169,193,238,.4);
+}
+*,*::before,*::after{box-sizing:inherit;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);overscroll-behavior-y:none;
+  font-family:Rubik,"Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+  font-size:16px;line-height:1.5;
+}
+h1,h2,h3{font-family:Rubik,"Segoe UI",system-ui,Arial,sans-serif;font-weight:500;line-height:1.2;margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+button{touch-action:manipulation}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+.app{max-width:520px;margin:0 auto;min-height:100%;background:var(--bg);position:relative}
+@media (min-width:521px){.app{border-left:1px solid var(--line-soft);border-right:1px solid var(--line-soft)}}
+
+/* cabecera con barra corporativa */
+.cab{
+  position:sticky;top:0;z-index:30;background:var(--bg);
+  padding:calc(var(--top) + .75rem) 1rem .6rem;
+  border-bottom:1px solid var(--line-soft);
+  display:flex;align-items:center;gap:.7rem;
+}
+.cab::before{content:"";position:absolute;left:0;right:0;top:0;height:calc(var(--top) + 4px);background:var(--red)}
+.marca{flex:0 0 auto;display:flex;align-items:baseline;font-weight:700;letter-spacing:-.02em;font-size:1.02rem;color:var(--slate-deep)}
+:root[data-theme="dark"] .marca,:root:not([data-theme="light"]) .marca{color:var(--ink)}
+.marca i{font-style:normal;color:var(--red);font-weight:700;margin-left:.05rem}
+.cab h1{font-size:1.05rem;font-weight:500;flex:1;text-align:right;color:var(--muted)}
+.cab .sub{display:block;font-size:.68rem;color:var(--muted);font-weight:400}
+.cab button{background:var(--surface);border:1px solid var(--line);border-radius:10px;min-width:2.3rem;height:2.3rem;cursor:pointer;color:var(--muted)}
+.cuerpo{padding:1rem 1rem calc(var(--nav) + var(--bot) + 5rem)}
+.view[hidden]{display:none}
+
+/* navegación inferior */
+.nav{
+  position:fixed;left:0;right:0;bottom:0;z-index:40;
+  background:var(--bg);border-top:1px solid var(--line-soft);
+  padding-bottom:var(--bot);display:flex;
+  box-shadow:0 -2px 14px rgba(32,48,58,.07);
+}
+@media (min-width:521px){.nav{max-width:520px;margin:0 auto}}
+.nav button{
+  flex:1;background:none;border:0;color:var(--muted);cursor:pointer;
+  padding:.5rem .1rem;display:flex;flex-direction:column;align-items:center;gap:.15rem;
+  font-size:.6rem;min-height:var(--nav);justify-content:center;position:relative;white-space:nowrap;
+}
+.nav .gl{font-size:1.15rem;line-height:1}
+.nav button[aria-current="true"]{color:var(--red);font-weight:500}
+.nav button[aria-current="true"]::before{content:"";position:absolute;top:0;left:22%;right:22%;height:3px;background:var(--red);border-radius:0 0 3px 3px}
+.fab{
+  position:fixed;z-index:41;right:max(1rem,calc(50vw - 260px + 1rem));
+  bottom:calc(var(--nav) + var(--bot) + .9rem);
+  width:3.4rem;height:3.4rem;border-radius:16px;border:0;
+  background:var(--red);color:#fff;font-size:1.6rem;line-height:1;
+  box-shadow:0 6px 16px rgba(203,51,59,.35);cursor:pointer;
+}
+
+/* hoy */
+.hero{background:var(--surface);border-radius:16px;padding:1rem 1.05rem;margin-bottom:1.4rem;border-left:4px solid var(--red)}
+.hero .curso{color:var(--muted);font-size:.76rem;text-transform:none}
+.hero .fecha{font-size:1.65rem;font-weight:500;letter-spacing:-.02em;margin:.15rem 0 .35rem}
+.hero .res{color:var(--muted);font-size:.9rem;margin:0}
+.hero .res b{color:var(--red);font-weight:700}
+.bloque{margin-bottom:1.7rem}
+.bloque h2{font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--slate);margin-bottom:.5rem}
+.bloque .nota{margin:-.3rem 0 .5rem;color:var(--muted);font-size:.82rem}
+
+/* agenda día a día */
+.agenda{position:relative}
+.diabloque{padding:.7rem 0;border-bottom:1px solid var(--line-soft)}
+.diabloque:last-child{border-bottom:0}
+.diabloque .tareas{margin-top:.5rem}
+.diafecha{display:flex;align-items:baseline;gap:.5rem}
+.diafecha-n{font-size:1.05rem;font-weight:700;color:var(--ink);min-width:1.4rem}
+.diafecha-t{font-size:.78rem;color:var(--muted);text-transform:capitalize}
+.diafecha.finde .diafecha-n{color:var(--red)}
+.diavacio{margin:.4rem 0 0;color:var(--muted);font-size:.82rem;font-style:italic}
+
+/* tareas */
+.tareas{list-style:none;margin:0;padding:0}
+.tarea{display:flex;gap:.7rem;align-items:center;background:var(--bg);
+  border:1px solid var(--line-soft);border-radius:14px;padding:.6rem .7rem;margin-bottom:.5rem}
+.check{flex:0 0 auto;width:2rem;height:2rem;border:1.5px solid var(--line);border-radius:8px;
+  background:none;cursor:pointer;display:grid;place-items:center;color:transparent;font-size:.9rem}
+.check[aria-pressed="true"]{background:var(--verde);border-color:var(--verde);color:#fff}
+.fecha-col{flex:0 0 2.5rem;text-align:center;line-height:1.05;background:var(--surface);border-radius:8px;padding:.22rem 0}
+.fecha-col .d{font-size:1.1rem;font-weight:700;color:var(--slate)}
+.fecha-col .m{font-size:.6rem;color:var(--muted)}
+.tarea .txtb{flex:1;min-width:0;text-align:left;background:none;border:0;padding:.25rem 0;cursor:pointer}
+.tarea .t{display:block;font-weight:500;font-size:.95rem}
+.tarea.hecha{background:var(--verde-soft);border-color:var(--verde-soft);border-left:3px solid var(--verde)}
+.tarea.hecha .t{text-decoration:line-through;color:var(--verde);font-weight:400}
+.tarea.hecha .meta{color:var(--verde);opacity:.8}
+.tarea.hecha .check[aria-pressed="true"]{background:var(--verde);border-color:var(--verde)}
+.tarea .meta{display:block;color:var(--muted);font-size:.76rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chev{color:var(--line);flex:0 0 auto;font-size:1.1rem}
+.pill{display:inline-block;font-size:.66rem;padding:.06rem .45rem;border-radius:5px;background:var(--naranja-soft);color:var(--naranja);font-weight:500}
+.pill.urg{background:var(--naranja-soft);color:var(--naranja)}
+.pill.reunion{background:var(--surface);color:var(--slate);border:1px solid var(--line);margin-left:.4rem;font-weight:500;text-transform:none}
+.pill.no-realizada{background:var(--naranja-soft);color:var(--naranja);margin-left:.4rem;font-weight:500;text-transform:none}
+.tarea.no-realizada,.tarea.vencida{background:var(--naranja-soft);border-color:var(--naranja-soft);border-left:3px solid var(--naranja)}
+.tarea.no-realizada .t,.tarea.vencida .t{text-decoration:underline;text-decoration-color:var(--naranja);text-decoration-thickness:2px;text-underline-offset:.15em;color:var(--naranja);font-weight:500}
+.tarea.no-realizada .meta,.tarea.vencida .meta{color:var(--naranja);opacity:.85}
+.nota-rango{margin:-.5rem 0 .9rem;color:var(--muted);font-size:.78rem;line-height:1.4}
+.aviso-lunes{background:var(--naranja-soft);border-left:3px solid var(--naranja);border-radius:0 12px 12px 0;padding:.8rem .9rem;margin-bottom:1.3rem}
+.aviso-lunes strong{display:block;font-size:.9rem;margin-bottom:.25rem;color:var(--ink)}
+.aviso-lunes p{margin:0 0 .6rem;color:var(--muted);font-size:.84rem;line-height:1.4}
+.aviso-lunes button{background:none;border:1px solid var(--line);border-radius:8px;padding:.35rem .75rem;font-size:.82rem;color:var(--ink);cursor:pointer}
+.tarea.reunion{border-left:3px solid var(--slate)}
+.check.cerrada{opacity:.75;cursor:not-allowed}
+.tarea.cerrada .meta{opacity:.95}
+.bloque-atrasadas h2{color:var(--naranja)}
+.nota-lista{font-size:.8rem;color:var(--muted);margin:-.2rem 0 .9rem}
+.bloque-mes h2{text-transform:capitalize}
+.bloque-mes.mes-actual h2{color:var(--pri-ink);border-bottom-color:var(--pri-line)}
+.diahead-fila{display:flex;align-items:center;gap:.6rem;margin:1.4rem 0 .6rem}
+.diahead-fila .diahead{margin:0;flex:1;min-width:0}
+.btn-abrir-hoy{flex:0 0 auto;border:1px solid var(--red);color:var(--red);background:none;border-radius:999px;padding:.35rem .85rem;font-size:.82rem;font-weight:600;cursor:pointer}
+.pasados-btn{width:100%;background:var(--surface);border:1px dashed var(--line);border-radius:12px;padding:.6rem;color:var(--slate);font-size:.86rem;cursor:pointer;margin-bottom:.6rem}
+.pasados .diabloque{opacity:.92}
+.separador-gris{border:1px solid var(--line);border-radius:8px;padding:.4rem .6rem;margin:.9rem 0 1.1rem;
+  text-align:center;font-size:.72rem;font-weight:500;color:var(--red);background:var(--surface)}
+
+/* selector segmentado tarea/reunión */
+.segmentado{display:flex;background:var(--surface);border-radius:12px;padding:.2rem;gap:.2rem}
+.segmentado button{flex:1;border:0;background:none;padding:.55rem 0;border-radius:9px;font-size:.9rem;color:var(--muted);cursor:pointer}
+.segmentado button[aria-pressed="true"]{background:var(--bg);color:var(--ink);font-weight:500;box-shadow:0 1px 3px rgba(32,48,58,.12)}
+
+/* calendario */
+.calbar{display:flex;align-items:center;gap:.4rem;margin-bottom:.8rem}
+.calbar h2{font-size:1.05rem;font-weight:500;flex:1;text-transform:capitalize}
+.calbar button{background:var(--surface);border:1px solid var(--line-soft);border-radius:10px;min-width:2.3rem;height:2.3rem;cursor:pointer;color:var(--slate)}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.dow{text-align:center;font-size:.65rem;color:var(--muted);padding-bottom:.25rem;font-weight:500}
+.dia{aspect-ratio:1/1;background:var(--surface);border:1.5px solid transparent;border-radius:10px;
+  cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.18rem;
+  font:inherit;font-size:.88rem;padding:0;color:var(--ink)}
+.dia.fuera{background:transparent;color:var(--muted);opacity:.4}
+.dia.hoy{border-color:var(--red);color:var(--red);font-weight:700}
+.dia.sel{background:var(--slate);color:#fff;border-color:var(--slate)}
+.dia.sel .dot{background:#fff}
+.dots{display:flex;gap:2px;height:5px}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--slate)}
+.dot.done{background:var(--verde)}
+.dot.no-realizada,.dot.vencida{background:var(--naranja)}
+.diahead{margin:1.4rem 0 .6rem;font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--slate)}
+
+/* manuales */
+.buscar{margin-bottom:.7rem}
+.buscar input{width:100%;padding:.72rem .85rem;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.cats{display:flex;gap:.35rem;overflow-x:auto;padding-bottom:.6rem;margin-bottom:.4rem;scrollbar-width:none}
+.cats::-webkit-scrollbar{display:none}
+.cat{background:var(--surface);border:1px solid var(--line-soft);color:var(--muted);border-radius:8px;padding:.32rem .75rem;font-size:.8rem;white-space:nowrap;cursor:pointer}
+.cat[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff}
+.manuales{list-style:none;margin:0;padding:0}
+.manual{margin-bottom:.5rem}
+.manual button{width:100%;text-align:left;background:var(--bg);border:1px solid var(--line-soft);
+  border-radius:14px;padding:.8rem .85rem;cursor:pointer;display:flex;gap:.7rem;align-items:center;border-left:4px solid var(--slate)}
+.manual .info{flex:1;min-width:0}
+.manual h3{font-size:.98rem;font-weight:500}
+.manual .desc{color:var(--muted);font-size:.8rem;margin:.15rem 0 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* botones */
+.btn{border:1px solid var(--red);background:var(--red);color:#fff;border-radius:12px;padding:.78rem 1rem;cursor:pointer;font-size:.94rem;font-weight:500;width:100%;display:block;text-align:center;text-decoration:none}
+.btn.sec{background:var(--surface);color:var(--ink);border-color:var(--line)}
+.btn.warn{background:var(--bg);color:var(--red);border-color:var(--line)}
+.acciones{display:grid;gap:.5rem;margin:1.2rem 0 0}
+.vacio{border:1px dashed var(--line);border-radius:14px;padding:1.2rem;text-align:center;color:var(--muted)}
+.vacio p{margin:0 0 .8rem;font-size:.9rem}
+.aviso{background:var(--surface);border-left:3px solid var(--red);padding:.7rem .85rem;font-size:.84rem;color:var(--muted);border-radius:0 10px 10px 0;margin:1rem 0}
+.lista-ajustes{list-style:none;margin:0;padding:0}
+.lista-ajustes li{border-bottom:1px solid var(--line-soft)}
+.lista-ajustes button{width:100%;background:none;border:0;padding:.95rem .2rem;text-align:left;cursor:pointer;display:flex;gap:.8rem;align-items:center}
+.lista-ajustes .gl{width:1.9rem;height:1.9rem;flex:0 0 auto;display:grid;place-items:center;border-radius:8px;background:var(--red-soft);color:var(--red);font-size:.9rem}
+.lista-ajustes strong{font-weight:500}
+.lista-ajustes small{display:block;color:var(--muted);font-size:.76rem;font-weight:400}
+
+/* hoja inferior */
+.overlay{position:fixed;inset:0;background:rgba(20,32,40,.5);z-index:60;display:flex;align-items:flex-end;justify-content:center}
+.overlay[hidden]{display:none}
+.sheet{background:var(--bg);width:100%;max-width:520px;max-height:92vh;max-height:92dvh;overflow-y:auto;
+  border-radius:20px 20px 0 0;padding:.5rem 1rem calc(1.5rem + var(--bot));
+  animation:subir .22s ease-out;-webkit-overflow-scrolling:touch}
+@keyframes subir{from{transform:translateY(22px);opacity:.6}to{transform:none;opacity:1}}
+.asa{width:2.4rem;height:4px;border-radius:99px;background:var(--line);margin:.35rem auto .7rem}
+.sheet-top{display:flex;align-items:flex-start;gap:.7rem;margin-bottom:.7rem;position:sticky;top:0;background:var(--bg);padding-bottom:.4rem;z-index:2}
+.sheet-top h2{font-size:1.15rem;font-weight:500;flex:1}
+.cerrar{background:var(--surface);border:1px solid var(--line);border-radius:10px;width:2.2rem;height:2.2rem;cursor:pointer;flex:0 0 auto;color:var(--muted)}
+.campo{display:block;margin-bottom:.85rem}
+.campo > span{display:block;font-size:.76rem;color:var(--muted);margin-bottom:.28rem;font-weight:500}
+.campo input,.campo select,.campo textarea{width:100%;padding:.72rem .8rem;border:1px solid var(--line);border-radius:12px;background:var(--surface);font-size:16px}
+.campo textarea{min-height:8rem;resize:vertical;line-height:1.5}
+.fila{display:flex;gap:.6rem}
+.fila > *{flex:1}
+.dato{border-top:1px solid var(--line-soft);padding:.55rem 0;font-size:.92rem}
+.dato .k{color:var(--muted);font-size:.73rem;display:block;font-weight:500}
+.pasos{list-style:none;margin:.4rem 0 0;padding:0;counter-reset:p}
+.pasos li{display:flex;gap:.65rem;align-items:flex-start;padding:.5rem 0;border-bottom:1px solid var(--line-soft)}
+.pasos .num{counter-increment:p;flex:0 0 1.5rem;height:1.5rem;display:grid;place-items:center;border-radius:50%;
+  background:var(--red-soft);color:var(--red);font-size:.75rem;font-weight:700;margin-top:.1rem}
+.pasos .num::before{content:counter(p)}
+.pasos .txt{flex:1;font-size:.93rem}
+.pasos li.ok .txt{color:var(--muted);text-decoration:line-through}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--nav) + var(--bot) + 1.2rem);
+  background:var(--slate-deep);color:#fff;padding:.6rem 1.1rem;border-radius:10px;z-index:80;font-size:.86rem;max-width:90%;text-align:center}
+:root[data-theme="dark"] .toast,:root:not([data-theme="light"]) .toast{background:var(--surface);border:1px solid var(--line)}
+.toast[hidden]{display:none}
+a{color:var(--red)}
+
+/* ======== aspecto más claro: días y tareas ======== */
+.bloque h2{font-size:.9rem;color:var(--ink);letter-spacing:.05em;padding-bottom:.45rem;border-bottom:2px solid var(--line);margin-bottom:.7rem}
+.diabloque{padding:.85rem 0 .9rem;border-bottom:1px solid var(--line)}
+.diabloque .tareas{margin-top:.65rem}
+.diafecha{display:flex;align-items:center;gap:.75rem}
+.diafecha-badge{flex:0 0 3.1rem;height:3.1rem;border-radius:12px;background:var(--surface);border:1px solid var(--line);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+.diafecha-dow{font-size:.62rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:500}
+.diafecha .diafecha-n{font-size:1.3rem;font-weight:700;color:var(--ink);min-width:0;margin-top:.12rem}
+.diafecha-txt{display:flex;flex-direction:column;min-width:0}
+.diafecha-nombre{font-size:1.02rem;font-weight:600;color:var(--ink);text-transform:capitalize;display:flex;align-items:center;gap:.45rem}
+.diafecha .diafecha-t{font-size:.8rem;color:var(--muted);text-transform:none}
+.etq-dia{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:.12rem .45rem;border-radius:6px;background:var(--surface);color:var(--slate);border:1px solid var(--line)}
+.etq-dia.hoy{background:var(--red);color:#fff;border-color:var(--red)}
+.diafecha.eshoy .diafecha-badge{background:var(--red);border-color:var(--red)}
+.diafecha.eshoy .diafecha-badge *{color:#fff}
+.diafecha.finde .diafecha-badge{background:var(--red-soft);border-color:transparent}
+.diafecha.finde .diafecha-n{color:var(--red)}
+.diafecha.eshoy.finde .diafecha-n{color:#fff}
+.diafecha.pasado .diafecha-nombre{color:var(--muted)}
+/* días sin tareas: una línea discreta */
+.diabloque.vacio-dia{padding:.5rem 0}
+.diabloque.vacio-dia .diafecha-badge{flex-basis:2.4rem;height:2.4rem;opacity:.75}
+.diabloque.vacio-dia .diafecha-dow{font-size:.55rem}
+.diabloque.vacio-dia .diafecha-n{font-size:1rem}
+.diabloque.vacio-dia .diafecha-nombre{font-size:.9rem;font-weight:500;color:var(--muted)}
+.diabloque.vacio-dia .diafecha-t{font-size:.74rem}
+.diabloque.vacio-dia .diafecha.eshoy .diafecha-badge{opacity:1}
+.diabloque.vacio-dia .diafecha.eshoy .diafecha-nombre{color:var(--ink);font-weight:600}
+/* tarjetas de tarea con más contraste */
+.tarea{border:1px solid var(--line);box-shadow:0 1px 2px rgba(32,48,58,.06);padding:.7rem .75rem}
+.tarea .t{font-size:1rem}
+.tarea .meta{font-size:.8rem}
+.check{border-width:2px;border-color:var(--muted);opacity:.85}
+.check[aria-pressed="true"]{opacity:1}
+.fecha-col{flex:0 0 2.9rem;padding:.3rem 0;border:1px solid var(--line)}
+.fecha-col .w{font-size:.58rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:500}
+.fecha-col .d{font-size:1.15rem;color:var(--ink)}
+.fecha-col.eshoy{background:var(--red);border-color:var(--red)}
+.fecha-col.eshoy *{color:#fff}
+.separador-gris{font-size:.78rem;font-weight:600;border-style:dashed}
+
+/* ======== Hoy: un día cada vez ======== */
+.hoy-nav{display:flex;align-items:center;gap:.6rem;margin-bottom:.9rem}
+.hoy-nav > button{flex:0 0 auto;width:3rem;height:3rem;border-radius:14px;border:1px solid var(--line);background:var(--surface);
+  color:var(--ink);font-size:1.6rem;line-height:1;cursor:pointer;display:grid;place-items:center}
+.hoy-nav > button:active{background:var(--red-soft)}
+.hoy-nav-centro{flex:1;min-width:0;text-align:center;display:flex;flex-direction:column;align-items:center;gap:.2rem}
+.hoy-nav-centro .n1{font-weight:600;font-size:1.05rem}
+.hoy-nav-centro .ir-hoy{border:1px solid var(--red);color:var(--red);background:none;border-radius:999px;padding:.12rem .7rem;font-size:.76rem;font-weight:600;cursor:pointer}
+.hero.otro-dia{border-left-color:var(--slate)}
+.hero.pasado{border-left-color:var(--muted)}
+.dia-lista-vacia{border:1px dashed var(--line);border-radius:14px;padding:1.4rem 1rem;text-align:center;color:var(--muted)}
+.dia-lista-vacia p{margin:0 0 .8rem}
+
+/* ======== TABLET (pantallas grandes) ======== */
+.panel-vacio{height:100%;min-height:14rem;display:grid;place-items:center;text-align:center;color:var(--muted);font-size:.92rem;padding:2rem}
+.panel-vacio span{display:block;font-size:2rem;margin-bottom:.4rem;opacity:.5}
+@media (min-width:768px) and (min-height:500px){
+  body{font-size:17px}
+  .app{max-width:none;margin:0 0 0 var(--rail);border:0!important}
+  :root{--rail:6rem}
+  .cab{padding-left:1.5rem;padding-right:1.5rem}
+  .cuerpo{padding:1.4rem 1.5rem calc(var(--bot) + 6rem)}
+
+  /* barra de navegación -> columna lateral */
+  .nav{top:0;bottom:0;right:auto;width:var(--rail);max-width:none;margin:0;flex-direction:column;justify-content:flex-start;
+    padding:calc(var(--top) + 4.6rem) 0 var(--bot);border-top:0;border-right:1px solid var(--line-soft);box-shadow:2px 0 14px rgba(32,48,58,.05)}
+  .nav::after{content:"";position:absolute;left:0;right:0;top:0;height:calc(var(--top) + 4px);background:var(--red)}
+  .nav button{flex:0 0 auto;min-height:4.6rem;font-size:.72rem;gap:.3rem}
+  .nav .gl{font-size:1.35rem}
+  .nav button[aria-current="true"]{background:var(--red-soft)}
+  .nav button[aria-current="true"]::before{top:18%;bottom:18%;left:0;right:auto;width:3px;height:auto;border-radius:0 3px 3px 0}
+  .fab{right:1.6rem;bottom:calc(var(--bot) + 1.6rem)}
+  .toast{bottom:calc(var(--bot) + 1.6rem)}
+
+  /* Hoy: resumen a la izquierda, agenda a la derecha */
+  #v-hoy{max-width:820px;margin:0 auto}
+
+  /* Calendario: mes a la izquierda, día a la derecha */
+  #v-calendario:not([hidden]){display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);column-gap:2rem;align-items:start}
+  #v-calendario .calbar{grid-column:1;grid-row:1}
+  #v-calendario .grid{grid-column:1;grid-row:2;gap:5px}
+  #dia-detalle{grid-column:2;grid-row:1 / span 2;position:sticky;top:calc(var(--top) + 5rem)}
+  #dia-detalle .diahead-fila{margin-top:.2rem}
+  .dia{font-size:1rem;border-radius:12px}
+  .dots{gap:3px}.dot{width:6px;height:6px}
+
+  /* Tareas y Manuales: lista a la izquierda, detalle a la derecha */
+  .cuerpo.con-panel{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:1.5rem;align-items:start}
+  .cuerpo.con-panel > .view{grid-column:1;grid-row:1}
+  .panel{grid-column:2;grid-row:1;position:sticky;top:calc(var(--top) + 5rem);
+    max-height:calc(100vh - var(--top) - 6.5rem);max-height:calc(100dvh - var(--top) - 6.5rem);overflow-y:auto;
+    background:var(--bg);border:1px solid var(--line);border-radius:18px;padding:.9rem 1.1rem 1.2rem}
+  .panel .sheet-top{padding-top:.2rem}
+  .tarea.activa,.manual.activa button{border-color:var(--red);box-shadow:0 0 0 1px var(--red) inset}
+
+  /* ventanas: centradas en vez de subir desde abajo */
+  .overlay{align-items:center;padding:1.5rem}
+  .sheet{max-width:640px;border-radius:20px;max-height:88vh;max-height:88dvh;padding:1rem 1.4rem 1.5rem}
+  .sheet .asa{display:none}
+
+  .vacio{padding:2rem}
+}
+
+/* ======== REDISEÑO: azul marino como color principal ======== */
+:focus-visible{outline-color:var(--pri-ink)}
+.cab::before{background:var(--pri)}
+.marca{color:var(--pri-ink)}
+.cab h1{color:var(--ink);font-weight:600}
+.nav .gl{display:grid;place-items:center;height:1.5rem}
+.nav .gl svg{width:1.45rem;height:1.45rem}
+.nav button[aria-current="true"]{color:var(--pri-ink);font-weight:600}
+.nav button[aria-current="true"]::before{background:var(--pri-ink)}
+.nav button[aria-current="true"] .gl{background:var(--pri-soft);border-radius:999px;width:3.2rem}
+.btn{background:var(--pri);border-color:var(--pri)}
+.btn.sec{background:var(--surface);color:var(--ink);border-color:var(--line)}
+.btn.warn{color:var(--red)}
+.cat[aria-pressed="true"]{background:var(--pri);border-color:var(--pri)}
+.aviso{border-left-color:var(--pri-ink)}
+.lista-ajustes .gl{background:var(--pri-soft);color:var(--pri-ink);width:2.3rem;height:2.3rem;border-radius:10px}
+.lista-ajustes .gl svg{width:1.3rem;height:1.3rem}
+.pasos .num{background:var(--pri-soft);color:var(--pri-ink)}
+.manual button{border-left-color:var(--pri-ink)}
+.segmentado button[aria-pressed="true"]{color:var(--pri-ink);font-weight:600}
+a{color:var(--pri-ink)}
+.fab{background:var(--red);font-size:0;display:grid;place-items:center}
+.fab::before{content:"";width:1.4rem;height:1.4rem;background:
+  linear-gradient(#fff,#fff) center/100% 3px no-repeat,linear-gradient(#fff,#fff) center/3px 100% no-repeat}
+.btn-abrir-hoy,.hoy-nav-centro .ir-hoy{border-color:var(--pri-line);color:var(--pri-ink)}
+
+/* tareas atrasadas: señal clara pero sin subrayados */
+.tarea.no-realizada .t,.tarea.vencida .t{text-decoration:none;color:var(--ink);font-weight:500}
+.tarea.no-realizada,.tarea.vencida{border-left-width:4px}
+.tarea.no-realizada .meta,.tarea.vencida .meta{color:var(--naranja);opacity:1}
+.pill.urg{font-weight:600}
+.tarea.reunion{border-left:4px solid var(--pri-ink)}
+.pill.reunion{background:var(--pri-soft);color:var(--pri-ink);border-color:transparent}
+
+/* Hoy: barra del día + progreso */
+.hoy-nav{background:var(--surface);border-radius:18px;padding:.45rem;margin-bottom:.8rem}
+.hoy-nav > button{background:var(--bg);border-color:var(--line-soft);width:2.9rem;height:2.9rem;color:var(--pri-ink)}
+.hoy-nav > button svg{width:1.4rem;height:1.4rem}
+.hoy-nav-centro{gap:.05rem}
+.hoy-etq{display:flex;align-items:center;gap:.45rem}
+.hoy-etq .n1{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.hoy-etq .n1.eshoy{color:var(--red)}
+.hoy-nav .fecha{font-size:1.2rem;font-weight:600;margin:0;letter-spacing:-.01em;line-height:1.2}
+.hoy-nav-centro .ir-hoy{padding:.05rem .6rem;font-size:.7rem}
+.hero{border-left:0;background:none;padding:.1rem .2rem;margin-bottom:1rem;display:grid;grid-template-columns:1fr auto;align-items:center;row-gap:.4rem}
+.hero .res{grid-column:1;grid-row:1;margin:0;color:var(--ink);font-size:.95rem}
+.hero .res b{color:var(--red)}
+.hero .curso{grid-column:2;grid-row:1;font-size:.8rem;color:var(--muted)}
+.progreso{grid-column:1 / -1;height:6px;border-radius:99px;background:var(--line-soft);overflow:hidden}
+.progreso[hidden]{display:none}
+.progreso span{display:block;height:100%;width:0;background:var(--verde);border-radius:99px;transition:width .3s}
+.hero.completo .res{color:var(--verde);font-weight:600}
+
+/* Más: por secciones */
+.ajustes-sec{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:1.3rem .2rem .35rem;border-bottom:0!important}
+.lista-ajustes > li:first-child.ajustes-sec{padding-top:.4rem}
+.lista-ajustes li.destacado .gl{background:var(--naranja-soft);color:var(--naranja)}
+.lista-ajustes li.destacado small{color:var(--naranja)}
+.sec-pruebas{margin-top:1rem;border-top:1px dashed var(--line)!important}
+.lista-ajustes li.prueba strong{font-weight:400;color:var(--muted)}
+.lista-ajustes li.prueba .gl{background:var(--surface);color:var(--muted)}
+.lista-ajustes li.peligro strong{color:var(--red)}
+.lista-ajustes li.peligro .gl{color:var(--red)}
+.fila-tema{display:flex;align-items:center;gap:.8rem;padding:.7rem .2rem;flex-wrap:wrap}
+.fila-tema .gl{width:2.3rem;height:2.3rem;flex:0 0 auto;display:grid;place-items:center;border-radius:10px;background:var(--pri-soft);color:var(--pri-ink)}
+.fila-tema .gl svg{width:1.3rem;height:1.3rem}
+.fila-tema .tema-txt{flex:1}
+.seg-tema{flex:1 1 100%;margin-left:3.1rem}
+.seg-tema button{font-size:.84rem;padding:.45rem 0}
+
+/* formulario: fecha de fin plegable */
+.btn-plazo{background:none;border:1px dashed var(--line);border-radius:12px;width:100%;padding:.6rem;color:var(--pri-ink);font-size:.86rem;cursor:pointer;margin:0 0 .85rem}
+.btn-plazo.quitar{border:0;padding:.2rem;width:auto;color:var(--muted);font-size:.8rem;margin:-.4rem 0 .8rem}
+.nota-rango{margin:-.5rem 0 .4rem}
+
+/* calendario: número de pendientes */
+.dia{gap:.2rem}
+.cnt{min-width:1.15rem;height:1.15rem;padding:0 .25rem;border-radius:99px;font-size:.66rem;font-weight:700;line-height:1.15rem;text-align:center;
+  background:var(--pri);color:#fff;display:inline-block}
+.cnt.atr{background:var(--naranja)}
+.cnt.ok{background:var(--verde-soft);color:var(--verde)}
+.cnt.vacio{visibility:hidden}
+.dia.sel{color:#fff}
+
+.dia.fuera .cnt{opacity:.6}
+.dia.sel{background:var(--pri);border-color:var(--pri)}
+.dia.sel .cnt{background:#fff;color:var(--pri)}
+.dia.sel .cnt.atr{color:var(--naranja)}
+.dia.hoy{border-color:var(--red);color:var(--red)}
+.dia.sel,.dia.sel.hoy{color:#fff}
+.dia.sel.hoy{box-shadow:0 0 0 2px var(--red) inset}
+.cal-leyenda{display:flex;flex-wrap:wrap;gap:.4rem 1rem;margin:.7rem 0 0;font-size:.76rem;color:var(--muted)}
+.cal-leyenda span{display:inline-flex;align-items:center;gap:.35rem}
+.cal-leyenda i.cnt{min-width:.75rem;height:.75rem;padding:0}
+.calbar button{color:var(--pri-ink)}
+
+@media (min-width:768px) and (min-height:500px){
+  .nav::after{background:var(--pri)}
+  .nav button[aria-current="true"]{background:none}
+  .nav button[aria-current="true"] .gl{width:3.4rem;height:2rem}
+  .nav .gl svg{width:1.55rem;height:1.55rem}
+  .tarea.activa,.manual.activa button{border-color:var(--pri-ink);box-shadow:0 0 0 1px var(--pri-ink) inset}
+  #v-calendario .cal-leyenda{grid-column:1;grid-row:3}
+}
+
+/* celebración al completar el día */
+.ole{position:fixed;inset:0;z-index:90;display:grid;place-items:center;background:rgba(15,23,28,.35);overflow:hidden;animation:oleIn .25s ease-out}
+.ole.fuera{opacity:0;transition:opacity .4s}
+.ole-card{background:var(--bg);border-radius:22px;padding:1.4rem 1.6rem;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.3);
+  animation:olePop .45s cubic-bezier(.2,1.4,.4,1);max-width:85vw;border-top:5px solid var(--red)}
+.ole-emoji{font-size:3rem;line-height:1;animation:oleBaile 1s ease-in-out infinite alternate}
+.ole-txt{font-size:1.45rem;font-weight:700;color:var(--red);margin-top:.5rem;letter-spacing:-.01em}
+.ole-sub{font-size:.88rem;color:var(--muted);margin-top:.25rem}
+.ole-conf{position:absolute;top:-12px;width:9px;height:14px;border-radius:2px;animation:oleCae 2.6s linear forwards}
+@keyframes oleIn{from{opacity:0}to{opacity:1}}
+@keyframes olePop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes oleBaile{from{transform:rotate(-12deg)}to{transform:rotate(12deg)}}
+@keyframes oleCae{to{top:105%;transform:rotate(540deg)}}
+.hero.completo .res{color:var(--red);font-weight:700}
+
+/* botón del pánico */
+.cab .panico{flex:0 0 auto;min-width:0;width:2.6rem;height:2.6rem;border-radius:50%;border:0;background:var(--red);color:#fff;
+  font-size:.72rem;font-weight:800;letter-spacing:.04em;cursor:pointer;box-shadow:0 0 0 0 rgba(203,51,59,.5);animation:latido 2.4s ease-out infinite}
+.cab .panico:active{transform:scale(.92)}
+@keyframes latido{0%{box-shadow:0 0 0 0 rgba(203,51,59,.45)}70%{box-shadow:0 0 0 10px rgba(203,51,59,0)}100%{box-shadow:0 0 0 0 rgba(203,51,59,0)}}
+.chiste{text-align:center;padding:1.3rem 1.1rem 1.4rem;background:var(--surface);border-radius:18px;margin:.2rem 0 .6rem}
+.chiste-emoji{font-size:2.2rem;line-height:1;margin-bottom:.6rem}
+.chiste-txt{font-size:1.15rem;font-weight:500;line-height:1.45;margin:0 0 .35rem;color:var(--ink)}
+.chiste-txt:last-child{margin-bottom:0}
+.chiste-mas{text-align:center;font-size:.78rem;color:var(--muted);margin:0 0 .4rem}
+.chiste-intro{color:var(--muted);font-size:.86rem;margin:0 0 .8rem}
+
+/* dictado por voz */
+.fab-voz{position:fixed;z-index:41;right:max(1.35rem,calc(50vw - 260px + 1.35rem));bottom:calc(var(--nav) + var(--bot) + 5rem);
+  width:2.7rem;height:2.7rem;border-radius:50%;border:1px solid var(--line);background:var(--bg);color:var(--pri-ink);
+  box-shadow:0 4px 12px rgba(32,48,58,.18);cursor:pointer;display:grid;place-items:center}
+.fab-voz[hidden]{display:none}
+.fab-voz svg{width:1.35rem;height:1.35rem}
+.fab-voz:active{background:var(--pri-soft)}
+.voz-aviso{background:var(--pri-soft);border-radius:14px;padding:.7rem .85rem;margin:0 0 .9rem}
+.voz-dicho{font-weight:600;font-size:.95rem;color:var(--ink)}
+.voz-nota{font-size:.8rem;color:var(--muted);margin-top:.2rem}
+@media (min-width:768px) and (min-height:500px){ .fab-voz{right:1.95rem;bottom:calc(var(--bot) + 6.5rem)} }
+
+/* ======== botones flotantes: + y micrófono (rediseño) ======== */
+.fab{width:3.6rem;height:3.6rem;border-radius:50%;background:#CB333B;color:#fff;font-size:0;line-height:0;padding:0;
+  display:grid;place-items:center;box-shadow:0 6px 18px rgba(203,51,59,.38),0 2px 4px rgba(0,0,0,.12)}
+.fab::before{content:none;display:none}
+.fab > span{display:grid;place-items:center;width:100%;height:100%}
+.fab svg{width:1.7rem;height:1.7rem;stroke-width:2.6}
+.fab:active{transform:scale(.94)}
+.fab-voz{width:3rem;height:3rem;right:calc(max(1rem,calc(50vw - 260px + 1rem)) + 4.3rem);
+  bottom:calc(var(--nav) + var(--bot) + .9rem + .3rem);background:var(--bg);border:1.5px solid var(--pri-line);color:var(--pri-ink);
+  box-shadow:0 4px 12px rgba(32,48,58,.15)}
+.fab-voz > span{display:grid;place-items:center}
+.fab-voz svg{width:1.4rem;height:1.4rem}
+@media (min-width:768px) and (min-height:500px){
+  .fab{right:1.6rem;bottom:calc(var(--bot) + 1.6rem)}
+  .fab-voz{right:calc(1.6rem + 4.3rem);bottom:calc(var(--bot) + 1.9rem)}
+}
+
+.fab[hidden],.fab-voz[hidden]{display:none!important}
+/* ======== chat con la IA ======== */
+.cab-chat{flex:0 0 auto;width:2.6rem;height:2.6rem;border-radius:50%;border:1.5px solid var(--pri-line);background:var(--bg);color:var(--pri-ink);
+  display:grid;place-items:center;cursor:pointer;padding:0}
+.cab-chat svg{width:1.3rem;height:1.3rem}
+body.en-chat .cab-chat{background:var(--pri);color:#fff;border-color:var(--pri)}
+body.en-chat .cuerpo{padding-bottom:calc(var(--nav) + var(--bot) + 6.5rem)}
+#v-chat{max-width:820px;margin:0 auto}
+.chat-top{display:flex;justify-content:space-between;align-items:center;margin:-.2rem 0 .8rem;font-size:.76rem;color:var(--muted)}
+.chat-borrar{background:none;border:0;color:var(--muted);font-size:.76rem;text-decoration:underline;cursor:pointer;padding:.2rem}
+.chat-msgs{display:flex;flex-direction:column;gap:.6rem}
+.msg{max-width:88%;border-radius:18px;padding:.7rem .9rem;font-size:.95rem;line-height:1.5;word-wrap:break-word}
+.msg-yo{align-self:flex-end;background:var(--pri);color:#fff;border-bottom-right-radius:6px;white-space:pre-wrap}
+.msg-ia{align-self:flex-start;background:var(--surface);border:1px solid var(--line-soft);border-bottom-left-radius:6px}
+.msg-ia p{margin:0 0 .5rem}.msg-ia p:last-child{margin-bottom:0}
+.msg-ia ul,.msg-ia ol{margin:.2rem 0 .5rem;padding-left:1.2rem}
+.msg-ia code{background:var(--pri-soft);padding:.05rem .3rem;border-radius:4px;font-size:.88em}
+.msg-acc{display:flex;gap:.4rem;margin-top:.6rem;padding-top:.5rem;border-top:1px solid var(--line-soft)}
+.msg-acc button{display:inline-flex;align-items:center;gap:.3rem;background:none;border:1px solid var(--line);border-radius:99px;padding:.25rem .65rem;font-size:.78rem;color:var(--pri-ink);cursor:pointer}
+.msg-acc svg{width:.95rem;height:.95rem}
+.msg-error{align-self:flex-start;background:var(--naranja-soft);color:var(--ink);border-left:3px solid var(--naranja)}
+.msg-reintentar{margin-top:.5rem;background:none;border:1px solid var(--naranja);color:var(--naranja);border-radius:99px;padding:.25rem .7rem;font-size:.8rem;cursor:pointer}
+.msg-esperando{display:flex;gap:.3rem;padding:.9rem 1rem}
+.msg-esperando span{width:.5rem;height:.5rem;border-radius:50%;background:var(--muted);animation:puntos 1s infinite ease-in-out}
+.msg-esperando span:nth-child(2){animation-delay:.15s}.msg-esperando span:nth-child(3){animation-delay:.3s}
+@keyframes puntos{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+.chat-vacio{text-align:center;color:var(--muted);padding:1.5rem .5rem}
+.chat-vacio p{margin:.4rem 0 1rem}
+.chat-vacio-ico{width:3.2rem;height:3.2rem;margin:0 auto;border-radius:50%;background:var(--pri-soft);color:var(--pri-ink);display:grid;place-items:center}
+.chat-vacio-ico svg{width:1.6rem;height:1.6rem}
+.chat-sug{display:flex;flex-direction:column;gap:.45rem;text-align:left}
+.chat-sug button{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:.6rem .8rem;font-size:.86rem;color:var(--ink);cursor:pointer;text-align:left}
+.chat-barra{position:fixed;left:0;right:0;bottom:calc(var(--nav) + var(--bot));z-index:35;display:flex;align-items:flex-end;gap:.45rem;
+  padding:.55rem .75rem;background:var(--bg);border-top:1px solid var(--line-soft);max-width:520px;margin:0 auto}
+#v-chat[hidden] .chat-barra{display:none}
+.chat-barra textarea{flex:1;resize:none;border:1px solid var(--line);border-radius:20px;background:var(--surface);padding:.6rem .9rem;font-size:16px;line-height:1.35;max-height:140px;min-height:2.6rem}
+.chat-mic,.chat-enviar{flex:0 0 auto;width:2.6rem;height:2.6rem;border-radius:50%;display:grid;place-items:center;cursor:pointer;padding:0}
+.chat-mic{background:var(--bg);border:1.5px solid var(--pri-line);color:var(--pri-ink)}
+.chat-enviar{background:var(--pri);border:0;color:#fff}
+.chat-mic svg,.chat-enviar svg{width:1.25rem;height:1.25rem}
+@media (min-width:768px) and (min-height:500px){
+  .chat-barra{left:var(--rail);bottom:var(--bot);max-width:none;padding:.7rem 1.5rem}
+  .chat-barra textarea{max-width:none}
+  body.en-chat .cuerpo{padding-bottom:calc(var(--bot) + 6rem)}
+}
+
+/* ======== chat estilo WhatsApp con Don Bosco ======== */
+:root{--wa-fondo:#EFEAE2;--wa-yo:#D9FDD3;--wa-yo-txt:#111B21;--wa-el:#FFFFFF;--wa-el-txt:#111B21;--wa-hora:#667781;--wa-verde:#00A884;--wa-check:#53BDEB;--wa-cab:#F0F2F5;--wa-dibujo:rgba(0,0,0,.045)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--wa-fondo:#0B141A;--wa-yo:#005C4B;--wa-yo-txt:#E9EDEF;--wa-el:#202C33;--wa-el-txt:#E9EDEF;--wa-hora:#8696A0;--wa-cab:#202C33;--wa-dibujo:rgba(255,255,255,.035)}}
+:root[data-theme="dark"]{--wa-fondo:#0B141A;--wa-yo:#005C4B;--wa-yo-txt:#E9EDEF;--wa-el:#202C33;--wa-el-txt:#E9EDEF;--wa-hora:#8696A0;--wa-cab:#202C33;--wa-dibujo:rgba(255,255,255,.035)}
+.bosco-av{display:block;border-radius:50%;overflow:hidden;line-height:0}
+.bosco-av svg{width:100%;height:100%;display:block}
+.cab-chat{padding:0;border:2px solid var(--pri-line);overflow:hidden;background:#8EC5E8}
+.cab-chat .bosco-av{width:100%;height:100%}
+body.en-chat .cab-chat{border-color:var(--wa-verde);background:#8EC5E8;box-shadow:0 0 0 2px rgba(0,168,132,.25)}
+body.en-chat{background:var(--wa-fondo)}
+body.en-chat .app{background:var(--wa-fondo)}
+body.en-chat .cuerpo{background-color:var(--wa-fondo);background-image:
+  radial-gradient(circle at 12px 12px,var(--wa-dibujo) 2.5px,transparent 3px),
+  radial-gradient(circle at 42px 34px,var(--wa-dibujo) 4px,transparent 4.5px),
+  linear-gradient(45deg,transparent 46%,var(--wa-dibujo) 47%,var(--wa-dibujo) 53%,transparent 54%);
+  background-size:56px 56px,56px 56px,28px 28px;min-height:calc(100vh - var(--top) - 4.2rem);padding-top:0}
+.wa-cab{position:sticky;top:calc(var(--top) + 3.95rem);z-index:20;display:flex;align-items:center;gap:.7rem;background:var(--wa-cab);
+  margin:0 -1rem .8rem;padding:.55rem 1rem;border-bottom:1px solid var(--line-soft)}
+.wa-av{width:2.6rem;height:2.6rem;flex:0 0 auto}
+.wa-nom{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.2}
+.wa-nom strong{font-size:1rem;font-weight:600;color:var(--ink)}
+.wa-nom span{font-size:.76rem;color:var(--wa-hora)}
+.wa-nom span.escribiendo{color:var(--wa-verde);font-weight:500}
+.wa-menu{background:none;border:0;color:var(--wa-hora);width:2.4rem;height:2.4rem;border-radius:50%;display:grid;place-items:center;cursor:pointer}
+.wa-menu svg{width:1.25rem;height:1.25rem}
+.wa-dia{align-self:center;background:var(--wa-cab);color:var(--wa-hora);font-size:.72rem;padding:.25rem .7rem;border-radius:8px;box-shadow:0 1px .5px rgba(0,0,0,.13);margin-bottom:.2rem}
+.chat-msgs{gap:.35rem}
+.msg{position:relative;max-width:82%;border-radius:10px;padding:.4rem .55rem .35rem .65rem;box-shadow:0 1px .5px rgba(0,0,0,.13);font-size:.95rem;line-height:1.4}
+.msg-yo{background:var(--wa-yo);color:var(--wa-yo-txt);border:0;border-top-right-radius:0;margin-right:8px;white-space:normal}
+.msg-yo .msg-txt{white-space:pre-wrap}
+.msg-ia{background:var(--wa-el);color:var(--wa-el-txt);border:0;border-top-left-radius:0;margin-left:8px}
+.msg-yo::after,.msg-ia::before{content:"";position:absolute;top:0;width:8px;height:13px}
+.msg-yo::after{right:-8px;background:var(--wa-yo);clip-path:polygon(0 0,100% 0,0 100%)}
+.msg-ia::before{left:-8px;background:var(--wa-el);clip-path:polygon(0 0,100% 0,100% 100%)}
+.msg-esperando::before{display:none}
+.msg-hora{float:right;display:inline-flex;align-items:center;gap:.2rem;font-size:.68rem;color:var(--wa-hora);margin:.45rem 0 -.15rem .6rem;line-height:1}
+.msg-yo .msg-hora{color:var(--wa-hora)}
+.msg-check{color:var(--wa-check);display:inline-flex}
+.msg-txt::after{content:"";display:table;clear:both}
+.msg-acc{clear:both;border-top-color:var(--line-soft)}
+.msg-acc button{border-color:var(--line-soft);color:var(--wa-verde)}
+.msg-esperando{background:var(--wa-el)}
+.chat-vacio{padding:.6rem 0 0}
+.chat-sug{align-items:flex-end}
+.chat-sug button{background:var(--wa-el);border:1px solid var(--line-soft);border-radius:18px;color:var(--wa-verde);font-size:.84rem;max-width:88%;box-shadow:0 1px .5px rgba(0,0,0,.08)}
+.chat-barra{background:var(--wa-cab);border-top:0}
+.chat-barra textarea{background:var(--wa-el);border:0;border-radius:22px;color:var(--wa-el-txt)}
+.chat-enviar{background:var(--wa-verde)}
+.chat-mic{background:var(--wa-el);border:0;color:var(--wa-hora)}
+@media (min-width:768px) and (min-height:500px){
+  .wa-cab{margin:0 -1.5rem .8rem;padding:.6rem 1.5rem;top:calc(var(--top) + 4.3rem)}
+  #v-chat{max-width:none}
+  .chat-msgs{max-width:860px;margin:0 auto}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="cab">
+    <div class="marca">AdmSec<i>+</i></div>
+    <h1 id="cab-titulo">Hoy<span class="sub" id="cab-sub"></span></h1>
+    <button class="cab-chat" data-action="chat" aria-label="Chatear con Don Bosco"><span class="bosco-av"></span></button>
+    <button class="panico" data-action="panico" aria-label="Botón del pánico">SOS</button>
+  </header>
+
+  <div class="cuerpo">
+    <section class="view" id="v-hoy">
+      <div class="hoy-nav">
+        <button data-action="dia-prev" aria-label="Día anterior"><span data-ico="izq"></span></button>
+        <div class="hoy-nav-centro">
+          <div class="hoy-etq" id="hoy-nav-titulo"></div>
+          <h2 class="fecha" id="fecha-hoy"></h2>
+        </div>
+        <button data-action="dia-next" aria-label="Día siguiente"><span data-ico="der"></span></button>
+      </div>
+      <div class="hero">
+        <div class="curso" id="curso"></div>
+        <p class="res" id="resumen"></p>
+        <div class="progreso" id="progreso"><span id="progreso-barra"></span></div>
+      </div>
+      <div id="hoy-contenido"></div>
+    </section>
+
+    <section class="view" id="v-calendario" hidden>
+      <div class="calbar">
+        <h2 id="mes-titulo"></h2>
+        <button data-action="mes-prev" aria-label="Mes anterior">‹</button>
+        <button data-action="mes-hoy" aria-label="Ir a hoy">•</button>
+        <button data-action="mes-next" aria-label="Mes siguiente">›</button>
+      </div>
+      <div class="grid" id="grid"></div>
+      <div id="dia-detalle"></div>
+    </section>
+
+    <section class="view" id="v-tareas" hidden>
+      <div class="buscar"><input id="qt" type="search" placeholder="Buscar tarea o reunión" aria-label="Buscar tareas y reuniones"></div>
+      <div class="cats" id="filtros-tareas"></div>
+      <div id="lista-tareas-todas"></div>
+    </section>
+
+    <section class="view" id="v-manuales" hidden>
+      <div class="buscar"><input id="q" type="search" placeholder="Buscar procedimiento, paso o nota" aria-label="Buscar manuales"></div>
+      <div class="cats" id="cats"></div>
+      <div id="lista-manuales"></div>
+    </section>
+
+    <section class="view" id="v-mas" hidden>
+      <p class="aviso" id="estado-datos"></p>
+      <ul class="lista-ajustes" id="ajustes"></ul>
+    </section>
+
+    <section class="view" id="v-chat" hidden>
+      <div class="wa-cab">
+        <span class="bosco-av wa-av"></span>
+        <div class="wa-nom"><strong>Don Bosco</strong><span id="wa-estado">en línea</span></div>
+        <button class="wa-menu" data-action="chat-borrar" aria-label="Borrar conversación"><span data-ico="papelera"></span></button>
+      </div>
+      <div id="chat-msgs" class="chat-msgs" aria-live="polite"></div>
+      <div class="chat-barra">
+        <button class="chat-mic" data-action="chat-mic" aria-label="Dictar la pregunta"><span data-ico="micro"></span></button>
+        <textarea id="chat-txt" rows="1" placeholder="Escribe tu pregunta…"></textarea>
+        <button class="chat-enviar" data-action="chat-enviar" aria-label="Enviar"><span data-ico="enviar"></span></button>
+      </div>
+    </section>
+
+    <aside class="panel" id="panel" hidden aria-label="Detalle"></aside>
+  </div>
+</div>
+
+<nav class="nav" aria-label="Secciones">
+  <button data-vista="tareas"><span class="gl" data-ico="tareas"></span>Tareas</button>
+  <button data-vista="hoy" aria-current="true"><span class="gl" data-ico="hoy"></span>Hoy</button>
+  <button data-vista="calendario"><span class="gl" data-ico="calendario"></span>Calendario</button>
+  <button data-vista="manuales"><span class="gl" data-ico="manuales"></span>Manuales</button>
+  <button data-vista="mas"><span class="gl" data-ico="mas"></span>Más</button>
+</nav>
+<button class="fab-voz" data-action="voz" aria-label="Crear tarea por voz"><span data-ico="micro"></span></button>
+<button class="fab" data-action="crear" aria-label="Crear"><span data-ico="nuevo"></span></button>
+
+<div class="overlay" id="overlay" hidden>
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title"></div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+"use strict";
+var MESES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+var MESES_C=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+var DIAS=["lunes","martes","miércoles","jueves","viernes","sábado","domingo"];
+var CATEGORIAS=["Matriculación","Becas y ayudas","Alumnado","Personal","Documentación oficial","Inventario y compras","Comunicación","Órganos colegiados","Económico","Otros"];
+var REPS={none:"No se repite",diaria:"Cada día laborable (lunes a viernes)",semanal:"Cada semana",mensual:"Cada mes",trimestral:"Cada trimestre",anual:"Cada curso"};
+var TITULOS={chat:"Chat",hoy:"Agenda",calendario:"Calendario",tareas:"Tareas",manuales:"Manuales",mas:"Más"};
+
+function $(s,c){return (c||document).querySelector(s);}
+function el(t,a,txt){var e=document.createElement(t);if(a)for(var k in a){if(k==="class")e.className=a[k];else e.setAttribute(k,a[k]);}if(txt!=null)e.textContent=txt;return e;}
+function iso(d){var m=d.getMonth()+1,x=d.getDate();return d.getFullYear()+"-"+(m<10?"0":"")+m+"-"+(x<10?"0":"")+x;}
+function parseISO(s){var p=String(s||"").split("-");return new Date(+p[0],(+p[1]||1)-1,+p[2]||1);}
+function hoyISO(){return iso(new Date());}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
+function fmtLargo(d){return DIAS[(d.getDay()+6)%7]+", "+d.getDate()+" de "+MESES[d.getMonth()];}
+function diasEntre(a,b){return Math.round((parseISO(b)-parseISO(a))/86400000);}
+function toast(m){var t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(t._h);t._h=setTimeout(function(){t.hidden=true;},2600);}
+function curso(d){var y=d.getFullYear(),ini=d.getMonth()>=8?y:y-1;var s=Math.floor((d-new Date(ini,8,1))/604800000)+1;
+  return {etiqueta:"Curso "+ini+"/"+String(ini+1).slice(2),semana:s};}
+
+var state={diaHoy:null,siguiendoHoy:true,diasPasados:0,manuales:[],tareas:[],vista:"hoy",mes:new Date(),diaSel:hoyISO(),q:"",cat:null,qt:"",filtroT:"pendientes"};
+
+/* ---------- almacenamiento local + sincronización con Supabase ---------- */
+var SUPA_URL="https://fwehlxpahjxzpfpjoexv.supabase.co";
+var SUPA_KEY="sb_publishable_MWCFJM_llZL_X3MZmPf9vw_CdpghVl5";
+var TABLA="registros";
+
+function lsGet(k,def){try{var v=localStorage.getItem(k);return v==null?def:JSON.parse(v);}catch(e){return def;}}
+function lsSet(k,v){try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+
+var Store={
+  modo:"local",
+  async init(onChange){
+    this.leer(); onChange(); pintarEstado();
+    Sync.arrancar();
+  },
+  datosListos(){ return true; },
+  leer(){state.manuales=lsGet("cs_manuales",[]);state.tareas=lsGet("cs_tareas",[]);},
+  escribir(){lsSet("cs_manuales",state.manuales);lsSet("cs_tareas",state.tareas);},
+  async guardar(col,obj){
+    obj._mod=new Date().toISOString();
+    var l=state[col],i=-1;for(var k=0;k<l.length;k++) if(l[k].id===obj.id) i=k;
+    if(i>=0) l[i]=obj; else l.push(obj);
+    this.escribir(); Sync.marcar(col,obj.id,false);
+    render();
+  },
+  async borrar(col,id){
+    state[col]=state[col].filter(function(o){return o.id!==id;});
+    this.escribir(); Sync.marcar(col,id,true);
+    render();
+  }
+};
+
+var Sync={
+  estado:"",          /* "", "sincronizando", "ok", "error", "sin-conexion" */
+  ultima:lsGet("cs_ultima_sync",null),
+  _timer:null,_enCurso:false,_otraVez:false,
+  sesion(){return lsGet("cs_sesion",null);},
+  conectado(){return !!this.sesion();},
+  pendientes(){return lsGet("cs_pendientes",{});},
+  marcar(col,id,borrado){
+    if(!this.conectado()) return;
+    var p=this.pendientes(); p[id]={c:col,b:!!borrado,n:Date.now()+"-"+Math.random().toString(36).slice(2,6)}; lsSet("cs_pendientes",p);
+    this.programar(1500);
+  },
+  programar(ms){var self=this;clearTimeout(this._timer);this._timer=setTimeout(function(){self.sincronizar();},ms||0);},
+  arrancar(){
+    var self=this;
+    if(!this.conectado()){
+      if(!lsGet("cs_sin_cuenta",false)) setTimeout(abrirLogin,300);
+      return;
+    }
+    this.sincronizar();
+    if(!this._int){
+      this._int=setInterval(function(){if(!document.hidden) self.sincronizar();},30000);
+      document.addEventListener("visibilitychange",function(){if(!document.hidden) self.sincronizar();});
+      window.addEventListener("online",function(){self.sincronizar();});
+    }
+  },
+
+  /* --- peticiones --- */
+  async _fetch(path,opt){
+    opt=opt||{};
+    var h={"apikey":SUPA_KEY,"Content-Type":"application/json"};
+    if(opt.token) h["Authorization"]="Bearer "+opt.token;
+    if(opt.headers) for(var k in opt.headers) h[k]=opt.headers[k];
+    var r=await fetch(SUPA_URL+path,{method:opt.method||"GET",headers:h,body:opt.body?JSON.stringify(opt.body):undefined});
+    var txt=await r.text(),json=null;try{json=txt?JSON.parse(txt):null;}catch(e){}
+    return {ok:r.ok,status:r.status,json:json};
+  },
+  _guardarSesion(j){
+    if(!j||!j.access_token) return false;
+    lsSet("cs_sesion",{access_token:j.access_token,refresh_token:j.refresh_token,
+      expires_at:j.expires_at||Math.floor(Date.now()/1000)+(j.expires_in||3600),
+      email:(j.user&&j.user.email)||"",user_id:(j.user&&j.user.id)||""});
+    return true;
+  },
+  async _token(forzar){
+    var s=this.sesion(); if(!s) return null;
+    if(!forzar&&s.expires_at-60>Date.now()/1000) return s.access_token;
+    var r=await this._fetch("/auth/v1/token?grant_type=refresh_token",{method:"POST",body:{refresh_token:s.refresh_token}});
+    if(r.ok&&this._guardarSesion(r.json)) return this.sesion().access_token;
+    if(r.status>=400&&r.status<500){ this._caducada(); }
+    return null;
+  },
+  _caducada(){
+    lsSet("cs_sesion",null); this.estado="";
+    toast("La sesión ha caducado. Vuelve a entrar para sincronizar.");
+    pintarEstado(); if(state.vista==="mas") render(); abrirLogin();
+  },
+  async _api(path,opt){
+    var t=await this._token(false); if(!t) throw new Error("sin-sesion");
+    opt=opt||{}; opt.token=t;
+    var r=await this._fetch(path,opt);
+    if(r.status===401){ t=await this._token(true); if(!t) throw new Error("sin-sesion"); opt.token=t; r=await this._fetch(path,opt); }
+    if(!r.ok){var e=new Error("http-"+r.status);e.r=r;throw e;}
+    return r.json;
+  },
+
+  /* --- cuenta --- */
+  async entrar(email,pass,crear){
+    var r;
+    try{
+      r=crear
+        ? await this._fetch("/auth/v1/signup",{method:"POST",body:{email:email,password:pass}})
+        : await this._fetch("/auth/v1/token?grant_type=password",{method:"POST",body:{email:email,password:pass}});
+    }catch(e){ return "No hay conexión a internet. Inténtalo de nuevo."; }
+    if(!r.ok){
+      var j=r.json||{},c=j.error_code||j.code||"",m=(j.msg||j.error_description||j.message||"")+"";
+      if(c==="invalid_credentials"||/invalid login/i.test(m)) return "Correo o contraseña incorrectos.";
+      if(c==="user_already_exists"||/already registered/i.test(m)) return "Ya existe una cuenta con ese correo. Pulsa «Entrar».";
+      if(c==="weak_password"||/password/i.test(m)) return "La contraseña es demasiado corta o débil (mínimo 8 caracteres).";
+      if(c==="email_not_confirmed") return "Tienes que confirmar el correo antes de entrar.";
+      if(c==="validation_failed"||/email/i.test(m)) return "Revisa que el correo esté bien escrito.";
+      if(r.status===429) return "Demasiados intentos. Espera un minuto.";
+      return "No se pudo entrar ("+(m||r.status)+").";
+    }
+    if(!this._guardarSesion(r.json)) return "Cuenta creada. Revisa tu correo para confirmarla y luego pulsa «Entrar».";
+    lsSet("cs_sin_cuenta",null);
+    /* lo que hubiera en este dispositivo se sube a la cuenta */
+    var p=this.pendientes();
+    state.manuales.forEach(function(o){if(!p[o.id])p[o.id]={c:"manuales",b:false,n:"ini"};});
+    state.tareas.forEach(function(o){if(!p[o.id])p[o.id]={c:"tareas",b:false,n:"ini"};});
+    lsSet("cs_pendientes",p);
+    this.arrancar();
+    return null;
+  },
+  async salir(){
+    try{await this.sincronizar();}catch(e){}
+    var s=this.sesion();
+    if(s){try{await this._fetch("/auth/v1/logout",{method:"POST",token:s.access_token});}catch(e){}}
+    lsSet("cs_sesion",null);lsSet("cs_pendientes",{});lsSet("cs_ultima_sync",null);
+    lsSet("cs_sin_cuenta",true);
+    this.estado="";this.ultima=null;
+    render();pintarEstado();
+  },
+
+  /* --- sincronizar: subir cambios pendientes y descargar todo --- */
+  async sincronizar(){
+    if(!this.conectado()) return;
+    if(this._enCurso){this._otraVez=true;return;}
+    this._enCurso=true;this.estado="sincronizando";pintarEstado();
+    try{
+      var s=this.sesion(),p=this.pendientes(),ids=Object.keys(p),filas=[];
+      ids.forEach(function(id){
+        var x=p[id],obj=null;
+        if(!x.b){var l=state[x.c]||[];for(var i=0;i<l.length;i++) if(l[i].id===id) obj=l[i];}
+        var datos={};if(obj) for(var k in obj) if(k!=="id") datos[k]=obj[k];
+        filas.push({id:id,user_id:s.user_id,coleccion:x.c,datos:datos,borrado:!obj,actualizado:new Date().toISOString()});
+      });
+      for(var a=0;a<filas.length;a+=200){
+        await this._api("/rest/v1/"+TABLA+"?on_conflict=user_id,id",{method:"POST",body:filas.slice(a,a+200),
+          headers:{"Prefer":"resolution=merge-duplicates,return=minimal"}});
+      }
+      /* quitar de pendientes solo lo que ya se subió (y no ha cambiado mientras tanto) */
+      var p2=this.pendientes();
+      ids.forEach(function(id){ if(p2[id]&&p2[id].n===p[id].n) delete p2[id]; });
+      lsSet("cs_pendientes",p2);
+
+      /* descargar */
+      var remotos=[],desde=0,lote=1000;
+      while(true){
+        var r=await this._api("/rest/v1/"+TABLA+"?select=id,coleccion,datos,borrado&order=id&offset="+desde+"&limit="+lote);
+        remotos=remotos.concat(r||[]);
+        if(!r||r.length<lote) break; desde+=lote;
+      }
+      this._aplicar(remotos);
+      this.ultima=new Date().toISOString();lsSet("cs_ultima_sync",this.ultima);
+      this.estado="ok";
+    }catch(e){
+      if(e&&e.message==="sin-sesion"){this.estado="";}
+      else if(e instanceof TypeError){this.estado="sin-conexion";}
+      else{this.estado="error";this._detalle=(e&&e.r&&e.r.json&&(e.r.json.message||e.r.json.msg))||(e&&e.message)||"";}
+    }
+    this._enCurso=false;pintarEstado();
+    if(this._otraVez){this._otraVez=false;this.programar(300);}
+  },
+  _aplicar(remotos){
+    var p=this.pendientes(),vistos={},cambios=false;
+    var nuevo={manuales:state.manuales.slice(),tareas:state.tareas.slice()};
+    function idx(l,id){for(var i=0;i<l.length;i++) if(l[i].id===id) return i;return -1;}
+    remotos.forEach(function(r){
+      vistos[r.id]=true;
+      if(p[r.id]) return;                 /* hay un cambio local más reciente sin subir */
+      var col=r.coleccion==="manuales"?"manuales":"tareas",l=nuevo[col],i=idx(l,r.id);
+      if(r.borrado){ if(i>=0){l.splice(i,1);cambios=true;} return; }
+      var o=r.datos||{};o.id=r.id;
+      if(i<0){l.push(o);cambios=true;}
+      else if(JSON.stringify(l[i])!==JSON.stringify(o)){l[i]=o;cambios=true;}
+    });
+    /* lo que existe aquí pero no en la nube (y no está pendiente) se vuelve a subir */
+    var falta=false;
+    ["manuales","tareas"].forEach(function(col){nuevo[col].forEach(function(o){
+      if(!vistos[o.id]&&!p[o.id]){p[o.id]={c:col,b:false,n:"re"};falta=true;}
+    });});
+    if(falta){lsSet("cs_pendientes",p);this.programar(500);}
+    if(cambios){state.manuales=nuevo.manuales;state.tareas=nuevo.tareas;Store.escribir();render();}
+  }
+};
+
+/* ---------- pantalla de acceso ---------- */
+function abrirLogin(){
+  abrirSheet(function(sh){
+    cabecera(sh,"Entrar en AdmSec+");
+    var p=el("p",null,"Entra con tu cuenta para ver tus tareas y manuales en todos tus dispositivos. Si es la primera vez, escribe tu correo y una contraseña y pulsa «Crear cuenta».");
+    p.style.cssText="margin:0 0 .9rem;color:var(--muted);font-size:.9rem";sh.appendChild(p);
+    var em=el("input",{type:"email",autocomplete:"email",inputmode:"email",placeholder:"tu@correo.com"});
+    var pw=el("input",{type:"password",autocomplete:"current-password",placeholder:"Mínimo 8 caracteres"});
+    var s0=Sync.sesion()||{};if(s0.email) em.value=s0.email; else {var ult=lsGet("cs_ultimo_email","");if(ult)em.value=ult;}
+    sh.appendChild(campo("Correo",em));sh.appendChild(campo("Contraseña",pw));
+    var msg=el("p");msg.style.cssText="margin:.2rem 0 0;color:var(--red);font-size:.86rem;min-height:1.2em";sh.appendChild(msg);
+    var acc=el("div",{class:"acciones"});
+    var bE=el("button",{class:"btn"},"Entrar"),bC=el("button",{class:"btn sec"},"Crear cuenta"),bS=el("button",{class:"btn warn"},"Usar sin cuenta (solo este dispositivo)");
+    async function ir(crear){
+      var e=em.value.trim(),w=pw.value;
+      if(!e||e.indexOf("@")<0){msg.textContent="Escribe tu correo.";return;}
+      if(w.length<8){msg.textContent="La contraseña debe tener al menos 8 caracteres.";return;}
+      msg.textContent="";bE.disabled=bC.disabled=true;var t=crear?bC:bE,orig=t.textContent;t.textContent="Un momento…";
+      lsSet("cs_ultimo_email",e);
+      var err=await Sync.entrar(e,w,crear);
+      bE.disabled=bC.disabled=false;t.textContent=orig;
+      if(err){msg.textContent=err;return;}
+      cerrarSheet();toast(crear?"Cuenta creada. Sincronizando…":"Sesión iniciada. Sincronizando…");render();
+    }
+    bE.addEventListener("click",function(){ir(false);});
+    bC.addEventListener("click",function(){ir(true);});
+    pw.addEventListener("keydown",function(ev){if(ev.key==="Enter")ir(false);});
+    bS.addEventListener("click",function(){lsSet("cs_sin_cuenta",true);cerrarSheet();render();});
+    acc.appendChild(bE);acc.appendChild(bC);acc.appendChild(bS);sh.appendChild(acc);
+  });
+}
+
+function pintarEstado(){
+  var e2=$("#estado-datos");if(!e2)return;
+  if(!Sync.conectado()){
+    e2.textContent="Sin cuenta: tus datos solo se guardan en este dispositivo. Entra con tu cuenta para verlos en todos tus dispositivos.";return;
+  }
+  var s=Sync.sesion(),t="Cuenta: "+(s.email||"conectada")+". ";
+  var np=Object.keys(Sync.pendientes()).length;
+  if(Sync.estado==="sincronizando") t+="Sincronizando…";
+  else if(Sync.estado==="sin-conexion") t+="Sin conexión: los cambios se guardan aquí y se subirán al volver internet"+(np?" ("+np+" pendientes).":".");
+  else if(Sync.estado==="error") t+="No se pudo sincronizar"+(Sync._detalle?" ("+Sync._detalle+")":"")+". Se reintentará solo.";
+  else if(Sync.ultima){var d=new Date(Sync.ultima);t+="Sincronizado a las "+z(d.getHours())+":"+z(d.getMinutes())+(np?" · "+np+" cambios por subir.":".");}
+  else t+="Pendiente de sincronizar.";
+  e2.textContent=t;
+}
+
+/* ---------- repeticiones y rango de fechas ---------- */
+function finTarea(t){ return t.fechaFin||t.fecha; }
+function duracionTarea(t){ var f=finTarea(t); return f?Math.max(0,diasEntre(t.fecha,f)):0; }
+/* Repeticiones:
+   - "diaria": solo días laborables (lunes a viernes).
+   - semanal / mensual / trimestral / anual: si la fecha cae en sábado o domingo,
+     se adelanta al viernes anterior. */
+function esFinde(d){var w=d.getDay();return w===0||w===6;}
+function patronNominal(t,candidatoISO){
+  if(candidatoISO<t.fecha) return false;
+  var a=parseISO(t.fecha),b=parseISO(candidatoISO);
+  if(t.repite==="semanal") return a.getDay()===b.getDay();
+  if(t.repite==="mensual") return a.getDate()===b.getDate();
+  if(t.repite==="trimestral"){if(a.getDate()!==b.getDate())return false;
+    return (((b.getFullYear()-a.getFullYear())*12+(b.getMonth()-a.getMonth()))%3)===0;}
+  if(t.repite==="anual") return a.getDate()===b.getDate()&&a.getMonth()===b.getMonth();
+  return false;
+}
+function patronCoincide(t,candidatoISO){
+  if(!t.fecha) return false;
+  if(!t.repite||t.repite==="none") return candidatoISO===t.fecha;
+  var b=parseISO(candidatoISO);
+  if(t.repite==="diaria") return candidatoISO>=t.fecha&&!esFinde(b);
+  if(esFinde(b)) return false;                         /* nunca cae en fin de semana */
+  if(patronNominal(t,candidatoISO)) return true;
+  if(b.getDay()===5){                                  /* viernes: recoge el sábado y el domingo siguientes */
+    for(var k=1;k<=2;k++){
+      var n=iso(new Date(b.getFullYear(),b.getMonth(),b.getDate()+k));
+      if(patronNominal(t,n)) return true;
+    }
+  }
+  return false;
+}
+function primeraOcurrencia(t){
+  if(!t.repite||t.repite==="none") return t.fecha;
+  var d=parseISO(t.fecha);
+  if(t.repite==="diaria"){while(esFinde(d)) d=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1);return iso(d);}
+  while(esFinde(d)) d=new Date(d.getFullYear(),d.getMonth(),d.getDate()-1);
+  return iso(d);
+}
+/* Fecha de inicio de la ocurrencia (del ciclo de repetición) a la que pertenece f, o null si f no cae en ninguna. */
+/* Tareas con plazo (fecha de inicio y de fin, sin repetición): no se apuntan todos los días.
+   Aparecen solo en UN día: hoy mientras están pendientes y dentro del plazo (van pasando al día siguiente),
+   el día de inicio si todavía no ha empezado, el día en que se hicieron si ya están hechas,
+   y el último día del plazo si se pasó sin hacer (atrasada). */
+function esPlazoMovil(t){return t.tipo!=="reunion"&&(!t.repite||t.repite==="none")&&t.fechaFin&&t.fechaFin>t.fecha;}
+function diaVisiblePlazo(t){
+  if(t.hechas&&t.hechas[t.fecha]){
+    var en=t.hechasEn&&t.hechasEn[t.fecha];
+    return en||t.fechaFin;
+  }
+  var h=hoyISO();
+  if(h<t.fecha) return t.fecha;
+  if(h<=t.fechaFin) return h;
+  return t.fechaFin;
+}
+function ocurrenciaEn(t,f){
+  if(!t.fecha) return null;
+  if(esPlazoMovil(t)) return f===diaVisiblePlazo(t)?t.fecha:null;
+  var dur=duracionTarea(t), fd=parseISO(f);
+  for(var i=0;i<=dur;i++){
+    var cand=iso(new Date(fd.getFullYear(),fd.getMonth(),fd.getDate()-i));
+    if(patronCoincide(t,cand)) return cand;
+  }
+  return null;
+}
+function ocurreEn(t,f){ return !!ocurrenciaEn(t,f); }
+function claveOcurrencia(t,f){ return ocurrenciaEn(t,f)||f; }
+function hecha(t,f){var c=claveOcurrencia(t,f);return !!(t.hechas&&t.hechas[c]);}
+/* una tarea hecha cuyo día (o plazo) ya pasó queda cerrada: no se edita, ni se desmarca, ni se borra */
+function finOcurrencia(t,f){var c=parseISO(claveOcurrencia(t,f));return iso(new Date(c.getFullYear(),c.getMonth(),c.getDate()+duracionTarea(t)));}
+function bloqueada(t,f){
+  if(!hecha(t,f)) return false;
+  var h=hoyISO(); if(finOcurrencia(t,f)>=h) return false;
+  var en=t.hechasEn&&t.hechasEn[claveOcurrencia(t,f)];
+  return !(en&&en>=h);   /* si la marcaste hoy, puedes corregirla hasta que acabe el día */
+}
+function avisoBloqueada(){toast("Tarea cerrada: ya se hizo y su día ha pasado, no se puede modificar.");}
+function tareasDe(f){return state.tareas.filter(function(t){return ocurreEn(t,f);})
+  .sort(function(x,y){return (x.hora||"99")<(y.hora||"99")?-1:1;});}
+function atrasadas(){var h=hoyISO(),o=[];
+  state.tareas.forEach(function(t){var fin=finTarea(t);
+    if(fin&&fin<h&&t.tipo!=="reunion"&&(!t.repite||t.repite==="none")&&!hecha(t,t.fecha))o.push({t:t,f:fin});});
+  return o.sort(function(a,b){return a.f<b.f?-1:1;});}
+function manualDe(t){for(var i=0;i<state.manuales.length;i++) if(state.manuales[i].id===t.manualId) return state.manuales[i];return null;}
+
+/* ---------- barrido de los lunes ---------- */
+/* Cada lunes a partir de las 8:00, las tareas (no reuniones, no repetitivas)
+   que hayan quedado sin cerrar de antes se pasan a ese lunes marcadas como
+   "no realizada" y se avisa con un mensaje. */
+function intentarBarridoLunes(){
+  return; /* desactivado: las pendientes atrasadas solo pasan a hoy con el botón «Pasar pendientes a hoy» de Más */
+  if(!Store.datosListos()) return;
+  var ahora=new Date();
+  if(ahora.getDay()!==1||ahora.getHours()<8) return;
+  var hoy=hoyISO(),flagKey="cs_barrido_hecho",yaHecho=null;
+  try{yaHecho=localStorage.getItem(flagKey);}catch(e){}
+  if(yaHecho===hoy) return;
+  try{localStorage.setItem(flagKey,hoy);}catch(e){}
+  var candidatos=pendientesAnteriores().filter(function(t){return t.estado!=="no_realizada";});
+  if(!candidatos.length) return;
+  var titulos=candidatos.map(function(t){return t.titulo;});
+  candidatos.forEach(function(t){
+    var o=JSON.parse(JSON.stringify(t));
+    o.fechaOriginalInicio=o.fechaOriginalInicio||o.fecha;
+    o.fechaOriginalFin=o.fechaOriginalFin||finTarea(t);
+    o.fecha=hoy;o.fechaFin=hoy;o.estado="no_realizada";
+    Store.guardar("tareas",o);
+  });
+  try{localStorage.setItem("cs_aviso_barrido",JSON.stringify({fecha:hoy,n:candidatos.length,titulos:titulos}));}catch(e){}
+  toast("Lunes: "+candidatos.length+" tarea"+(candidatos.length===1?"":"s")+" sin cerrar se ha"+(candidatos.length===1?"":"n")+" pasado a hoy.");
+}
+/* tareas sin cerrar cuyo plazo terminó antes de hoy (no reuniones, no repetitivas) */
+function pendientesAnteriores(){
+  var hoy=hoyISO();
+  return state.tareas.filter(function(t){
+    return t.tipo!=="reunion"&&(!t.repite||t.repite==="none")&&t.fecha!==hoy&&
+      finTarea(t)<hoy&&!hecha(t,t.fecha);
+  });
+}
+/* botón de Más: pasar a hoy todo lo pendiente de días anteriores */
+function traerPendientesAHoy(){
+  var lista=pendientesAnteriores().sort(function(a,b){return finTarea(a)<finTarea(b)?-1:1;});
+  if(!lista.length){toast("No hay tareas pendientes de días anteriores.");return;}
+  abrirSheet(function(sh){
+    cabecera(sh,"Pasar pendientes a hoy");
+    var p=el("p",null,(lista.length===1?"Esta tarea de un día anterior sigue sin marcar como hecha. Se moverá":"Estas "+lista.length+" tareas de días anteriores siguen sin marcar como hechas. Se moverán")+" a hoy ("+fmtLargo(new Date())+") y "+(lista.length===1?"quedará marcada":"quedarán marcadas")+" como «no realizada», guardando su fecha original. Las reuniones y las tareas que se repiten no se mueven.");
+    p.style.cssText="margin:0 0 .8rem;color:var(--muted);font-size:.9rem";sh.appendChild(p);
+    var ul=el("ul",{class:"tareas"});
+    lista.forEach(function(t){
+      var li=el("li",{class:"tarea vencida"}),d=parseISO(finTarea(t)),c=el("div",{class:"fecha-col"});
+      c.appendChild(el("div",{class:"d"},String(d.getDate())));c.appendChild(el("div",{class:"m"},MESES_C[d.getMonth()]));
+      li.appendChild(c);var tx=el("div",{class:"txtb"});tx.appendChild(el("span",{class:"t"},t.titulo));li.appendChild(tx);ul.appendChild(li);
+    });
+    sh.appendChild(ul);
+    var acc=el("div",{class:"acciones"});
+    var ok=el("button",{class:"btn"},"Pasar "+lista.length+" a hoy");
+    ok.addEventListener("click",function(){
+      var hoy=hoyISO();
+      lista.forEach(function(t){
+        var o=JSON.parse(JSON.stringify(t));
+        o.fechaOriginalInicio=o.fechaOriginalInicio||o.fecha;
+        o.fechaOriginalFin=o.fechaOriginalFin||finTarea(t);
+        o.fecha=hoy;o.fechaFin=hoy;o.estado="no_realizada";
+        Store.guardar("tareas",o);
+      });
+      cerrarSheet();state.vista="hoy";window.scrollTo(0,0);render();
+      toast(lista.length+" tarea"+(lista.length===1?"":"s")+" pasada"+(lista.length===1?"":"s")+" a hoy.");
+    });
+    var c=el("button",{class:"btn sec"},"Cancelar");c.addEventListener("click",cerrarSheet);
+    acc.appendChild(ok);acc.appendChild(c);sh.appendChild(acc);
+  });
+}
+function avisoBarridoPendiente(){
+  try{var raw=localStorage.getItem("cs_aviso_barrido");return raw?JSON.parse(raw):null;}catch(e){return null;}
+}
+function descartarAvisoBarrido(){try{localStorage.removeItem("cs_aviso_barrido");}catch(e){}render();}
+
+/* ---------- iconos (dibujados, iguales en todos los móviles) ---------- */
+var ICONOS={
+  tareas:'<rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M8 12.3l2.7 2.7L16.2 9.5"/>',
+  hoy:'<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/><circle cx="12" cy="15.2" r="1.9" fill="currentColor" stroke="none"/>',
+  calendario:'<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M8 13.6h.01M12 13.6h.01M16 13.6h.01M8 17.2h.01M12 17.2h.01" stroke-width="2.6"/>',
+  manuales:'<path d="M5 5.5A2.5 2.5 0 0 1 7.5 3H19v15H7.5A2.5 2.5 0 0 0 5 20.5z"/><path d="M5 20.5A2.5 2.5 0 0 0 7.5 23H19v-5" transform="translate(0 -2)"/><path d="M9 7.5h6"/>',
+  mas:'<circle cx="5.5" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="18.5" cy="12" r="1.6" fill="currentColor" stroke="none"/>',
+  izq:'<path d="M14.5 5.5L8 12l6.5 6.5"/>',der:'<path d="M9.5 5.5L16 12l-6.5 6.5"/>',
+  traer:'<path d="M3.5 12h11M10 7l5 5-5 5M19.5 4.5v15"/>',
+  exportar:'<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4M12 13v5M9.8 15.5L12 13l2.2 2.5"/>',
+  copia:'<path d="M12 3.5v11M7.5 10.5l4.5 4.5 4.5-4.5M4.5 16.5v2a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-2"/>',
+  restaurar:'<path d="M12 15V4M7.5 8.5L12 4l4.5 4.5M4.5 16.5v2a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-2"/>',
+  pasar:'<path d="M7 7.5h13l-3.5-3.5M17 16.5H4l3.5 3.5"/>',
+  sync:'<path d="M19.5 10A8 8 0 0 0 5.5 6.5L3.5 9M4.5 14a8 8 0 0 0 14 3.5l2-2.5M3.5 4v5h5M20.5 20v-5h-5"/>',
+  salir:'<path d="M14 4h3.5a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H14M9.5 16.5L5 12l4.5-4.5M5 12h10"/>',
+  entrar:'<path d="M14 4h3.5a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H14M9.5 7.5L14 12l-4.5 4.5M14 12H3.5"/>',
+  tema:'<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 0 0 17z" fill="currentColor"/>',
+  prueba:'<path d="M9 3.5h6M10 3.5v6L4.8 18.6A1.6 1.6 0 0 0 6.2 21h11.6a1.6 1.6 0 0 0 1.4-2.4L14 9.5v-6"/><path d="M7.5 15h9"/>',
+  historial:'<path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1L3.5 8.5M3.5 4v4.5H8M12 7.5V12l3 2"/>',
+  papelera:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13.5h10L18 7M9 7V4h6v3"/>',
+  alerta:'<path d="M12 3.5l9.5 16.5h-19z"/><path d="M12 10v4.5M12 17.4v.01"/>',
+  nuevo:'<path d="M12 5v14M5 12h14"/>',
+  chat:'<path d="M4.5 5.5h15a1.5 1.5 0 0 1 1.5 1.5v9a1.5 1.5 0 0 1-1.5 1.5H10l-4.5 3.5V17.5h-1A1.5 1.5 0 0 1 3 16V7a1.5 1.5 0 0 1 1.5-1.5z"/><path d="M8 10h8M8 13.5h5"/>',
+  enviar:'<path d="M4 12l16-7.5-6 16-2.5-6.5z"/><path d="M11.5 14L20 4.5"/>',
+  copiar:'<rect x="8.5" y="8.5" width="11" height="12" rx="2"/><path d="M15.5 8.5V5.5a2 2 0 0 0-2-2h-8a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3"/>',
+  micro:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/>'
+};
+function ico(n){return '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(ICONOS[n]||"")+'</svg>';}
+function pintarIconos(raiz){(raiz||document).querySelectorAll("[data-ico]").forEach(function(n){if(!n.firstChild)n.innerHTML=ico(n.getAttribute("data-ico"));});}
+
+/* ---------- tema: automático / claro / oscuro ---------- */
+function temaActual(){try{return localStorage.getItem("cs_tema")||"auto";}catch(e){return "auto";}}
+function ponerTema(m){
+  if(m==="light"||m==="dark") document.documentElement.setAttribute("data-theme",m); else document.documentElement.removeAttribute("data-theme");
+  try{ if(m==="light"||m==="dark") localStorage.setItem("cs_tema",m); else localStorage.removeItem("cs_tema"); }catch(e){}
+}
+
+/* ---------- botón del pánico: un chiste para respirar ---------- */
+var CHISTES=[
+ "—Camarero, este filete tiene muchos nervios. —Normal, señor, es la primera vez que se lo comen.",
+ "—Doctor, me duele aquí, aquí y aquí. —Usted lo que tiene es el dedo roto.",
+ "—Doctor, cada vez que tomo café me duele el ojo. —Pruebe a sacar la cucharilla de la taza.",
+ "—Doctor, tengo un problema: todo el mundo me ignora. —¡Que pase el siguiente!",
+ "—Doctor, creo que soy un perro. —Túmbese en el diván. —No puedo, no me dejan subirme a los sillones.",
+ "—Jaimito, dime una palabra con muchas «o». —¡Goooooool!",
+ "—Jaimito, si tengo cinco manzanas en una mano y seis en la otra, qué tengo. —Unas manos enormes, señorita.",
+ "—Jaimito, llegas tarde otra vez. —Es que en la puerta del colegio hay un cartel que pone «Escuela, vaya despacio».",
+ "—Papá, papá, en el colegio me llaman mentiroso. —Anda ya, si tú no vas al colegio.",
+ "—Mamá, en el colegio me llaman despistado. —Niño, que tu casa es la de enfrente.",
+ "—Mamá, en el colegio me llaman cabezón. —No les hagas caso y ve a comprar diez kilos de patatas. —Vale, dame una bolsa. —No hace falta, tráelas en la gorra.",
+ "En una entrevista de trabajo: —Dígame su mayor defecto. —La sinceridad. —Yo no creo que eso sea un defecto. —Me da igual lo que usted crea.",
+ "En la entrevista: —Pone aquí que es usted muy rápido con los números. —Así es. —A ver: 17 por 24. —62. —Eso no se parece ni de lejos. —Ya, pero ha sido rapidísimo.",
+ "—Oiga, le llamo porque su perro está persiguiendo a un señor en bicicleta. —Imposible, mi perro no sabe montar en bicicleta.",
+ "Un caracol va montado encima de una tortuga y grita: —¡Yujuuu, más despacio, que me mareo!",
+ "—Quería una camiseta con un personaje histórico. —Tenemos esta de Gandhi. —No, mejor mediani.",
+ "—Cariño, estás obsesionado con el fútbol y te echo mucho de menos. —¡Falta! ¡Pero si no te he tocado!",
+ "Un hombre entra en una biblioteca y pide un libro sobre la paranoia. La bibliotecaria le susurra: «Está justo detrás de usted».",
+ "Fui a devolver un traje de camuflaje a la tienda, pero no conseguía encontrarlo.",
+ "—Vengo a devolver este despertador. —Qué le pasa. —Que me despierta justo cuando estoy durmiendo.",
+ "Mi mujer dice que nunca la escucho. O algo así me ha parecido que decía.",
+ "Mi jefa me dijo que tuviera un buen día. Así que me fui a casa.",
+ "Llamé al servicio técnico y me dijeron: «Apáguelo y vuelva a encenderlo». Ahora yo estoy mucho más descansado, pero el ordenador sigue igual.",
+ "He decidido ser más ordenado. Ya he empezado: tengo todas mis excusas por orden alfabético.",
+ "Tengo una memoria excelente para las caras. Lo malo es que no recuerdo dónde he dejado las gafas para verlas.",
+ "Mi ordenador me ha ganado al ajedrez. Menos mal que yo a él le gano al boxeo.",
+ "Mi GPS me dijo «en la rotonda, tome la tercera salida». Llevo cuatro vueltas y todavía no he encontrado la primera.",
+ "—Mamá, mamá, en el colegio dicen que soy muy exagerado. —Hijo, te lo he dicho un millón de veces: no hagas caso.",
+ "—Oiga, soy el vecino de abajo: su bañera se está saliendo. —Imposible, la bañera está aquí dentro.",
+ "Van dos y se cae el del medio.",
+ "El otro día le dije a mi mujer que dibujaba las cejas muy altas. Me miró muy sorprendida."
+];
+var bolsaChistes=[];
+function sacarChiste(){
+  if(!bolsaChistes.length){
+    bolsaChistes=CHISTES.slice();
+    for(var i=bolsaChistes.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),x=bolsaChistes[i];bolsaChistes[i]=bolsaChistes[j];bolsaChistes[j]=x;}
+  }
+  return bolsaChistes.pop();
+}
+function botonPanico(){
+  var ch=sacarChiste();
+  abrirSheet(function(sh){
+    cabecera(sh,"🆘 Botón del pánico");
+    var cont=el("div",{class:"chiste"});
+    ch.split(/\s(?=—)/).forEach(function(linea){cont.appendChild(el("p",{class:"chiste-txt"},linea));});
+    sh.appendChild(cont);
+  });
+}
+
+/* ---------- dictado por voz: entender la frase ---------- */
+var NUM_PAL={"un":1,"uno":1,"una":1,"dos":2,"tres":3,"cuatro":4,"cinco":5,"seis":6,"siete":7,"ocho":8,"nueve":9,"diez":10,"once":11,"doce":12,
+  "trece":13,"catorce":14,"quince":15,"dieciseis":16,"diecisiete":17,"dieciocho":18,"diecinueve":19,"veinte":20,"veintiuno":21,"veintiun":21,"veintidos":22,
+  "veintitres":23,"veinticuatro":24,"veinticinco":25,"veintiseis":26,"veintisiete":27,"veintiocho":28,"veintinueve":29,"treinta":30,"treinta y uno":31,"primero":1};
+var MESES_N={"enero":0,"febrero":1,"marzo":2,"abril":3,"mayo":4,"junio":5,"julio":6,"agosto":7,"septiembre":8,"setiembre":8,"octubre":9,"noviembre":10,"diciembre":11};
+var DOW_N={"domingo":0,"lunes":1,"martes":2,"miercoles":3,"jueves":4,"viernes":5,"sabado":6};
+function sinAcentos(s){return s.normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/ñ/g,"ñ");}
+function interpretarDictado(texto,hoyRef){
+  var hoy=hoyRef?parseISO(hoyRef):parseISO(hoyISO());
+  var r={texto:texto,tipo:"tarea",titulo:"",fecha:null,fechaFin:null,hora:"",horaFin:"",lugar:"",repite:"none",entendido:[]};
+  /* trabajamos sobre una copia en minúsculas y sin tildes; "tachamos" lo que vamos entendiendo */
+  var limpio=texto
+    .replace(/(\d)\s*\.?\s*[ºª°](?=\s+de\s)/gi,"$1")   /* 1.º de octubre -> 1 de octubre (sin tocar "3º B") */
+    .replace(/(\d)(er|ro)\b/gi,"$1")               /* 1er -> 1 */
+    .replace(/(\d)\.(\d{2})\b/g,"$1:$2")          /* 10.30 -> 10:30 */
+    .replace(/(\d{1,2})-(\d{1,2})-(\d{2,4})/g,"$1/$2/$3")
+    .replace(/[;!¡?¿"«»]/g," ").replace(/\.(\s|$)/g," ");
+  var orig=" "+limpio.replace(/\s+/g," ").trim()+" ";
+  var s=sinAcentos(orig.toLowerCase()).replace(/ñ/g,"n");
+  var marca=new Array(s.length).fill(false);
+  function tachar(m,idx){for(var i=idx;i<idx+m.length;i++)marca[i]=true;}
+  function buscar(re,fn){
+    re.lastIndex=0;var m;
+    while((m=re.exec(s))){
+      if(!marca[m.index+1]){var ok=fn(m);if(ok!==false){tachar(m[0],m.index);return true;}}
+      if(!re.global) break; re.lastIndex=m.index+1;
+    }
+    return false;
+  }
+  function num(x){if(x==null)return null;x=x.trim();if(/^\d+$/.test(x))return +x;return NUM_PAL[x]!=null?NUM_PAL[x]:null;}
+  var NUM="(\\d{1,2}|treinta y uno|un|uno|una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|once|doce|trece|catorce|quince|dieciseis|diecisiete|dieciocho|diecinueve|veinte|veintiuno|veintidos|veintitres|veinticuatro|veinticinco|veintiseis|veintisiete|veintiocho|veintinueve|treinta|primero)";
+  var MES="(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|setiembre|octubre|noviembre|diciembre)";
+  var DOW="(lunes|martes|miercoles|jueves|viernes|sabado|domingo)";
+  function mas(n){return new Date(hoy.getFullYear(),hoy.getMonth(),hoy.getDate()+n);}
+  function proxDow(w,forzarSig){var d=(w-hoy.getDay()+7)%7;if(d===0||forzarSig&&d===0)d=7;return mas(d);}
+  function fechaDM(d,m){var f=new Date(hoy.getFullYear(),m,d);if(f<hoy)f=new Date(hoy.getFullYear()+1,m,d);return f;}
+  function fechaD(d){var f=new Date(hoy.getFullYear(),hoy.getMonth(),d);if(f<hoy)f=new Date(hoy.getFullYear(),hoy.getMonth()+1,d);return f;}
+
+  /* 1) tipo */
+  if(/ (reunion|reuniones|claustro|consejo escolar|junta de evaluacion|junta|evaluacion|entrevista con|cita con|visita de|videollamada|jornada|jornadas|charla|formacion|curso de formacion|sesion de formacion|congreso|seminario) /.test(s)) r.tipo="reunion";
+
+  /* 2) repetición */
+  buscar(/ (todos los dias laborables|todos los dias|cada dia|a diario|diariamente|de lunes a viernes)( de la semana)? /,function(){r.repite="diaria";r.entendido.push("se repite cada día laborable");});
+  buscar(new RegExp(" (todos los|cada) "+DOW+" ","g"),function(m){var w=DOW_N[m[2]];r.repite="semanal";r.fecha=proxDow(w);if(r.fecha-hoy===7*864e5)r.fecha=hoy.getDay()===w?new Date(hoy):r.fecha;r.entendido.push("todos los "+m[2]);});
+  buscar(/ (cada semana|todas las semanas|semanalmente) /,function(){r.repite="semanal";r.entendido.push("cada semana");});
+  buscar(new RegExp(" (el )?(dia )?"+NUM+" de cada mes ","g"),function(m){var d=num(m[3]);if(!d||d>31)return false;r.repite="mensual";r.fecha=fechaD(d);r.entendido.push("el día "+d+" de cada mes");});
+  buscar(/ (cada mes|todos los meses|mensualmente|una vez al mes) /,function(){r.repite="mensual";r.entendido.push("cada mes");});
+  buscar(/ (cada trimestre|trimestralmente|cada tres meses) /,function(){r.repite="trimestral";r.entendido.push("cada trimestre");});
+  buscar(/ (cada ano|todos los anos|anualmente|cada curso|todos los cursos) /,function(){r.repite="anual";r.entendido.push("cada curso");});
+
+  /* 3) plazos: "del 1 al 15 de marzo", "hasta el viernes", "hasta el 20 de octubre" */
+  buscar(new RegExp(" del "+NUM+"( de "+MES+")? al "+NUM+" de "+MES+" ","g"),function(m){
+    var d1=num(m[1]),d2=num(m[4]),m2=MESES_N[m[5]],m1=m[3]?MESES_N[m[3]]:m2;if(!d1||!d2)return false;
+    var f1=fechaDM(d1,m1),f2=new Date(f1.getFullYear(),m2,d2);if(f2<f1)f2=new Date(f1.getFullYear()+1,m2,d2);
+    r.fecha=f1;r.fechaFin=f2;r.entendido.push("del "+d1+" al "+d2);});
+  buscar(new RegExp(" (hasta|antes del|antes de el|como tarde el|como muy tarde el) (el )?(dia )?"+NUM+" de "+MES+" ","g"),function(m){var d=num(m[4]);if(!d)return false;r.fechaFin=fechaDM(d,MESES_N[m[5]]);r.entendido.push("hasta el "+d+" de "+m[5]);});
+  buscar(new RegExp(" (hasta|antes del|antes de el) (el )?(proximo )?"+DOW+"( que viene)? ","g"),function(m){r.fechaFin=proxDow(DOW_N[m[4]]);r.entendido.push("hasta el "+m[4]);});
+  buscar(/ (hasta|antes de) (el )?fin(al)? de mes /,function(){r.fechaFin=new Date(hoy.getFullYear(),hoy.getMonth()+1,0);r.entendido.push("hasta fin de mes");});
+  buscar(/ (hasta|antes de) (el )?fin(al)? de (la )?semana /,function(){r.fechaFin=proxDow(5);if(hoy.getDay()===5)r.fechaFin=new Date(hoy);r.entendido.push("hasta el viernes");});
+
+  /* 4) fecha concreta (las combinaciones más largas primero) */
+  var ANIO="(?: de(?:l)? (?:ano )?(\\d{4}))?";
+  var PRE="(?:el |este |esta |el proximo |proximo |el siguiente |del |para el |a partir del |desde el )?";
+  var SEMSIG="(?: que viene| proximo| de la semana que viene| de la proxima semana| de la semana proxima)?";
+  if(!r.fecha){
+    /* "el jueves 25 de septiembre (de 2026)", "el jueves día 25", "el lunes 28" */
+    buscar(new RegExp(" "+PRE+DOW+"(?: dia)? "+NUM+"(?: de "+MES+ANIO+")? ","g"),function(m){
+      var d=num(m[2]);if(!d||d>31)return false;
+      r.fecha=m[3]?(m[4]?new Date(+m[4],MESES_N[m[3]],d):fechaDM(d,MESES_N[m[3]])):fechaD(d);r.entendido.push(m[1]+" "+d+(m[3]?" de "+m[3]:""));})||
+    /* "(el) (día) 25 de septiembre (del 2026)" */
+    buscar(new RegExp(" "+PRE+"(?:dia )?"+NUM+" de "+MES+ANIO+" ","g"),function(m){var d=num(m[1]);if(!d||d>31)return false;
+      r.fecha=m[3]?new Date(+m[3],MESES_N[m[2]],d):fechaDM(d,MESES_N[m[2]]);r.entendido.push(d+" de "+m[2]);})||
+    /* 25/9, 25/09/2026 */
+    buscar(/ (?:el |del |para el )?(?:dia )?(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))? /g,function(m){var d=+m[1],mo=+m[2]-1;if(d<1||d>31||mo<0||mo>11)return false;
+      r.fecha=m[3]?new Date(+(m[3].length===2?"20"+m[3]:m[3]),mo,d):fechaDM(d,mo);r.entendido.push(d+"/"+(mo+1));})||
+    /* pasado mañana (+ día de la semana / número) */
+    buscar(new RegExp(" (?:el dia de )?pasado manana(?: "+DOW+")?(?: (?:dia )?"+NUM+")? ","g"),function(){r.fecha=mas(2);r.entendido.push("pasado mañana");})||
+    /* mañana (mismo) (jueves) (día 24) — sin confundir con "por la mañana" */
+    buscar(new RegExp(" (?:el dia de )?manana(?: mismo)?(?: "+DOW+")?(?: (?:dia )?"+NUM+")? ","g"),function(m){
+      var antes=s.slice(Math.max(0,m.index-7),m.index+1);if(/(por la|de la|esta|a la) $/.test(antes))return false;
+      r.fecha=mas(1);r.entendido.push("mañana");})||
+    buscar(new RegExp(" (?:el dia de )?hoy(?: mismo)?(?: "+DOW+")?(?: (?:dia )?"+NUM+")? ","g"),function(){r.fecha=mas(0);r.entendido.push("hoy");})||
+    buscar(/ (esta tarde|esta manana|esta noche|a lo largo del dia) /g,function(m){r.fecha=mas(0);r.entendido.push("hoy");if(m[1]==="esta tarde")r._tarde=true;})||
+    /* dentro de / en N días, semanas o meses */
+    buscar(new RegExp(" (?:dentro de|en|de aqui a) "+NUM+" (dias|dia|semanas|semana|meses|mes) ","g"),function(m){var n=num(m[1]);if(!n)return false;
+      var u=m[2].slice(0,3);r.fecha=u==="dia"?mas(n):u==="sem"?mas(7*n):new Date(hoy.getFullYear(),hoy.getMonth()+n,hoy.getDate());r.entendido.push("dentro de "+n+" "+m[2]);})||
+    /* "la semana que viene el martes" */
+    buscar(new RegExp(" (?:la semana que viene|la proxima semana|la semana proxima)(?: el)? "+DOW+" ","g"),function(m){
+      var f=proxDow(DOW_N[m[1]]);if(f-hoy<7*864e5&&!(hoy.getDay()===0))f=new Date(f.getFullYear(),f.getMonth(),f.getDate()+(DOW_N[m[1]]>hoy.getDay()?7:0));
+      /* siempre en la semana siguiente (lunes-domingo) */
+      var lunesSig=proxDow(1);f=new Date(lunesSig.getFullYear(),lunesSig.getMonth(),lunesSig.getDate()+((DOW_N[m[1]]+6)%7));
+      r.fecha=f;r.entendido.push("el "+m[1]+" de la semana que viene");})||
+    /* "el martes", "este jueves", "el martes de la semana que viene", "del viernes" */
+    buscar(new RegExp(" "+PRE+DOW+SEMSIG+" ","g"),function(m){
+      var w=DOW_N[m[1]],f=proxDow(w);
+      if(/semana/.test(m[0])){var ls=proxDow(1);f=new Date(ls.getFullYear(),ls.getMonth(),ls.getDate()+((w+6)%7));}
+      r.fecha=f;r.entendido.push("el "+m[1]);})||
+    buscar(/ (?:la semana que viene|la proxima semana|la semana proxima) /g,function(){r.fecha=proxDow(1);r.entendido.push("la semana que viene (lunes)");})||
+    buscar(/ (?:(?:a lo largo de|durante) )?esta semana /g,function(){r.fecha=mas(0);if(!r.fechaFin){var v=proxDow(5);r.fechaFin=hoy.getDay()===5?new Date(hoy):(hoy.getDay()===6||hoy.getDay()===0?null:v);}r.entendido.push("esta semana");})||
+    buscar(new RegExp(" (?:el |para el )?dia "+NUM+" ","g"),function(m){var d=num(m[1]);if(!d||d>31)return false;r.fecha=fechaD(d);r.entendido.push("el día "+d);})||
+    buscar(new RegExp(" el "+NUM+" ","g"),function(m){var d=num(m[1]);if(!d||d>31)return false;r.fecha=fechaD(d);r.entendido.push("el día "+d);});
+  }
+
+  /* 5) hora: "de 10 a 12", "a las 10 y media", "a las cinco de la tarde", "a mediodia" */
+  var HORA="(\\d{1,2}(?:[:.h]\\d{2})?|"+NUM.slice(1,-1)+")";
+  function aHora(txt,extra){
+    txt=txt.trim();var h,mi=0,mm=/^(\d{1,2})[:.h](\d{2})$/.exec(txt);
+    if(mm){h=+mm[1];mi=+mm[2];}else{h=num(txt);if(h==null)return null;}
+    if(extra){if(/y media/.test(extra))mi=30;else if(/y cuarto/.test(extra))mi=15;else if(/menos cuarto/.test(extra)){h=h-1;mi=45;}
+      var ymm=/ y (\d{1,2}) /.exec(" "+extra+" ");if(ymm)mi=+ymm[1];}
+    var tarde=extra&&/(de la tarde|de la noche|por la tarde|pm)/.test(extra),manana=extra&&/(de la manana|por la manana|am)/.test(extra);
+    if(tarde&&h<12)h+=12; else if(!manana&&!mm&&h>=1&&h<=7)h+=12; else if(!manana&&mm&&h>=1&&h<=6)h+=12;
+    if(r._tarde&&h<12)h+=12;
+    if(h>23||mi>59)return null;return z(h)+":"+z(mi);
+  }
+  var EXTRA="((?: y media| y cuarto| menos cuarto| y \\d{1,2})?(?: horas| hrs| h)?(?: (?:de la|por la) (?:manana|tarde|noche)| am| pm)?)";
+  buscar(new RegExp(" (de|desde las) "+HORA+EXTRA+" (a|hasta) (las )?"+HORA+EXTRA+" ","g"),function(m){
+    var a1=aHora(m[2],m[3]+(m[7]||"")),a2=aHora(m[6],m[7]);if(!a1||!a2)return false;r.hora=a1;r.horaFin=a2;r.entendido.push("de "+a1+" a "+a2);});
+  if(!r.hora) buscar(new RegExp(" a (las|la) "+HORA+EXTRA+" ","g"),function(m){var h=aHora(m[2],m[3]);if(!h)return false;r.hora=h;r.entendido.push("a las "+h);});
+  if(!r.hora) buscar(/ (a mediodia|al mediodia) /,function(){r.hora="12:00";r.entendido.push("a mediodía");});
+  if(!r.hora) buscar(/ (por la manana|de la manana|esta manana) /,function(){});   /* sin hora concreta: solo se quita del título */
+  buscar(/ (por la tarde|esta tarde) /,function(){});
+
+  /* 6) lugar: "en dirección", "en la sala de profesores"… (solo lugares reconocibles) */
+  var LUG="((?:el |la |los |las )?(?:direccion|secretaria|jefatura de estudios|jefatura|conserjeria|biblioteca|salon de actos|sala de profesores|sala de reuniones|sala de [a-z]+|sala [a-z0-9]+|aula [a-z0-9]+|despacho de [a-z]+(?: [a-z]+)?|despacho|gimnasio|comedor|patio|ayuntamiento|delegacion|laboratorio|orientacion|departamento de [a-z]+))";
+  buscar(new RegExp(" en "+LUG+" ","g"),function(m){
+    var ini=m.index+4,fin=m.index+m[0].length-1;r.lugar=orig.slice(ini,fin).trim().replace(/^(el|la) /i,"");
+    r.lugar=r.lugar.charAt(0).toUpperCase()+r.lugar.slice(1);r.entendido.push("en "+r.lugar);});
+
+  /* 6b) restos de fecha que no aportan nada al título */
+  if(r.fecha||r.fechaFin||r.repite!=="none"){
+    buscar(new RegExp(" (?:el |este |del |para el )?"+DOW+"(?: dia)?(?: "+NUM+")?"+SEMSIG+" ","g"),function(){});
+    buscar(new RegExp(" (?:el )?dia "+NUM+" ","g"),function(){});
+    buscar(/ de(?:l)? (?:ano )?\d{4} /g,function(){});
+    buscar(/ (?:de la semana que viene|de la proxima semana|la semana que viene|la proxima semana) /g,function(){});
+    buscar(/ (?:mismo|horas) /g,function(){});
+  }
+  buscar(/ (?:horas|hrs) /g,function(){});
+
+  /* 7) título: lo que queda, sin muletillas */
+  var t="";for(var i=0;i<orig.length;i++) t+=marca[i]?" ":orig[i];
+  t=t.replace(/\s+/g," ").trim();
+  t=t.replace(/^(oye |vale |bueno |por favor )+/i,"");
+  t=t.replace(/^(recu[eé]rdame( que)?( tengo que)?|recordar( que)?|recordatorio( de| para)?|ap[uú]nta(me|r)?( que)?( tengo que)?|an[oó]ta(me|r)?( que)?( tengo que)?|a[ñn][aá]de( una tarea( de| para)?)?|nueva tarea( de| para)?|nueva reuni[oó]n|crea(r)?( una)? tarea( de| para)?|tarea( de| para)?|tengo que|hay que|tenemos que|debo|que)\s+/i,"");
+  t=t.replace(/^(que|de|para|a)\s+/i,"");
+  t=t.replace(/[,\s]+(el|la|los|las|a|de|del|para|y|en|que|con)$/i,"").replace(/[\s,]+$/,"").replace(/^[\s,]+/,"");
+  t=t.replace(/\s+,/g,",");
+  if(!t) t=texto.trim();
+  r.titulo=t.charAt(0).toUpperCase()+t.slice(1);
+  /* reuniones sin la palabra "reunión" en el título: se deja tal cual (ej. "Claustro") */
+  if(r.fechaFin&&!r.fecha) r.fecha=new Date(hoy);
+  r.fecha=r.fecha?iso(r.fecha):null;r.fechaFin=r.fechaFin?iso(r.fechaFin):null;
+  
+  delete r._tarde;
+  return r;
+}
+
+/* ---------- dictado: botón, recogida del texto y formulario relleno ---------- */
+function fechaVistaActual(){return state.vista==="calendario"?state.diaSel:(state.vista==="hoy"?(state.diaHoy||hoyISO()):hoyISO());}
+function iniciarDictado(){
+  if(window.AdmSecAndroid&&window.AdmSecAndroid.dictar){ try{window.AdmSecAndroid.dictar();return;}catch(e){} }
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(SR){
+    try{
+      var rec=new SR();rec.lang="es-ES";rec.interimResults=false;rec.maxAlternatives=1;
+      rec.onresult=function(ev){window.admsecDictado(ev.results[0][0].transcript);};
+      rec.onerror=function(){dictadoEscrito();};
+      rec.start();toast("Te escucho…");return;
+    }catch(e){}
+  }
+  dictadoEscrito();
+}
+/* si el dispositivo no tiene dictado, se puede escribir la frase igual */
+function dictadoEscrito(){
+  if(window.__destinoDictado==="chat"){window.__destinoDictado=null;toast("El dictado no está disponible aquí: escribe la pregunta.");$("#chat-txt").focus();return;}
+  abrirSheet(function(sh){
+    cabecera(sh,"🎤 Nueva tarea por voz");
+    var p=el("p",null,"El dictado por voz no está disponible aquí. Escribe la frase como la dirías:");
+    p.style.cssText="margin:0 0 .7rem;color:var(--muted);font-size:.9rem";sh.appendChild(p);
+    var ta=el("textarea",{placeholder:"Reunión con la inspectora el jueves a las diez en dirección"});ta.style.minHeight="5rem";
+    sh.appendChild(campo("Frase",ta));
+    var acc=el("div",{class:"acciones"}),b=el("button",{class:"btn"},"Continuar");
+    b.addEventListener("click",function(){if(ta.value.trim())window.admsecDictado(ta.value.trim());});
+    acc.appendChild(b);sh.appendChild(acc);setTimeout(function(){ta.focus();},100);
+  });
+}
+window.admsecDictado=function(texto,error){
+  var destino=window.__destinoDictado;window.__destinoDictado=null;
+  if(!texto){ if(error) toast(error); return; }
+  if(destino==="chat"){ cerrarSheet(); var ta=$("#chat-txt"); ta.value=(ta.value?ta.value+" ":"")+texto; ajustarChatTxt(); ta.focus(); return; }
+  var r=interpretarDictado(texto);
+  formTarea(null,r.fecha||fechaVistaActual(),null,r.tipo,r);
+};
+/* ---------- chat con la IA (Gemini, a través de Supabase) ---------- */
+var AVATAR_BOSCO='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><defs><linearGradient id="bgb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8EC5E8"/><stop offset="1" stop-color="#3F7FB5"/></linearGradient><radialGradient id="pielb" cx=".45" cy=".38" r=".75"><stop offset="0" stop-color="#F6D2B0"/><stop offset="1" stop-color="#DDA37C"/></radialGradient></defs><circle cx="60" cy="60" r="60" fill="url(#bgb)"/><ellipse cx="60" cy="13" rx="22" ry="5.5" fill="none" stroke="#FFE27A" stroke-width="3" opacity=".9"/><path d="M14 120c4-26 22-38 46-38s42 12 46 38z" fill="#15191D"/><path d="M60 90v30" stroke="#2A3035" stroke-width="1.6"/><circle cx="60" cy="98" r="1.6" fill="#4A5258"/><circle cx="60" cy="106" r="1.6" fill="#4A5258"/><circle cx="60" cy="114" r="1.6" fill="#4A5258"/><path d="M44 84q16 9 32 0l-1-5H45z" fill="#15191D"/><path d="M47 83q13 6 26 0" stroke="#F4F4F4" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M51 70h18v10q-9 5-18 0z" fill="#D39A74"/><ellipse cx="33.5" cy="56" rx="4.5" ry="7" fill="#DDA37C"/><ellipse cx="86.5" cy="56" rx="4.5" ry="7" fill="#DDA37C"/><path d="M35 50c0-17 11-27 25-27s25 10 25 27v7c0 15-11 23-25 23S35 72 35 57z" fill="url(#pielb)"/><path d="M34 54c-3-18 6-32 26-33 17-1 29 10 27 30l-3 4c0-8-2-13-5-16-3-5-10-7-19-7-7 0-13 2-16 5-4 4-6 10-6 17z" fill="#2B211B"/><path d="M41 33c5-6 12-8 19-8 8 0 15 3 19 9-6-3-12-4-19-4-7 0-13 1-19 3z" fill="#3B2E25"/><path d="M35 47c1-5 3-9 6-12M85 47c-1-5-3-9-6-12" stroke="#1E1712" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M44 30q4-3 8 0t8 0 8 0 8 0" stroke="#4A3A2E" stroke-width="1.8" fill="none" stroke-linecap="round" opacity=".9"/><path d="M40 36q4-3 8 0t8 0" stroke="#4A3A2E" stroke-width="1.5" fill="none" stroke-linecap="round" opacity=".7"/><path d="M66 35q4-3 8 0t6 1" stroke="#4A3A2E" stroke-width="1.5" fill="none" stroke-linecap="round" opacity=".7"/><path d="M36 50v8M84 50v8" stroke="#2B211B" stroke-width="3" stroke-linecap="round"/><path d="M42 46q7-4.5 13 0" stroke="#231A14" stroke-width="3.2" fill="none" stroke-linecap="round"/><path d="M65 46q6-4.5 13 0" stroke="#231A14" stroke-width="3.2" fill="none" stroke-linecap="round"/><path d="M44.5 53q4-3 8.5 0" stroke="#231A14" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M67 53q4-3 8.5 0" stroke="#231A14" stroke-width="2.4" fill="none" stroke-linecap="round"/><ellipse cx="44" cy="63" rx="5" ry="3" fill="#E58C7A" opacity=".45"/><ellipse cx="76" cy="63" rx="5" ry="3" fill="#E58C7A" opacity=".45"/><path d="M60 52v9" stroke="#C08662" stroke-width="1.6" stroke-linecap="round"/><path d="M55.5 62q4.5 3 9 0" stroke="#B87C58" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M50 68q10 7 20 0" stroke="#7A3B2E" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M47.5 66.5q1 1.5 2.5 1.5M72.5 66.5q-1 1.5-2.5 1.5" stroke="#B87C58" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>';
+function pintarAvatares(){document.querySelectorAll(".bosco-av").forEach(function(n){if(!n.firstChild)n.innerHTML=AVATAR_BOSCO;});}
+function horaAhora(){var d=new Date();return z(d.getHours())+":"+z(d.getMinutes());}
+var Chat={msgs:lsGet("cs_chat",[]),esperando:false};
+function guardarChat(){lsSet("cs_chat",Chat.msgs.slice(-40));}
+function escHTML(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+/* markdown sencillo y seguro: negritas, cursivas, listas y títulos */
+function mdSeguro(t){
+  var lineas=escHTML(t).split("\n"),out=[],enLista=null;
+  function cerrar(){if(enLista){out.push("</"+enLista+">");enLista=null;}}
+  lineas.forEach(function(l){
+    var fmt=function(x){return x.replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/(^|[^*])\*([^*\s][^*]*?)\*(?!\*)/g,"$1<i>$2</i>").replace(/`([^`]+)`/g,"<code>$1</code>");};
+    var m;
+    if((m=/^\s*[-*•]\s+(.*)$/.exec(l))){if(enLista!=="ul"){cerrar();out.push("<ul>");enLista="ul";}out.push("<li>"+fmt(m[1])+"</li>");}
+    else if((m=/^\s*(\d+)[.)]\s+(.*)$/.exec(l))){if(enLista!=="ol"){cerrar();out.push("<ol>");enLista="ol";}out.push("<li>"+fmt(m[2])+"</li>");}
+    else{cerrar();if((m=/^#{1,6}\s+(.*)$/.exec(l)))out.push("<p><b>"+fmt(m[1])+"</b></p>");else if(l.trim())out.push("<p>"+fmt(l)+"</p>");}
+  });
+  cerrar();return out.join("");
+}
+var SUGERENCIAS=["Redacta un aviso para las familias sobre la reunión de inicio de curso","Qué documentación suele pedirse para una matrícula","Escribe un correo formal pidiendo presupuesto de material de oficina","Resume en 3 puntos cómo organizar el archivo de secretaría"];
+function renderChat(){
+  pintarAvatares();
+  $("#wa-estado").textContent=Chat.esperando?"escribiendo…":"en línea";
+  $("#wa-estado").classList.toggle("escribiendo",Chat.esperando);
+  var c=$("#chat-msgs");c.textContent="";
+  if(!Sync.conectado()){
+    var v=el("div",{class:"chat-vacio"});v.appendChild(el("p",null,"Para usar el chat tienes que entrar con tu cuenta de AdmSec+."));
+    var b=el("button",{class:"btn"},"Entrar con tu cuenta");b.addEventListener("click",abrirLogin);v.appendChild(b);c.appendChild(v);return;
+  }
+  if(!Chat.msgs.length){
+    c.appendChild(el("div",{class:"wa-dia"},"Hoy"));
+    var sal=el("div",{class:"msg msg-ia"});
+    sal.appendChild(el("div",{class:"msg-txt"},"¡Hola, querido amigo! 😊 Soy Don Bosco. ¿En qué te echo una mano hoy en secretaría? Puedo redactarte avisos y correos, o resolverte dudas."));
+    sal.appendChild(el("span",{class:"msg-hora"},horaAhora()));c.appendChild(sal);
+    var v2=el("div",{class:"chat-vacio"});
+    var sg=el("div",{class:"chat-sug"});
+    SUGERENCIAS.forEach(function(s){var b=el("button",{type:"button"},s);b.addEventListener("click",function(){var ta=$("#chat-txt");ta.value=s;ajustarChatTxt();ta.focus();});sg.appendChild(b);});
+    v2.appendChild(sg);c.appendChild(v2);
+  }
+  Chat.msgs.forEach(function(m,i){
+    var burbuja=el("div",{class:"msg "+(m.rol==="ia"?"msg-ia":m.rol==="error"?"msg-error":"msg-yo")});
+    if(m.rol==="ia"){
+      var cuerpo=el("div",{class:"msg-txt"});cuerpo.innerHTML=mdSeguro(m.texto);burbuja.appendChild(cuerpo);
+      var acc=el("div",{class:"msg-acc"});
+      var bc=el("button",{type:"button"});bc.innerHTML=ico("copiar")+"<span>Copiar</span>";
+      bc.addEventListener("click",function(){copiarTexto(m.texto);});
+      var bt=el("button",{type:"button"});bt.innerHTML=ico("nuevo")+"<span>Crear tarea</span>";
+      bt.addEventListener("click",function(){
+        var preg="";for(var k=i-1;k>=0;k--)if(Chat.msgs[k].rol==="yo"){preg=Chat.msgs[k].texto;break;}
+        var tit=preg.length>70?preg.slice(0,67)+"…":preg;
+        var limpio=m.texto.replace(/\*\*(.+?)\*\*/g,"$1").replace(/^#{1,6}\s+/gm,"").replace(/^\s*[*•]\s+/gm,"- ");
+        formTarea(null,hoyISO(),null,"tarea",{texto:"",titulo:tit,entendido:[],notas:limpio,desdeChat:true});
+      });
+      acc.appendChild(bc);acc.appendChild(bt);burbuja.appendChild(acc);
+    }else if(m.rol==="error"){
+      burbuja.appendChild(el("div",{class:"msg-txt"},m.texto));
+      var br=el("button",{type:"button",class:"msg-reintentar"},"Reintentar");br.addEventListener("click",function(){Chat.msgs.splice(i,1);guardarChat();pedirRespuesta();});
+      burbuja.appendChild(br);
+    }else{
+      burbuja.appendChild(el("div",{class:"msg-txt"},m.texto));
+    }
+    var meta=el("span",{class:"msg-hora"},m.hora||"");
+    if(m.rol==="yo"){var ck=el("span",{class:"msg-check"});ck.innerHTML='<svg viewBox="0 0 18 12" width="16" height="11"><path d="M1 6.5l3 3L10 2.5M7.5 9.5l.5.5L15 2.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';meta.appendChild(ck);}
+    if(m.rol==="ia") burbuja.insertBefore(meta,burbuja.querySelector(".msg-acc"));else burbuja.appendChild(meta);
+    c.appendChild(burbuja);
+  });
+  if(Chat.esperando){var w=el("div",{class:"msg msg-ia msg-esperando"});w.appendChild(el("span"));w.appendChild(el("span"));w.appendChild(el("span"));c.appendChild(w);}
+  setTimeout(function(){var u=c.lastElementChild;if(u&&u.getBoundingClientRect().bottom>window.innerHeight-90)window.scrollTo(0,document.body.scrollHeight);},0);
+}
+function copiarTexto(t){
+  if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(function(){toast("Copiado.");},function(){toast("No se pudo copiar.");});
+  else{var ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");toast("Copiado.");}catch(e){toast("No se pudo copiar.");}ta.remove();}
+}
+function ajustarChatTxt(){var ta=$("#chat-txt");ta.style.height="auto";ta.style.height=Math.min(ta.scrollHeight,140)+"px";}
+function enviarChat(){
+  var ta=$("#chat-txt"),t=ta.value.trim();
+  if(!t||Chat.esperando) return;
+  if(!Sync.conectado()){abrirLogin();return;}
+  Chat.msgs.push({rol:"yo",texto:t,hora:horaAhora()});ta.value="";ajustarChatTxt();guardarChat();
+  pedirRespuesta();
+}
+async function pedirRespuesta(){
+  Chat.esperando=true;renderChat();
+  var hist=Chat.msgs.filter(function(m){return m.rol==="yo"||m.rol==="ia";}).slice(-12);
+  try{
+    var r=await Sync._api("/functions/v1/preguntar",{method:"POST",body:{mensajes:hist}});
+    Chat.msgs.push({rol:"ia",texto:(r&&r.respuesta)||"Sin respuesta.",hora:horaAhora()});
+  }catch(e){
+    var msg="No se ha podido conectar con la IA. Comprueba tu conexión.";
+    if(e&&e.message==="sin-sesion") msg="Tienes que entrar con tu cuenta para usar el chat.";
+    else if(e&&e.r&&e.r.json&&e.r.json.error) msg=e.r.json.error;
+    else if(e&&e.r&&e.r.status===404) msg="Falta instalar la función «preguntar» en Supabase.";
+    Chat.msgs.push({rol:"error",texto:msg,hora:horaAhora()});
+  }
+  Chat.esperando=false;guardarChat();if(state.vista==="chat")renderChat();
+}
+function borrarChat(){
+  if(!Chat.msgs.length) return;
+  if(!confirm("¿Borrar la conversación?")) return;
+  Chat.msgs=[];guardarChat();renderChat();
+}
+
+/* ---------- render ---------- */
+function render(){
+  pintarIconos();pintarAvatares();
+  document.querySelectorAll(".nav button").forEach(function(b){b.setAttribute("aria-current",String(b.dataset.vista===state.vista));});
+  ["hoy","calendario","tareas","manuales","mas","chat"].forEach(function(v){$("#v-"+v).hidden=(v!==state.vista);});
+  document.body.classList.toggle("en-chat",state.vista==="chat");
+  $("#cab-titulo").firstChild.nodeValue=TITULOS[state.vista];
+  $("#cab-sub").textContent = state.vista==="hoy"?(function(){var c=curso(parseISO(state.diaHoy||hoyISO()));return c.etiqueta+(c.semana>0&&c.semana<53?" · semana "+c.semana:"");})()
+    : state.vista==="manuales"?(state.manuales.length+" procedimientos guardados")
+    : state.vista==="calendario"?"Doble toque en un día: abrir en Hoy"
+    : state.vista==="tareas"?(state.tareas.length+" en total"):state.vista==="chat"?"Don Bosco · IA de Gemini":"Ajustes y copias";
+  $(".fab").hidden = (state.vista==="mas"||state.vista==="chat");
+  $(".fab-voz").hidden = (state.vista==="mas"||state.vista==="manuales"||state.vista==="chat");
+  if(state.vista==="chat") renderChat();
+  if(state.vista==="hoy") renderHoy();
+  if(state.vista==="calendario") renderCal();
+  if(state.vista==="tareas") renderTareas();
+  if(state.vista==="manuales") renderManuales();
+  if(state.vista==="mas") renderMas();
+  actualizarPanel();
+}
+
+function itemTarea(t,f,conFecha){
+  var esReunion=t.tipo==="reunion";
+  var estaHecha=hecha(t,f);
+  var noRealizada=!estaHecha&&t.estado==="no_realizada";
+  var estaVencida=!estaHecha&&!noRealizada&&t.tipo!=="reunion"&&finOcurrencia(t,f)<hoyISO();
+  var li=el("li",{class:"tarea"+(estaHecha?" hecha":"")+(noRealizada?" no-realizada":"")+(estaVencida?" vencida":"")+(esReunion?" reunion":""),"data-id":t.id});
+  var cerrada=bloqueada(t,f);
+  var ck=el("button",{class:"check"+(cerrada?" cerrada":""),"aria-pressed":String(estaHecha),"aria-label":cerrada?"Tarea cerrada":"Marcar hecha"},"✓");
+  ck.addEventListener("click",function(e){e.stopPropagation();if(cerrada){avisoBloqueada();return;}alternar(t.id,f);});
+  if(cerrada) li.classList.add("cerrada");
+  li.appendChild(ck);
+  if(conFecha){var d=parseISO(f),c=el("div",{class:"fecha-col"+(f===hoyISO()?" eshoy":"")});
+    c.appendChild(el("div",{class:"w"},DIAS[(d.getDay()+6)%7].slice(0,3)));
+    c.appendChild(el("div",{class:"d"},String(d.getDate())));
+    c.appendChild(el("div",{class:"m"},MESES_C[d.getMonth()]));li.appendChild(c);}
+  var b=el("button",{class:"txtb"});
+  var tt=el("span",{class:"t"},t.titulo);
+  if(esReunion) tt.appendChild(el("span",{class:"pill reunion"},"reunión"));
+  if(noRealizada) tt.appendChild(el("span",{class:"pill no-realizada"},"no realizada"));
+  b.appendChild(tt);
+  var bits=[];
+  if(esReunion){
+    if(t.hora) bits.push(t.hora+(t.horaFin?"–"+t.horaFin:""));
+    if(t.lugar) bits.push(t.lugar);
+    if(t.fechaFin&&t.fechaFin!==t.fecha){var dFr=parseISO(finOcurrencia(t,f));bits.push("hasta "+dFr.getDate()+" "+MESES_C[dFr.getMonth()]);}
+  }else{
+    var m=manualDe(t);
+    if(t.hora) bits.push(t.hora);
+    var np=(t.pasos||[]).length;if(m) bits.push(m.titulo);else if(np) bits.push(np+" paso"+(np===1?"":"s"));
+    if(noRealizada&&t.fechaOriginalFin){
+      var dOrig=parseISO(t.fechaOriginalFin);
+      bits.push("vencía el "+dOrig.getDate()+" "+MESES_C[dOrig.getMonth()]);
+    }else if(t.fechaFin&&t.fechaFin!==t.fecha){
+      var dFin=parseISO(t.fechaFin);
+      bits.push("hasta "+dFin.getDate()+" "+MESES_C[dFin.getMonth()]);
+    }
+  }
+  if(t.repite&&t.repite!=="none") bits.push(t.repite==="diaria"?"cada día laborable":REPS[t.repite].toLowerCase());
+  if(cerrada) bits.unshift("🔒 cerrada");
+  if(bits.length) b.appendChild(el("span",{class:"meta"},bits.join(" · ")));
+  b.addEventListener("click",function(){abrirTarea(t.id,f);});
+  li.appendChild(b);
+  if(estaVencida) li.appendChild(el("span",{class:"pill urg"},"tarde"));
+  li.appendChild(el("span",{class:"chev"},"›"));
+  return li;
+}
+function listaTareas(items,conFecha,vacio){
+  if(!items.length){var v=el("div",{class:"vacio"});v.appendChild(el("p",null,vacio));return v;}
+  var ul=el("ul",{class:"tareas"});
+  items.forEach(function(i){ul.appendChild(itemTarea(i.t,i.f,conFecha));});
+  return ul;
+}
+function cabeceraDia(f,vacio){
+  var fd=parseISO(f),h=hoyISO(),dif=diasEntre(h,f),finde=(fd.getDay()===0||fd.getDay()===6);
+  var cab=el("div",{class:"diafecha"+(finde?" finde":"")+(dif===0?" eshoy":"")+(dif<0?" pasado":"")});
+  var badge=el("div",{class:"diafecha-badge"});
+  badge.appendChild(el("span",{class:"diafecha-dow"},DIAS[(fd.getDay()+6)%7].slice(0,3)));
+  badge.appendChild(el("span",{class:"diafecha-n"},String(fd.getDate())));
+  cab.appendChild(badge);
+  var txt=el("div",{class:"diafecha-txt"});
+  var nom=el("span",{class:"diafecha-nombre"},DIAS[(fd.getDay()+6)%7]);
+  if(dif===0) nom.appendChild(el("span",{class:"etq-dia hoy"},"Hoy"));
+  else if(dif===1) nom.appendChild(el("span",{class:"etq-dia"},"Mañana"));
+  else if(dif===-1) nom.appendChild(el("span",{class:"etq-dia"},"Ayer"));
+  txt.appendChild(nom);
+  txt.appendChild(el("span",{class:"diafecha-t"},fd.getDate()+" de "+MESES[fd.getMonth()]+(vacio?" · sin tareas":"")));
+  cab.appendChild(txt);
+  return cab;
+}
+function agendaRango(desdeISO,dias){
+  var cont=el("div",{class:"agenda"}),d=parseISO(desdeISO),h=hoyISO();
+  var separadorPuesto=false;
+  for(var i=0;i<dias;i++){
+    var f=iso(new Date(d.getFullYear(),d.getMonth(),d.getDate()+i));
+    var fd=parseISO(f), finde=(fd.getDay()===0||fd.getDay()===6);
+    var itemsRaw=tareasDe(f);
+    var items=itemsRaw.map(function(t){return{t:t,f:f};});
+    var tienePendiente=itemsRaw.some(function(t){return !hecha(t,f);});
+    if(!separadorPuesto&&tienePendiente){
+      cont.appendChild(el("div",{class:"separador-gris"},"Pendiente desde aquí"));
+      separadorPuesto=true;
+    }
+    var bloque=el("div",{class:"diabloque"+(items.length?"":" vacio-dia")});
+    bloque.appendChild(cabeceraDia(f,!items.length));
+    if(items.length){
+      var ul=el("ul",{class:"tareas"});
+      items.forEach(function(it){ul.appendChild(itemTarea(it.t,it.f,false));});
+      bloque.appendChild(ul);
+    }
+    cont.appendChild(bloque);
+  }
+  return cont;
+}
+function renderHoy(){
+  var h=hoyISO();
+  if(state.siguiendoHoy||!state.diaHoy) state.diaHoy=h;
+  var f=state.diaHoy,d=parseISO(f),dif=diasEntre(h,f),c=curso(d);
+  /* barra de navegación */
+  var nav=$("#hoy-nav-titulo");nav.textContent="";
+  var etq=dif===0?"Hoy":dif===1?"Mañana":dif===-1?"Ayer":(dif>0?"Dentro de "+dif+" días":"Hace "+(-dif)+" días");
+  nav.appendChild(el("span",{class:"n1"+(dif===0?" eshoy":"")},etq));
+  if(dif!==0){var bh=el("button",{class:"ir-hoy",type:"button"},"Volver a hoy");bh.addEventListener("click",irAHoy);nav.appendChild(bh);}
+  $("#fecha-hoy").textContent=fmtLargo(d)+(d.getFullYear()!==new Date().getFullYear()?" de "+d.getFullYear():"");
+  /* progreso del día */
+  var hero=$(".hero");hero.classList.toggle("otro-dia",dif>0);hero.classList.toggle("pasado",dif<0);
+  var items=tareasDe(f).sort(function(x,y){
+    var ax=x.estado==="no_realizada"?0:1,ay=y.estado==="no_realizada"?0:1;
+    if(ax!==ay) return ax-ay;
+    return (x.hora||"99")<(y.hora||"99")?-1:(x.hora||"99")>(y.hora||"99")?1:0;
+  });
+  var pend=items.filter(function(t){return !hecha(t,f);}).length,hechas=items.length-pend;
+  $("#curso").textContent=!items.length?"":(hechas+" de "+items.length+" hecha"+(items.length===1?"":"s"));
+  var txt=!items.length?"No hay nada anotado este día.":
+    (pend?"<b>"+pend+"</b> pendiente"+(pend===1?"":"s"):"💃 "+MSG_OLE);
+  $("#resumen").innerHTML=txt;
+  $("#progreso").hidden=!items.length;
+  $("#progreso-barra").style.width=(items.length?Math.round(hechas*100/items.length):0)+"%";
+  hero.classList.toggle("completo",!!items.length&&!pend);
+  /* tareas de ese día */
+  var cont=$("#hoy-contenido");cont.textContent="";
+  if(!state.tareas.length&&!state.manuales.length){
+    var v=el("div",{class:"vacio"});
+    v.appendChild(el("p",null,"AdmSec+ está vacío. Empieza escribiendo tu primer manual o anotando una tarea."));
+    var b=el("button",{class:"btn"},"Escribir un manual");
+    b.addEventListener("click",function(){formManual();});v.appendChild(b);
+    var b2=el("button",{class:"btn sec"},"Anotar una tarea o reunión");
+    b2.style.marginTop=".5rem";
+    b2.addEventListener("click",function(){abrirCreador(f);});v.appendChild(b2);
+    cont.appendChild(v);return;
+  }
+  if(!items.length){
+    var vd=el("div",{class:"dia-lista-vacia"});
+    vd.appendChild(el("p",null,dif<0?"Este día no tuvo tareas.":"Día libre."));
+    var ba=el("button",{class:"btn sec"},"Añadir algo este día");
+    ba.addEventListener("click",function(){abrirCreador(f);});vd.appendChild(ba);
+    cont.appendChild(vd);return;
+  }
+  var ul=el("ul",{class:"tareas"});
+  items.forEach(function(t){ul.appendChild(itemTarea(t,f,false));});
+  cont.appendChild(ul);
+}
+function moverDia(n){
+  var d=parseISO(state.diaHoy||hoyISO());
+  state.diaHoy=iso(new Date(d.getFullYear(),d.getMonth(),d.getDate()+n));
+  state.siguiendoHoy=(state.diaHoy===hoyISO());
+  window.scrollTo(0,0);render();
+}
+function abrirDiaEnHoy(f){state.diaHoy=f;state.siguiendoHoy=(f===hoyISO());state.vista="hoy";window.scrollTo(0,0);render();}
+function irAHoy(){state.diaHoy=hoyISO();state.siguiendoHoy=true;window.scrollTo(0,0);render();}
+function renderCal(){
+  var m=state.mes;
+  $("#mes-titulo").textContent=MESES[m.getMonth()]+" "+m.getFullYear();
+  var g=$("#grid");g.textContent="";
+  ["L","M","X","J","V","S","D"].forEach(function(d){g.appendChild(el("div",{class:"dow"},d));});
+  var off=(new Date(m.getFullYear(),m.getMonth(),1).getDay()+6)%7;
+  var ini=new Date(m.getFullYear(),m.getMonth(),1-off),h=hoyISO();
+  for(var i=0;i<42;i++){
+    var d=new Date(ini.getFullYear(),ini.getMonth(),ini.getDate()+i),f=iso(d);
+    var fuera=d.getMonth()!==m.getMonth();
+    var cel=el("button",{class:"dia"+(fuera?" fuera":"")+(f===h?" hoy":"")+(f===state.diaSel?" sel":""),"aria-label":fmtLargo(d)});
+    cel.appendChild(el("span",null,String(d.getDate())));
+    var ts=tareasDe(f);
+    if(ts.length){
+      var pend=ts.filter(function(t){return !hecha(t,f);});
+      var atr=pend.some(function(t){return t.estado==="no_realizada"||(t.tipo!=="reunion"&&finOcurrencia(t,f)<h);});
+      var cls="cnt"+(!pend.length?" ok":(atr?" atr":""));
+      cel.appendChild(el("span",{class:cls},!pend.length?"✓":String(pend.length)));
+    }else cel.appendChild(el("span",{class:"cnt vacio"},""));
+    (function(f){cel.addEventListener("click",function(){
+      if(state.diaSel===f){abrirDiaEnHoy(f);return;}   /* segundo toque en el mismo día: abrirlo en Hoy */
+      state.diaSel=f;render();});})(f);
+    g.appendChild(cel);
+  }
+  var ley=$("#cal-leyenda");
+  if(!ley){ley=el("div",{class:"cal-leyenda",id:"cal-leyenda"});$("#grid").after(ley);}
+  ley.innerHTML='<span><i class="cnt"></i>tareas pendientes</span><span><i class="cnt atr"></i>atrasadas</span><span><i class="cnt ok"></i>todo hecho</span>';
+  var det=$("#dia-detalle");det.textContent="";
+  var cabD=el("div",{class:"diahead-fila"});
+  cabD.appendChild(el("h3",{class:"diahead"},fmtLargo(parseISO(state.diaSel))));
+  var bHoy=el("button",{class:"btn-abrir-hoy",type:"button"},"Abrir en Hoy ›");
+  bHoy.addEventListener("click",function(){abrirDiaEnHoy(state.diaSel);});
+  cabD.appendChild(bHoy);det.appendChild(cabD);
+  det.appendChild(listaTareas(tareasDe(state.diaSel).map(function(t){return{t:t,f:state.diaSel};}),false,"Día libre."));
+  var b=el("button",{class:"btn sec"},"Añadir algo este día");
+  b.style.marginTop=".7rem";
+  b.addEventListener("click",function(){abrirCreador(state.diaSel);});
+  det.appendChild(b);
+}
+var DIAS_PENDIENTES=30;
+function coincideBusqueda(t,q){return !q||[t.titulo,t.notas,t.lugar,t.asistentes].join(" ").toLowerCase().indexOf(q)>=0;}
+function sumarDias(f,n){var d=parseISO(f);return iso(new Date(d.getFullYear(),d.getMonth(),d.getDate()+n));}
+/* Todas las apariciones (una por cada repetición) que caen entre dos fechas.
+   Incluye las de plazo que empezaron antes y siguen abiertas en "desde". */
+function ocurrenciasEntre(desde,hasta,lista){
+  var out=[];
+  (lista||state.tareas).forEach(function(t){
+    if(!t.fecha) return;
+    if(!t.repite||t.repite==="none"){
+      if(t.fecha<=hasta&&finTarea(t)>=desde) out.push({t:t,f:esPlazoMovil(t)?diaVisiblePlazo(t):t.fecha});
+      return;
+    }
+    var ini=sumarDias(desde,-duracionTarea(t)-2),d=parseISO(ini),fin=parseISO(hasta);
+    while(d<=fin){
+      var f=iso(d);
+      if(patronCoincide(t,f)&&finOcurrencia(t,f)>=desde) out.push({t:t,f:f});
+      d=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1);
+    }
+  });
+  return out;
+}
+function ordenOc(a,b){ if(a.f!==b.f) return a.f<b.f?-1:1; return (a.t.hora||"99")<(b.t.hora||"99")?-1:1; }
+function limitesCurso(){
+  var h=parseISO(hoyISO()),y=h.getMonth()>=8?h.getFullYear():h.getFullYear()-1;
+  return {desde:y+"-09-01",hasta:(y+1)+"-08-31",etiqueta:"curso "+y+"/"+String(y+1).slice(2)};
+}
+function renderTareas(){
+  var cont=$("#filtros-tareas");cont.textContent="";
+  [["pendientes","Pendientes"],["todas","Todas"],["no_realizadas","No realizadas"],["hechas","Hechas"],["reuniones","Solo reuniones"]].forEach(function(f){
+    var b=el("button",{class:"cat","aria-pressed":String(state.filtroT===f[0])},f[1]);
+    b.addEventListener("click",function(){state.filtroT=f[0];state.irAlMes=true;render();});
+    cont.appendChild(b);
+  });
+  var lista=$("#lista-tareas-todas");lista.textContent="";
+  var q=state.qt.toLowerCase();
+  if(state.irAlMes){state.irAlMes=false;setTimeout(function(){
+    var m=document.querySelector("#lista-tareas-todas .mes-actual");
+    if(m){var y=m.getBoundingClientRect().top+window.scrollY-(document.querySelector(".cab").offsetHeight+8);window.scrollTo(0,Math.max(0,y));}
+    else window.scrollTo(0,0);
+  },0);}
+  if(!state.tareas.length){
+    var v0=el("div",{class:"vacio"});v0.appendChild(el("p",null,"Todavía no has anotado ninguna tarea ni reunión."));
+    var b0=el("button",{class:"btn"},"Crear la primera");b0.addEventListener("click",function(){abrirCreador(hoyISO());});v0.appendChild(b0);
+    lista.appendChild(v0);return;
+  }
+  if(state.filtroT==="pendientes"){ renderPendientes(lista,q); return; }
+  var tareasQ=state.tareas.filter(function(t){return coincideBusqueda(t,q);});
+  var items;
+  if(state.filtroT==="no_realizadas"){
+    items=tareasQ.filter(function(t){return t.estado==="no_realizada"&&!hecha(t,t.fecha);}).map(function(t){return{t:t,f:t.fecha};});
+  }else{
+    var c=limitesCurso();
+    items=ocurrenciasEntre(c.desde,c.hasta,tareasQ);
+    /* tareas sueltas fuera del curso actual también cuentan en «Todas» */
+    tareasQ.forEach(function(t){ if((!t.repite||t.repite==="none")&&(t.fecha>c.hasta||finTarea(t)<c.desde)) items.push({t:t,f:t.fecha}); });
+    if(state.filtroT==="hechas") items=items.filter(function(i){return hecha(i.t,i.f);});
+    if(state.filtroT==="reuniones") items=items.filter(function(i){return i.t.tipo==="reunion";});
+  }
+  items.sort(ordenOc);
+  if(!items.length){
+    var v=el("div",{class:"vacio"});v.appendChild(el("p",null,q?"Nada coincide con la búsqueda.":"Nada en este filtro."));
+    lista.appendChild(v);return;
+  }
+  if(state.filtroT!=="no_realizadas"){
+    var cc=limitesCurso();
+    lista.appendChild(el("p",{class:"nota-lista"},items.length+" en total · incluye cada repetición del "+cc.etiqueta));
+  }
+  pintarPorMeses(lista,items);
+}
+/* lista agrupada por meses, con el mes actual marcado */
+function pintarPorMeses(lista,items){
+  var mesAct=hoyISO().slice(0,7),grupo=null,ul=null;
+  items.forEach(function(i){
+    var m=i.f.slice(0,7);
+    if(m!==grupo){
+      grupo=m;var d=parseISO(m+"-01");
+      var s=el("section",{class:"bloque bloque-mes"+(m===mesAct?" mes-actual":"")});
+      s.appendChild(el("h2",null,MESES[d.getMonth()]+" "+d.getFullYear()));
+      ul=el("ul",{class:"tareas"});s.appendChild(ul);lista.appendChild(s);
+    }
+    ul.appendChild(itemTarea(i.t,i.f,true));
+  });
+}
+function renderPendientes(lista,q){
+  var h=hoyISO(),hasta=sumarDias(h,DIAS_PENDIENTES),atr=[];
+  var tareasQ=state.tareas.filter(function(t){return coincideBusqueda(t,q);});
+  tareasQ.forEach(function(t){
+    if(t.repite&&t.repite!=="none") return;
+    if(hecha(t,t.fecha)||t.tipo==="reunion") return;
+    if(finTarea(t)<h) atr.push({t:t,f:t.fecha});
+  });
+  var prox=ocurrenciasEntre(h,hasta,tareasQ).filter(function(i){return !hecha(i.t,i.f)&&!(i.f<h&&finOcurrencia(i.t,i.f)<h);});
+  atr.sort(ordenOc);prox.sort(ordenOc);
+  if(!atr.length&&!prox.length){
+    var v=el("div",{class:"vacio"});
+    v.appendChild(el("p",null,q?"Nada coincide con la búsqueda.":"No tienes nada pendiente en los próximos 30 días. 🎉"));
+    lista.appendChild(v);return;
+  }
+  function seccion(titulo,nota,items,clase){
+    var s=el("section",{class:"bloque"+(clase?" "+clase:"")});s.appendChild(el("h2",null,titulo));
+    if(nota) s.appendChild(el("p",{class:"nota"},nota));
+    var ul=el("ul",{class:"tareas"});items.forEach(function(i){ul.appendChild(itemTarea(i.t,i.f,true));});
+    s.appendChild(ul);lista.appendChild(s);
+  }
+  if(atr.length) seccion("Atrasadas ("+atr.length+")","Su día ya pasó y siguen sin hacer. Puedes pasarlas a hoy desde Más.",atr,"bloque-atrasadas");
+  if(prox.length){
+    var d=parseISO(hasta);
+    seccion("Próximos 30 días ("+prox.length+")","Hasta el "+d.getDate()+" de "+MESES[d.getMonth()]+", con cada repetición.",prox);
+  }
+}
+function renderManuales(){
+  var c=$("#cats");c.textContent="";
+  CATEGORIAS.filter(function(k){return state.manuales.some(function(m){return m.categoria===k;});})
+    .forEach(function(k){
+      var b=el("button",{class:"cat","aria-pressed":String(state.cat===k)},k);
+      b.addEventListener("click",function(){state.cat=(state.cat===k?null:k);render();});
+      c.appendChild(b);
+    });
+  var cont=$("#lista-manuales");cont.textContent="";
+  var q=state.q.toLowerCase();
+  var lista=state.manuales.filter(function(m){
+    if(state.cat&&m.categoria!==state.cat) return false;
+    if(!q) return true;
+    return [m.titulo,m.categoria,m.descripcion,m.notas,(m.pasos||[]).join(" ")].join(" ").toLowerCase().indexOf(q)>=0;
+  }).sort(function(a,b){return (a.titulo||"").localeCompare(b.titulo||"","es");});
+  if(!lista.length){
+    var v=el("div",{class:"vacio"});
+    v.appendChild(el("p",null,state.manuales.length?"Ningún manual coincide.":"Aún no hay manuales. Escribe el primero: esa gestión que repites cada curso."));
+    if(!state.manuales.length){var b=el("button",{class:"btn"},"Nuevo manual");b.addEventListener("click",function(){formManual();});v.appendChild(b);}
+    cont.appendChild(v);return;
+  }
+  var ul=el("ul",{class:"manuales"});
+  lista.forEach(function(m){
+    var li=el("li",{class:"manual","data-id":m.id}),b=el("button");
+    var info=el("div",{class:"info"});
+    info.appendChild(el("h3",null,m.titulo));
+    info.appendChild(el("p",{class:"desc"},(m.pasos||[]).length+" pasos · "+(m.categoria||"")));
+    b.appendChild(info);b.appendChild(el("span",{class:"chev"},"›"));
+    b.addEventListener("click",function(){abrirManual(m.id);});
+    li.appendChild(b);ul.appendChild(li);
+  });
+  cont.appendChild(ul);
+}
+function renderMas(){
+  var ul=$("#ajustes");ul.textContent="";
+  function sec(t,clase){ul.appendChild(el("li",{class:"ajustes-sec"+(clase?" "+clase:"")},t));}
+  function it(gl,t,s,fn,clase){
+    var li=el("li",clase?{class:clase}:null),b=el("button");
+    var g=el("span",{class:"gl"});g.innerHTML=ico(gl);b.appendChild(g);
+    var d=el("div");d.appendChild(el("strong",null,t));if(s)d.appendChild(el("small",null,s));
+    b.appendChild(d);b.addEventListener("click",fn);li.appendChild(b);ul.appendChild(li);
+  }
+  var nPend=pendientesAnteriores().length;
+  sec("Tareas");
+  it("traer","Pasar pendientes a hoy",nPend?(nPend+" tarea"+(nPend===1?"":"s")+" de días anteriores sin hacer"):"No hay nada pendiente de días anteriores",traerPendientesAHoy,nPend?"destacado":"");
+  sec("Datos");
+  it("copia","Copia de seguridad","Guarda un archivo con todos tus manuales y tareas",exportarCopia);
+  it("restaurar","Restaurar copia de seguridad","Recupera manuales y tareas desde un archivo",abrirImportar);
+  it("exportar","Exportar a Google Calendar","Archivo .ics con todas las tareas y repeticiones",exportar);
+  sec("Cuenta");
+  if(Sync.conectado()){
+    it("sync","Sincronizar ahora","Subir y descargar los últimos cambios",function(){Sync.sincronizar().then(function(){toast(Sync.estado==="ok"?"Sincronizado.":"No se pudo sincronizar ahora.");});});
+    it("salir","Cerrar sesión",(Sync.sesion().email||""),function(){if(confirm("¿Cerrar sesión en este dispositivo?")){Sync.salir().then(function(){toast("Sesión cerrada.");});}});
+  }else{
+    it("entrar","Entrar con tu cuenta","Para ver tus datos en todos tus dispositivos",abrirLogin);
+  }
+  it("pasar","Pasar datos sin cuenta","Copia manual entre dispositivos",instalar);
+  sec("Apariencia");
+  var liT=el("li",{class:"fila-tema"}),gT=el("span",{class:"gl"});gT.innerHTML=ico("tema");liT.appendChild(gT);
+  var dT=el("div",{class:"tema-txt"});dT.appendChild(el("strong",null,"Tema"));liT.appendChild(dT);
+  var seg=el("div",{class:"segmentado seg-tema"}),act=temaActual();
+  [["auto","Automático"],["light","Claro"],["dark","Oscuro"]].forEach(function(o){
+    var bt=el("button",{type:"button","aria-pressed":String(act===o[0])},o[1]);
+    bt.addEventListener("click",function(){ponerTema(o[0]);renderMas();});seg.appendChild(bt);
+  });
+  liT.appendChild(seg);ul.appendChild(liT);
+  sec("Pruebas","sec-pruebas");
+  it("prueba","Cargar prueba (1 mes)","Manuales y tareas de ejemplo",cargarPrueba,"prueba");
+  it("historial","Cargar prueba de atrasadas","12 tareas de las dos últimas semanas",cargarPruebaAtrasadas,"prueba");
+  it("papelera","Borrar datos de prueba","Solo lo creado con los botones de prueba",borrarPrueba,"prueba");
+  it("alerta","Borrar todo","Elimina todas las tareas y manuales",borrarTodo,"prueba peligro");
+}
+
+/* ---------- hoja / panel lateral (tablet) ---------- */
+var MQ_TABLET=window.matchMedia?window.matchMedia("(min-width:768px) and (min-height:500px)"):null;
+function esTablet(){return !!(MQ_TABLET&&MQ_TABLET.matches);}
+function usaPanel(){return esTablet()&&(state.vista==="tareas"||state.vista==="manuales");}
+var Panel={id:null,tipo:null,vista:null,reabrir:null};
+function pintarPanelVacio(){
+  var p=$("#panel");p.textContent="";
+  var v=el("div",{class:"panel-vacio"}),d=el("div");
+  d.appendChild(el("span",null,state.vista==="manuales"?"☰":"✓"));
+  d.appendChild(document.createTextNode(state.vista==="manuales"?"Elige un manual de la lista para ver sus pasos.":"Elige una tarea de la lista para ver el detalle."));
+  v.appendChild(d);p.appendChild(v);
+}
+function cerrarPanel(){Panel.id=Panel.tipo=Panel.vista=Panel.reabrir=null;if(usaPanel())pintarPanelVacio();marcarActiva();}
+function marcarActiva(){
+  document.querySelectorAll("[data-id]").forEach(function(n){
+    n.classList.toggle("activa",!!(Panel.id&&usaPanel()&&n.getAttribute("data-id")===Panel.id));
+  });
+}
+function actualizarPanel(){
+  var cu=$(".cuerpo"),p=$("#panel"),on=usaPanel();
+  cu.classList.toggle("con-panel",on);p.hidden=!on;
+  if(!on){ if(Panel.id){Panel.id=Panel.tipo=Panel.vista=Panel.reabrir=null;} return; }
+  if(Panel.id&&Panel.vista===state.vista){
+    var col=Panel.tipo==="manual"?state.manuales:state.tareas;
+    if(col.some(function(x){return x.id===Panel.id;})){Panel.reabrir();marcarActiva();return;}
+  }
+  cerrarPanel();
+}
+function abrirSheet(f,det){
+  if(det&&usaPanel()){
+    var p=$("#panel");p.textContent="";f(p);
+    Panel.id=det.id;Panel.tipo=det.tipo;Panel.vista=state.vista;Panel.reabrir=det.reabrir;
+    marcarActiva();return;
+  }
+  var ov=$("#overlay"),sh=$("#sheet");
+  sh.textContent="";sh.appendChild(el("div",{class:"asa"}));f(sh);
+  ov.hidden=false;document.body.style.overflow="hidden";sh.scrollTop=0;
+}
+function cerrarSheet(){
+  if(!$("#overlay").hidden){$("#overlay").hidden=true;document.body.style.overflow="";return;}
+  if(Panel.id) cerrarPanel();
+}
+function cabecera(sh,t){
+  var top=el("div",{class:"sheet-top"});
+  top.appendChild(el("h2",{id:"sheet-title"},t));
+  var x=el("button",{class:"cerrar","aria-label":"Cerrar"},"✕");
+  x.addEventListener("click",cerrarSheet);top.appendChild(x);sh.appendChild(top);
+}
+function campo(l,n){var c=el("label",{class:"campo"});c.appendChild(el("span",null,l));c.appendChild(n);return c;}
+function dato(sh,k,v){var d=el("div",{class:"dato"});d.appendChild(el("span",{class:"k"},k));
+  var s=el("div");s.textContent=v;d.appendChild(s);sh.appendChild(d);}
+
+function abrirTarea(id,f){
+  var t=state.tareas.filter(function(x){return x.id===id;})[0];if(!t)return;
+  var esReunion=t.tipo==="reunion";
+  var clave=claveOcurrencia(t,f);
+  var estaHecha=hecha(t,f);
+  var noRealizada=!estaHecha&&t.estado==="no_realizada";
+  var detT={tipo:"tarea",id:id,reabrir:function(){abrirTarea(id,f);}};
+  var cerrada=bloqueada(t,f);
+  abrirSheet(function(sh){
+    cabecera(sh,t.titulo);
+    var esRango=t.fechaFin&&t.fechaFin!==t.fecha;
+    if(esRango){
+      var dIni=parseISO(clave),finOc=iso(new Date(dIni.getFullYear(),dIni.getMonth(),dIni.getDate()+duracionTarea(t)));
+      var dFin=parseISO(finOc),h=hoyISO();
+      var texto=fmtLargo(dIni)+" – "+fmtLargo(dFin)+" de "+dFin.getFullYear();
+      var estadoTxt = h<clave ? ("empieza en "+diasEntre(h,clave)+" día"+(diasEntre(h,clave)===1?"":"s"))
+        : h>finOc ? ("terminó hace "+diasEntre(finOc,h)+" día"+(diasEntre(finOc,h)===1?"":"s"))
+        : ("en curso · termina en "+diasEntre(h,finOc)+" día"+(diasEntre(h,finOc)===1?"":"s"));
+      dato(sh,"Fechas",texto+" · "+estadoTxt);
+    }else{
+      var d=parseISO(clave),dif=diasEntre(hoyISO(),clave);
+      var cuando=fmtLargo(d)+" de "+d.getFullYear();
+      cuando+= dif===0?" · es hoy":(dif>0?" · faltan "+dif+" día"+(dif===1?"":"s"):" · hace "+(-dif)+" día"+(dif===-1?"":"s"));
+      dato(sh,"Fecha",cuando);
+    }
+    if(esReunion){
+      dato(sh,"Hora",t.hora?(t.hora+(t.horaFin?" a "+t.horaFin:"")):"Sin hora fijada");
+      if(t.lugar) dato(sh,"Lugar",t.lugar);
+      if(t.asistentes) dato(sh,"Asistentes",t.asistentes);
+    }else if(t.hora){
+      dato(sh,"Hora",t.hora);
+    }
+    dato(sh,"Repetición",REPS[t.repite||"none"]);
+    dato(sh,"Estado",estaHecha?(cerrada?"Hecha · cerrada 🔒":"Hecha"):(noRealizada?"No realizada":"Pendiente"));
+    if(cerrada){
+      var ac=el("div",{class:"aviso"},"Esta tarea se completó y su día ya pasó, así que queda cerrada: no se puede editar, desmarcar ni borrar.");
+      sh.appendChild(ac);
+    }
+    if(noRealizada&&t.fechaOriginalFin){
+      var dOr=parseISO(t.fechaOriginalFin);
+      sh.appendChild(el("div",{class:"aviso-lunes"},"No se completó antes de su fecha ("+fmtLargo(dOr)+") y se pasó a este día con «Pasar pendientes a hoy»."));
+    }
+    if(t.notas) dato(sh,esReunion?"Orden del día":"Notas",t.notas);
+    if(!esReunion){
+      var m=manualDe(t),pasosPropios=(t.pasos||[]);
+      var h3=el("h3",null,"Cómo se hace");h3.style.margin="1.2rem 0 .1rem";sh.appendChild(h3);
+      if(!m&&!pasosPropios.length){
+        var p=el("p",{class:"nota"},"Esta tarea no tiene instrucciones.");p.style.color="var(--muted)";sh.appendChild(p);
+        if(!cerrada){var bv=el("button",{class:"btn sec"},"Añadir instrucciones");
+        bv.addEventListener("click",function(){formTarea(t.id);});sh.appendChild(bv);}
+      }else{
+        if(m){
+          var sub=el("p",null,m.titulo+(m.descripcion?" — "+m.descripcion:""));
+          sub.style.cssText="color:var(--muted);font-size:.86rem;margin:.1rem 0 0";sh.appendChild(sub);
+        }
+        var prog=(t.progreso&&t.progreso[clave])||[];
+        var ul=el("ul",{class:"pasos"});
+        (m?(m.pasos||[]):pasosPropios).forEach(function(paso,i){
+          var ok=prog.indexOf(i)>=0,li=el("li",{class:ok?"ok":""});
+          var ck=el("button",{class:"check"+(cerrada?" cerrada":""),"aria-pressed":String(ok),"aria-label":"Paso "+(i+1)},"✓");
+          ck.addEventListener("click",function(){if(cerrada){avisoBloqueada();return;}marcarPaso(t.id,f,i);abrirTarea(t.id,f);});
+          li.appendChild(ck);li.appendChild(el("div",{class:"num"}));li.appendChild(el("div",{class:"txt"},paso));
+          ul.appendChild(li);
+        });
+        sh.appendChild(ul);
+        if(m&&m.notas) sh.appendChild(el("div",{class:"aviso"},m.notas));
+      }
+    }
+    var acc=el("div",{class:"acciones"});
+    var bh=el("button",{class:"btn"},hecha(t,f)?"Marcar pendiente":"Marcar hecha");
+    bh.addEventListener("click",function(){alternar(t.id,f);cerrarSheet();});
+    var bg=el("a",{class:"btn sec",href:enlaceGoogle(t,f),target:"_blank",rel:"noopener"},"Añadir a Google Calendar");
+    var be=el("button",{class:"btn sec"},esReunion?"Editar reunión":"Editar tarea");
+    be.addEventListener("click",function(){formTarea(t.id);});
+    var bb=el("button",{class:"btn warn"},"Borrar");
+    bb.addEventListener("click",function(){if(confirm("¿Borrar «"+t.titulo+"»?")){Store.borrar("tareas",t.id);cerrarSheet();}});
+    (cerrada?[bg]:[bh,bg,be,bb]).forEach(function(b){acc.appendChild(b);});
+    sh.appendChild(acc);
+  },detT);
+}
+function alternar(id,f){
+  var t=state.tareas.filter(function(x){return x.id===id;})[0];if(!t)return;
+  if(bloqueada(t,f)){avisoBloqueada();return;}
+  var clave=claveOcurrencia(t,f);
+  var c=JSON.parse(JSON.stringify(t));c.hechas=c.hechas||{};
+  c.hechasEn=c.hechasEn||{};
+  var marcando=!c.hechas[clave];
+  if(!marcando){ delete c.hechas[clave]; delete c.hechasEn[clave]; }
+  else{ c.hechas[clave]=true; c.hechasEn[clave]=hoyISO(); }
+  Store.guardar("tareas",c);
+  /* si con esta se completan todas las tareas del día: ¡celebración! */
+  if(marcando){
+    var delDia=tareasDe(f);
+    if(delDia.length&&delDia.every(function(x){return hecha(x,f);})) celebrar();
+  }
+}
+var MSG_OLE="¡Ole tu pelo gitano!";
+function celebrar(){
+  var viejo=$("#ole");if(viejo)viejo.remove();
+  var o=el("div",{id:"ole",class:"ole",role:"status"});
+  var card=el("div",{class:"ole-card"});
+  card.appendChild(el("div",{class:"ole-emoji"},"💃"));
+  card.appendChild(el("div",{class:"ole-txt"},MSG_OLE));
+  card.appendChild(el("div",{class:"ole-sub"},"Todas las tareas del día, hechas."));
+  o.appendChild(card);
+  for(var i=0;i<26;i++){
+    var p=el("span",{class:"ole-conf"});
+    p.style.left=(Math.random()*100)+"%";p.style.animationDelay=(Math.random()*.5)+"s";
+    p.style.background=["#CB333B","#132D60","#2E7D46","#D9710C","#F2C230"][i%5];
+    p.style.transform="rotate("+(Math.random()*360)+"deg)";o.appendChild(p);
+  }
+  o.addEventListener("click",function(){o.remove();});
+  document.body.appendChild(o);
+  setTimeout(function(){if(o.parentNode){o.classList.add("fuera");setTimeout(function(){o.remove();},400);}},3200);
+}
+function marcarPaso(id,f,i){
+  var t=state.tareas.filter(function(x){return x.id===id;})[0];if(!t)return;
+  if(bloqueada(t,f)){avisoBloqueada();return;}
+  var clave=claveOcurrencia(t,f);
+  var c=JSON.parse(JSON.stringify(t));c.progreso=c.progreso||{};
+  var a=c.progreso[clave]||[],k=a.indexOf(i);
+  if(k>=0)a.splice(k,1);else a.push(i);
+  c.progreso[clave]=a;Store.guardar("tareas",c);
+}
+function formTarea(id,fechaPre,manualPre,tipoPre,voz){
+  var t=id?state.tareas.filter(function(x){return x.id===id;})[0]:null;
+  abrirSheet(function(sh){
+    cabecera(sh,t?(t.tipo==="reunion"?"Editar reunión":"Editar tarea"):"Nueva actividad");
+    var tipoActual=t?(t.tipo||"tarea"):(tipoPre||"tarea");
+
+    var seg=el("div",{class:"segmentado",role:"tablist"});
+    var segT=el("button",{type:"button","aria-pressed":"false"},"Tarea");
+    var segR=el("button",{type:"button","aria-pressed":"false"},"Reunión");
+    seg.appendChild(segT);seg.appendChild(segR);
+    sh.appendChild(campo("Tipo",seg));
+
+    var titulo=el("input",{type:"text"});titulo.value=t?t.titulo:"";
+    var fecha=el("input",{type:"date"});fecha.value=t?t.fecha:(fechaPre||hoyISO());
+    var fechaFin=el("input",{type:"date"});fechaFin.value=t&&t.fechaFin?t.fechaFin:(t?t.fecha:(fechaPre||hoyISO()));
+    var hora=el("input",{type:"time"});hora.value=t&&t.hora?t.hora:"";
+    var horaFin=el("input",{type:"time"});horaFin.value=t&&t.horaFin?t.horaFin:"";
+    var lugar=el("input",{type:"text",placeholder:"Sala de profesores, despacho de dirección…"});lugar.value=t&&t.lugar?t.lugar:"";
+    var asistentes=el("input",{type:"text",placeholder:"Dirección, jefatura de estudios, tutores de 2º ciclo…"});asistentes.value=t&&t.asistentes?t.asistentes:"";
+    var rep=el("select");Object.keys(REPS).forEach(function(k){var o=el("option",{value:k},REPS[k]);if(t&&t.repite===k)o.selected=true;rep.appendChild(o);});
+    var man=el("select");man.appendChild(el("option",{value:""},"— sin instrucciones —"));
+    state.manuales.slice().sort(function(a,b){return a.titulo.localeCompare(b.titulo,"es");}).forEach(function(m){
+      var o=el("option",{value:m.id},m.titulo);
+      if((t&&t.manualId===m.id)||(!t&&manualPre===m.id))o.selected=true;man.appendChild(o);});
+    var notas=el("textarea");notas.style.minHeight="5rem";notas.value=t&&t.notas?t.notas:"";
+    if(voz&&!t){
+      titulo.value=voz.titulo||"";
+      if(voz.hora) hora.value=voz.hora;
+      if(voz.horaFin) horaFin.value=voz.horaFin;
+      if(voz.lugar) lugar.value=voz.lugar;
+      if(voz.repite&&REPS[voz.repite]) rep.value=voz.repite;
+      if(voz.fechaFin) fechaFin.value=voz.fechaFin;
+      if(voz.notas) notas.value=voz.notas;
+      if(voz.desdeChat){ var bCh=el("div",{class:"voz-aviso"});bCh.appendChild(el("div",{class:"voz-nota"},"La respuesta de la IA se guardará en las notas de la tarea. Pon fecha y guarda."));sh.appendChild(bCh); }
+      else{
+      var bVoz=el("div",{class:"voz-aviso"});
+      bVoz.appendChild(el("div",{class:"voz-dicho"},"🎤 «"+voz.texto+"»"));
+      bVoz.appendChild(el("div",{class:"voz-nota"},voz.entendido.length?("He entendido: "+voz.entendido.join(" · ")+". Revisa y guarda."):"Revisa los datos y guarda."));
+      sh.appendChild(bVoz);
+      }
+    }
+
+    var campoTitulo=campo("Qué hay que hacer",titulo);
+    sh.appendChild(campoTitulo);
+    var campoFechaIni=campo("Fecha",fecha);
+    var fila=el("div",{class:"fila"});fila.appendChild(campoFechaIni);fila.appendChild(campo("Hora",hora));sh.appendChild(fila);
+
+    var grupoTarea=el("div");
+    var campoFechaFin=campo("Fecha de fin",fechaFin);
+    var tienePlazo=!!(t&&t.fechaFin&&t.fechaFin!==t.fecha)||!!(voz&&!t&&voz.fechaFin&&voz.fechaFin!==fecha.value);
+    var bPlazo=el("button",{type:"button",class:"btn-plazo"},"＋ Añadir fecha de fin (plazo de varios días)");
+    bPlazo.addEventListener("click",function(){tienePlazo=true;pintarPlazo();fechaFin.focus();});
+    var bQuitar=el("button",{type:"button",class:"btn-plazo quitar"},"Quitar fecha de fin");
+    bQuitar.addEventListener("click",function(){tienePlazo=false;fechaFin.value=fecha.value;pintarPlazo();});
+    function pintarPlazo(){campoFechaFin.style.display=tienePlazo?"":"none";bQuitar.style.display=tienePlazo?"":"none";bPlazo.style.display=tienePlazo?"none":"";notaRango.style.display=tienePlazo?"":"none";}
+    fecha.addEventListener("change",function(){if(!tienePlazo||fechaFin.value<fecha.value)fechaFin.value=fecha.value;});
+    grupoTarea.appendChild(bPlazo);
+    grupoTarea.appendChild(campoFechaFin);
+    var notaRango=el("p",{class:"nota-rango"},"La tarea aparecerá cada día de ese periodo.");
+    grupoTarea.appendChild(notaRango);grupoTarea.appendChild(bQuitar);pintarPlazo();
+    sh.appendChild(grupoTarea);
+
+    var grupoReunion=el("div");
+    var filaR=el("div",{class:"fila"});
+    filaR.appendChild(campo("Hora de fin",horaFin));
+    filaR.appendChild(campo("Lugar",lugar));
+    grupoReunion.appendChild(filaR);
+    grupoReunion.appendChild(campo("Asistentes",asistentes));
+    sh.appendChild(grupoReunion);
+
+    sh.appendChild(campo("Repetición",rep));
+    /* instrucciones: en el desplegable del manual se puede elegir escribirlas aquí */
+    var ESCRIBIR="__escribir__";
+    var optEsc=el("option",{value:ESCRIBIR},"✎ Escribir las instrucciones aquí");
+    man.insertBefore(optEsc,man.options[1]||null);
+    if(t&&!t.manualId&&(t.pasos||[]).length) man.value=ESCRIBIR;
+    var campoManual=el("div");
+    campoManual.appendChild(campo("Manual con las instrucciones",man));
+    var pasosTxt=el("textarea",{placeholder:"Un paso por línea.\nPor ejemplo:\nSacar el listado de la aplicación\nRevisar la documentación\nArchivar"});
+    pasosTxt.style.minHeight="9rem";pasosTxt.value=t&&t.pasos?t.pasos.join("\n"):"";
+    var grupoPropias=el("div");
+    grupoPropias.appendChild(campo("Instrucciones (un paso por línea)",pasosTxt));
+    var lblMan=el("label");lblMan.style.cssText="display:flex;gap:.55rem;align-items:center;font-size:.86rem;color:var(--muted);margin:-.3rem 0 .9rem;cursor:pointer";
+    var chkMan=el("input",{type:"checkbox"});chkMan.style.cssText="width:1.15rem;height:1.15rem;accent-color:var(--red)";
+    lblMan.appendChild(chkMan);lblMan.appendChild(document.createTextNode("Guardar también como manual para usarlo en otras tareas"));
+    grupoPropias.appendChild(lblMan);
+    campoManual.appendChild(grupoPropias);
+    function pintarInstr(){ grupoPropias.style.display=man.value===ESCRIBIR?"":"none"; }
+    man.addEventListener("change",function(){pintarInstr();if(man.value===ESCRIBIR)setTimeout(function(){pasosTxt.focus();},50);});
+    pintarInstr();
+    sh.appendChild(campoManual);
+    var campoNotas=campo("Notas",notas);
+    sh.appendChild(campoNotas);
+
+    function pintarTipo(){
+      segT.setAttribute("aria-pressed",String(tipoActual==="tarea"));
+      segR.setAttribute("aria-pressed",String(tipoActual==="reunion"));
+      grupoReunion.style.display=tipoActual==="reunion"?"":"none";
+      grupoTarea.style.display="";
+      var esR=tipoActual==="reunion";
+      bPlazo.textContent=esR?"＋ Añadir más días (reunión de varios días)":"＋ Añadir fecha de fin (plazo de varios días)";
+      bQuitar.textContent=esR?"Solo un día":"Quitar fecha de fin";
+      campoFechaFin.querySelector("span").textContent=esR?"Último día":"Fecha de fin";
+      notaRango.textContent=esR?"La reunión aparecerá cada día de ese periodo, con el mismo horario.":"La tarea aparecerá cada día de ese periodo.";
+      campoFechaIni.querySelector("span").textContent=tipoActual==="reunion"?"Fecha":"Fecha de inicio";
+      titulo.placeholder=tipoActual==="reunion"?"Reunión de coordinación de ciclo":"Enviar la matrícula a Delegación";
+      campoNotas.querySelector("span").textContent=tipoActual==="reunion"?"Orden del día":"Notas";
+      notas.placeholder=tipoActual==="reunion"?"Puntos a tratar":"Detalles de esta vez";
+      campoManual.style.display=tipoActual==="reunion"?"none":"";
+    }
+    segT.addEventListener("click",function(){tipoActual="tarea";pintarTipo();});
+    segR.addEventListener("click",function(){tipoActual="reunion";pintarTipo();});
+    pintarTipo();
+
+    var acc=el("div",{class:"acciones"});
+    var g=el("button",{class:"btn"},"Guardar");
+    g.addEventListener("click",function(){
+      if(!titulo.value.trim()){titulo.focus();toast("Ponle un título.");return;}
+      var o=t?JSON.parse(JSON.stringify(t)):{id:uid(),hechas:{},progreso:{}};
+      o.tipo=tipoActual;
+      o.titulo=titulo.value.trim();o.fecha=fecha.value||hoyISO();o.hora=hora.value||"";
+      o.repite=rep.value;o.notas=notas.value;
+      if(o.estado==="no_realizada"&&t&&o.fecha!==t.fecha){o.estado="";delete o.fechaOriginalInicio;delete o.fechaOriginalFin;}  /* solo deja de ser «no realizada» si le cambias la fecha */
+      if(tipoActual==="reunion"){
+        o.horaFin=horaFin.value||"";o.lugar=lugar.value.trim();o.asistentes=asistentes.value.trim();o.manualId="";
+        var ffR=tienePlazo?(fechaFin.value||o.fecha):o.fecha;
+        if(ffR<o.fecha){toast("El último día no puede ser anterior al primero.");fechaFin.focus();return;}
+        o.fechaFin=ffR;
+      }else{
+        o.horaFin="";o.lugar="";o.asistentes="";
+        var listaPasos=pasosTxt.value.split("\n").map(function(s){return s.trim();}).filter(Boolean);
+        if(man.value&&man.value!==ESCRIBIR){
+          o.manualId=man.value;o.pasos=[];
+        }else if(man.value===ESCRIBIR){
+          if(!listaPasos.length){toast("Escribe al menos un paso.");pasosTxt.focus();return;}
+          o.manualId="";o.pasos=listaPasos;
+          if(chkMan.checked){
+            var nm={id:uid(),titulo:o.titulo,categoria:"Otros",descripcion:"",cuando:"",notas:"",actualizado:hoyISO(),pasos:listaPasos.slice()};
+            Store.guardar("manuales",nm);o.manualId=nm.id;o.pasos=[];
+          }
+        }else{ o.manualId="";o.pasos=[]; }
+        var ff=fechaFin.value||o.fecha;
+        if(ff<o.fecha){toast("La fecha de fin no puede ser anterior a la de inicio.");fechaFin.focus();return;}
+        o.fechaFin=ff;
+      }
+      Store.guardar("tareas",o);cerrarSheet();toast(tipoActual==="reunion"?"Reunión guardada.":"Tarea guardada.");
+    });
+    var c=el("button",{class:"btn sec"},"Cancelar");c.addEventListener("click",cerrarSheet);
+    acc.appendChild(g);acc.appendChild(c);sh.appendChild(acc);
+  });
+}
+function abrirCreador(fechaPre){ formTarea(null,fechaPre||hoyISO(),null,"tarea"); }
+function abrirCreador_viejo(fechaPre){
+  abrirSheet(function(sh){
+    cabecera(sh,"Nueva actividad");
+    var p=el("p",null,"¿Qué quieres anotar?");p.style.cssText="margin:0 0 .9rem;color:var(--muted);font-size:.9rem";
+    sh.appendChild(p);
+    var acc=el("div",{class:"acciones"});
+    var b1=el("button",{class:"btn"},"Tarea");
+    b1.addEventListener("click",function(){formTarea(null,fechaPre,null,"tarea");});
+    var b2=el("button",{class:"btn sec"},"Reunión");
+    b2.addEventListener("click",function(){formTarea(null,fechaPre,null,"reunion");});
+    acc.appendChild(b1);acc.appendChild(b2);sh.appendChild(acc);
+  });
+}
+function abrirManual(id){
+  var m=state.manuales.filter(function(x){return x.id===id;})[0];if(!m)return;
+  abrirSheet(function(sh){
+    cabecera(sh,m.titulo);
+    if(m.categoria) dato(sh,"Categoría",m.categoria);
+    if(m.descripcion) dato(sh,"Para qué sirve",m.descripcion);
+    if(m.cuando) dato(sh,"Cuándo toca",m.cuando);
+    var h=el("h3",null,"Pasos");h.style.margin="1.1rem 0 0";sh.appendChild(h);
+    var ul=el("ul",{class:"pasos"});
+    (m.pasos||[]).forEach(function(p){var li=el("li");li.appendChild(el("div",{class:"num"}));
+      li.appendChild(el("div",{class:"txt"},p));ul.appendChild(li);});
+    sh.appendChild(ul);
+    if(m.notas) sh.appendChild(el("div",{class:"aviso"},m.notas));
+    var acc=el("div",{class:"acciones"});
+    var b1=el("button",{class:"btn"},"Crear tarea con este manual");
+    b1.addEventListener("click",function(){formTarea(null,state.diaSel||hoyISO(),m.id);});
+    var b2=el("button",{class:"btn sec"},"Editar manual");
+    b2.addEventListener("click",function(){formManual(m.id);});
+    var b3=el("button",{class:"btn warn"},"Borrar");
+    b3.addEventListener("click",function(){if(confirm("¿Borrar «"+m.titulo+"»?")){Store.borrar("manuales",m.id);cerrarSheet();}});
+    acc.appendChild(b1);acc.appendChild(b2);acc.appendChild(b3);sh.appendChild(acc);
+  },{tipo:"manual",id:id,reabrir:function(){abrirManual(id);}});
+}
+function formManual(id){
+  var m=id?state.manuales.filter(function(x){return x.id===id;})[0]:null;
+  abrirSheet(function(sh){
+    cabecera(sh,m?"Editar manual":"Nuevo manual");
+    var titulo=el("input",{type:"text",placeholder:"Matrícula de alumnado nuevo"});titulo.value=m?m.titulo:"";
+    var cat=el("select");CATEGORIAS.forEach(function(k){var o=el("option",{value:k},k);if(m&&m.categoria===k)o.selected=true;cat.appendChild(o);});
+    var desc=el("input",{type:"text",placeholder:"Resumen en una línea"});desc.value=m&&m.descripcion?m.descripcion:"";
+    var cuando=el("input",{type:"text",placeholder:"Primera quincena de junio, cada curso"});cuando.value=m&&m.cuando?m.cuando:"";
+    var pasos=el("textarea",{placeholder:"Un paso por línea."});pasos.value=m?(m.pasos||[]).join("\n"):"";pasos.style.minHeight="11rem";
+    var notas=el("textarea",{placeholder:"Avisos, teléfonos, dónde está la plantilla…"});notas.value=m&&m.notas?m.notas:"";notas.style.minHeight="5rem";
+    sh.appendChild(campo("Título del procedimiento",titulo));
+    sh.appendChild(campo("Categoría",cat));
+    sh.appendChild(campo("Para qué sirve",desc));
+    sh.appendChild(campo("Cuándo toca",cuando));
+    sh.appendChild(campo("Pasos (uno por línea)",pasos));
+    sh.appendChild(campo("Notas y avisos",notas));
+    var acc=el("div",{class:"acciones"});
+    var g=el("button",{class:"btn"},"Guardar manual");
+    g.addEventListener("click",function(){
+      if(!titulo.value.trim()){titulo.focus();toast("Ponle un título.");return;}
+      var o=m?JSON.parse(JSON.stringify(m)):{id:uid()};
+      o.titulo=titulo.value.trim();o.categoria=cat.value;o.descripcion=desc.value.trim();
+      o.cuando=cuando.value.trim();o.notas=notas.value;o.actualizado=hoyISO();
+      o.pasos=pasos.value.split("\n").map(function(s){return s.trim();}).filter(Boolean);
+      Store.guardar("manuales",o);cerrarSheet();toast("Manual guardado.");
+    });
+    var c=el("button",{class:"btn sec"},"Cancelar");c.addEventListener("click",cerrarSheet);
+    acc.appendChild(g);acc.appendChild(c);sh.appendChild(acc);
+  });
+}
+
+/* ---------- Google Calendar ---------- */
+function textoManual(t){
+  var o=[];
+  if(t.tipo==="reunion"){
+    if(t.asistentes) o.push("Asistentes: "+t.asistentes);
+    if(t.notas){o.push("","ORDEN DEL DÍA",t.notas);}
+    return o.join("\n")||"Reunión creada desde AdmSec+.";
+  }
+  var m=manualDe(t);
+  if(t.notas) o.push(t.notas,"");
+  if(m){o.push("CÓMO SE HACE — "+m.titulo);if(m.descripcion)o.push(m.descripcion);o.push("");
+    (m.pasos||[]).forEach(function(p,i){o.push((i+1)+". "+p);});
+    if(m.notas)o.push("","Avisos: "+m.notas);}
+  else if((t.pasos||[]).length){o.push("CÓMO SE HACE");t.pasos.forEach(function(p,i){o.push((i+1)+". "+p);});}
+  else o.push("Sin instrucciones en AdmSec+.");
+  return o.join("\n");
+}
+function comp(f){return f.replace(/-/g,"");}
+function z(x){return (x<10?"0":"")+x;}
+function rrule(t){
+  var LV="BYDAY=MO,TU,WE,TH,FR",d=parseISO(t.fecha),D=d.getDate();
+  /* "el día D o, si cae en fin de semana, el viernes anterior" */
+  var ajuste=D>=3?";BYMONTHDAY="+D+","+(D-1)+","+(D-2)+";"+LV+";BYSETPOS=-1":"";
+  if(t.repite==="diaria")return "FREQ=WEEKLY;"+LV;
+  if(t.repite==="semanal")return "FREQ=WEEKLY"+(esFinde(d)?";BYDAY=FR":"");
+  if(t.repite==="mensual")return "FREQ=MONTHLY"+ajuste;
+  if(t.repite==="trimestral")return "FREQ=MONTHLY;INTERVAL=3"+ajuste;
+  return "FREQ=YEARLY;BYMONTH="+(d.getMonth()+1)+ajuste;
+}
+function calcularFinEvento(dIni,finDiaISO,t){
+  var finDia=parseISO(finDiaISO);
+  if(t.horaFin){
+    var hf=t.horaFin.split(":");
+    return new Date(finDia.getFullYear(),finDia.getMonth(),finDia.getDate(),+hf[0],+hf[1]);
+  }
+  var hm=t.hora.split(":");
+  if(finDiaISO===iso(dIni)) return new Date(dIni.getFullYear(),dIni.getMonth(),dIni.getDate(),+hm[0]+1,+hm[1]);
+  return new Date(finDia.getFullYear(),finDia.getMonth(),finDia.getDate(),+hm[0],+hm[1]);
+}
+function enlaceGoogle(t,f){
+  var clave=claveOcurrencia(t,f);
+  var dIni=parseISO(clave);
+  var finDiaISO=iso(new Date(dIni.getFullYear(),dIni.getMonth(),dIni.getDate()+duracionTarea(t)));
+  var fechas;
+  if(t.hora){
+    var hm=t.hora.split(":");
+    var a=new Date(dIni.getFullYear(),dIni.getMonth(),dIni.getDate(),+hm[0],+hm[1]);
+    var b=calcularFinEvento(dIni,finDiaISO,t);
+    var loc=function(x){return x.getFullYear()+z(x.getMonth()+1)+z(x.getDate())+"T"+z(x.getHours())+z(x.getMinutes())+"00";};
+    fechas=loc(a)+"/"+loc(b);
+  }else{
+    var finD=parseISO(finDiaISO);
+    fechas=comp(clave)+"/"+comp(iso(new Date(finD.getFullYear(),finD.getMonth(),finD.getDate()+1)));
+  }
+  var p=["action=TEMPLATE","text="+encodeURIComponent(t.titulo),"dates="+fechas,
+    "details="+encodeURIComponent(textoManual(t))];
+  if(t.lugar) p.push("location="+encodeURIComponent(t.lugar));
+  if(t.repite&&t.repite!=="none") p.push("recur="+encodeURIComponent("RRULE:"+rrule(t)));
+  return "https://calendar.google.com/calendar/render?"+p.join("&");
+}
+function esc(s){return String(s||"").replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\r?\n/g,"\\n");}
+function fold(l){var o=[],s=l;while(s.length>73){o.push(s.slice(0,73));s=" "+s.slice(73);}o.push(s);return o.join("\r\n");}
+function generarICS(){
+  var L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//AdmSec+//ES","CALSCALE:GREGORIAN","METHOD:PUBLISH"];
+  var stamp=new Date().toISOString().replace(/[-:]/g,"").split(".")[0]+"Z";
+  state.tareas.forEach(function(t){
+    if(!t.fecha)return;
+    var ini=primeraOcurrencia(t),dIni=parseISO(ini),finDiaISO=iso(new Date(dIni.getFullYear(),dIni.getMonth(),dIni.getDate()+duracionTarea(t)));
+    L.push("BEGIN:VEVENT","UID:"+t.id+"@admsecplus","DTSTAMP:"+stamp);
+    if(t.hora){
+      var hm=t.hora.split(":");
+      var s=dIni.getFullYear()+z(dIni.getMonth()+1)+z(dIni.getDate())+"T"+z(+hm[0])+z(+hm[1])+"00";
+      var e=calcularFinEvento(dIni,finDiaISO,t);
+      L.push("DTSTART:"+s,"DTEND:"+e.getFullYear()+z(e.getMonth()+1)+z(e.getDate())+"T"+z(e.getHours())+z(e.getMinutes())+"00");
+    }else{
+      var finD=parseISO(finDiaISO);
+      L.push("DTSTART;VALUE=DATE:"+comp(ini),
+        "DTEND;VALUE=DATE:"+comp(iso(new Date(finD.getFullYear(),finD.getMonth(),finD.getDate()+1))));
+    }
+    if(t.repite&&t.repite!=="none") L.push("RRULE:"+rrule(t));
+    if(t.lugar) L.push(fold("LOCATION:"+esc(t.lugar)));
+    L.push(fold("SUMMARY:"+esc((t.tipo==="reunion"?"Reunión: ":"")+t.titulo)),fold("DESCRIPTION:"+esc(textoManual(t))));
+    L.push("BEGIN:VALARM","TRIGGER:-P2D","ACTION:DISPLAY",fold("DESCRIPTION:"+esc(t.titulo)),"END:VALARM","END:VEVENT");
+  });
+  L.push("END:VCALENDAR");
+  return L.join("\r\n");
+}
+
+/* ---------- puente con Android ---------- */
+function esApp(){return !!(window.AdmSecAndroid);}
+function guardarArchivo(nombre,mime,texto,okMsg){
+  if(esApp()){ try{ window.AdmSecAndroid.guardarArchivo(nombre,mime,texto); return true; }catch(e){ toast("No se pudo guardar el archivo."); return false; } }
+  try{
+    var b=new Blob([texto],{type:mime}),a=document.createElement("a");
+    a.href=URL.createObjectURL(b);a.download=nombre;a.click();
+    setTimeout(function(){URL.revokeObjectURL(a.href);},2000);
+    if(okMsg) toast(okMsg);
+    return true;
+  }catch(e){toast("La descarga no está disponible aquí.");return false;}
+}
+window.admsecAviso=function(m){toast(m);};
+if("serviceWorker" in navigator && (location.protocol==="https:"||location.hostname==="localhost") && !window.AdmSecAndroid){
+  window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});
+}
+window.AdmSecDebug={Sync:Sync,Store:Store,state:state,ocurreEn:ocurreEn,rrule:rrule,primera:primeraOcurrencia};
+/* botón Atrás de Android: devuelve true si la app lo ha gestionado */
+window.admsecAtras=function(){
+  if(!$("#overlay").hidden){cerrarSheet();return true;}
+  if(Panel.id&&usaPanel()){cerrarPanel();return true;}
+  if(state.vista==="chat"){state.vista=state.vistaAntesChat||"hoy";render();return true;}
+  if(state.vista==="hoy"&&state.diaHoy&&state.diaHoy!==hoyISO()){irAHoy();return true;}
+  if(state.vista!=="hoy"){state.vista="hoy";window.scrollTo(0,0);render();return true;}
+  return false;
+};
+async function exportar(){
+  if(!state.tareas.length){toast("Todavía no hay tareas que exportar.");return;}
+  guardarArchivo("admsec-calendario.ics","text/calendar",generarICS(),"Archivo listo. Impórtalo en Google Calendar.");
+}
+async function exportarCopia(){
+  if(!state.tareas.length&&!state.manuales.length){toast("Todavía no hay nada que copiar.");return;}
+  var datos={version:1,fecha:hoyISO(),manuales:state.manuales,tareas:state.tareas};
+  guardarArchivo("admsec-copia-"+hoyISO()+".json","application/json",JSON.stringify(datos,null,2),"Copia de seguridad descargada.");
+}
+function abrirImportar(){
+  abrirSheet(function(sh){
+    cabecera(sh,"Restaurar copia de seguridad");
+    var p=el("p",null,"Elige un archivo .json exportado antes desde \"Copia de seguridad\". Puedes añadirlo a lo que ya tienes, o sustituirlo todo.");
+    p.style.cssText="margin:0 0 .9rem;color:var(--muted);font-size:.9rem";sh.appendChild(p);
+    var input=el("input",{type:"file",accept:"application/json,.json,text/plain,application/octet-stream"});
+    input.style.cssText="width:100%;padding:.7rem;border:1px solid var(--line);border-radius:12px;background:var(--surface);margin-bottom:.9rem";
+    sh.appendChild(input);
+    var modoSel=el("select");
+    modoSel.appendChild(el("option",{value:"anadir"},"Añadir a lo que ya tengo"));
+    modoSel.appendChild(el("option",{value:"reemplazar"},"Sustituir todo lo actual"));
+    sh.appendChild(campo("Cómo restaurar",modoSel));
+    var acc=el("div",{class:"acciones"});
+    var g=el("button",{class:"btn"},"Restaurar");
+    g.addEventListener("click",function(){
+      var f=input.files&&input.files[0];
+      if(!f){toast("Elige primero un archivo.");return;}
+      var r=new FileReader();
+      r.onload=function(){
+        var datos;
+        try{ datos=JSON.parse(r.result); }catch(e){ toast("El archivo no es una copia válida."); return; }
+        if(!datos||!Array.isArray(datos.tareas)||!Array.isArray(datos.manuales)){ toast("El archivo no es una copia válida."); return; }
+        if(modoSel.value==="reemplazar"){
+          state.manuales.slice().forEach(function(m){Store.borrar("manuales",m.id);});
+          state.tareas.slice().forEach(function(t){Store.borrar("tareas",t.id);});
+        }
+        datos.manuales.forEach(function(m){ if(!m.id) m.id=uid(); Store.guardar("manuales",m); });
+        datos.tareas.forEach(function(t){ if(!t.id) t.id=uid(); Store.guardar("tareas",t); });
+        cerrarSheet();
+        toast("Copia restaurada: "+datos.manuales.length+" manuales y "+datos.tareas.length+" tareas.");
+      };
+      r.onerror=function(){ toast("No se pudo leer el archivo."); };
+      r.readAsText(f);
+    });
+    var c=el("button",{class:"btn sec"},"Cancelar");c.addEventListener("click",cerrarSheet);
+    acc.appendChild(g);acc.appendChild(c);sh.appendChild(acc);
+  });
+}
+function instalar(){
+  abrirSheet(function(sh){
+    cabecera(sh,"Pasar datos sin cuenta");
+    var p=el("p",null,"AdmSec+ guarda tus tareas y manuales dentro de este dispositivo y funciona sin internet. Para tener los mismos datos en otro móvil o tablet:");
+    p.style.cssText="margin:0 0 .8rem;font-size:.93rem;color:var(--muted)";sh.appendChild(p);
+    var ul=el("ul",{class:"pasos"});
+    ["Instala el mismo archivo AdmSec+.apk en el otro dispositivo.",
+     "En este dispositivo: Más → «Copia de seguridad» y guarda el archivo (por ejemplo en Google Drive o envíatelo por correo).",
+     "En el otro dispositivo: Más → «Restaurar copia de seguridad» y elige ese archivo."
+    ].forEach(function(t){var li=el("li");li.appendChild(el("div",{class:"num"}));li.appendChild(el("div",{class:"txt"},t));ul.appendChild(li);});
+    sh.appendChild(ul);
+    var acc=el("div",{class:"acciones"});
+    var b=el("button",{class:"btn"},"Hacer copia de seguridad ahora");b.addEventListener("click",function(){cerrarSheet();exportarCopia();});
+    acc.appendChild(b);sh.appendChild(acc);
+  });
+}
+function cambiarTema_viejo(){
+  var cur=document.documentElement.getAttribute("data-theme");
+  var osc=cur?cur==="dark":window.matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.setAttribute("data-theme",osc?"light":"dark");
+  try{localStorage.setItem("cs_tema",osc?"light":"dark");}catch(e){}
+}
+
+/* ---------- datos de prueba ---------- */
+function fechaMas(n){var d=new Date();d.setDate(d.getDate()+n);return iso(d);}
+function cargarPruebaAtrasadas(){
+  var hoy=hoyISO(),n=0;
+  function tarea(dIni,dFin,titulo,extra){
+    var o={id:uid(),tipo:"tarea",titulo:"Prueba · "+titulo,fecha:fechaMas(dIni),fechaFin:fechaMas(dFin),hora:"",repite:"none",
+      notas:"",manualId:"",pasos:[],hechas:{},progreso:{},prueba:true};
+    if(extra) for(var k in extra) o[k]=extra[k];
+    if(o.tipo==="reunion") o.fechaFin="";
+    Store.guardar("tareas",o);n++;return o;
+  }
+  tarea(-14,-14,"Enviar estadística de matrícula",{pasos:["Sacar datos","Rellenar plantilla","Enviar a Delegación"]});
+  tarea(-12,-12,"Archivar expedientes de septiembre");
+  tarea(-10,-10,"Pedir material de oficina",{hora:"09:30"});
+  tarea(-8,-6,"Revisar solicitudes de becas (plazo cerrado)");
+  tarea(-5,-5,"Llamar a la empresa de mantenimiento");
+  tarea(-3,-3,"Actualizar listado de alumnado");
+  tarea(-1,-1,"Preparar certificados pendientes");
+  var h1=tarea(-11,-11,"Tarea atrasada ya HECHA (no debe moverse)");h1.hechas={};h1.hechas[h1.fecha]=true;Store.guardar("tareas",h1);
+  var h2=tarea(-4,-4,"Otra atrasada HECHA (no debe moverse)");h2.hechas={};h2.hechas[h2.fecha]=true;Store.guardar("tareas",h2);
+  tarea(-9,-9,"Reunión pasada (no debe moverse)",{tipo:"reunion",hora:"10:00",horaFin:"11:00",lugar:"Secretaría"});
+  tarea(-7,4,"Plazo aún abierto (no debe moverse)");
+  tarea(-14,-14,"Tarea semanal (no debe moverse)",{repite:"semanal"});
+  n=12;
+  toast("Prueba de atrasadas cargada: 12 tareas de las últimas dos semanas (7 deberían pasarse a hoy).");
+  state.vista="tareas";state.filtroT="pendientes";render();
+}
+function borrarPrueba(){
+  var t=state.tareas.filter(function(x){return x.prueba;}),m=state.manuales.filter(function(x){return x.prueba;});
+  if(!t.length&&!m.length){toast("No hay datos de prueba.");return;}
+  if(!confirm("¿Borrar "+t.length+" tareas y "+m.length+" manuales de prueba? Tus datos reales no se tocan.")) return;
+  t.forEach(function(x){Store.borrar("tareas",x.id);});m.forEach(function(x){Store.borrar("manuales",x.id);});
+  toast("Datos de prueba borrados.");
+}
+function borrarTodo(){
+  var nt=state.tareas.length,nm=state.manuales.length;
+  if(!nt&&!nm){toast("No hay nada que borrar.");return;}
+  abrirSheet(function(sh){
+    cabecera(sh,"Borrar todo");
+    var av=el("div",{class:"aviso-lunes"});
+    av.appendChild(el("strong",null,"Se borrarán "+nt+" tarea"+(nt===1?"":"s")+" y "+nm+" manual"+(nm===1?"":"es")+"."));
+    av.appendChild(el("p",null,Sync.conectado()?"Como tienes la sesión iniciada, también se borrarán en la nube y en todos tus dispositivos. No se puede deshacer, salvo que tengas una copia de seguridad.":"No se puede deshacer, salvo que tengas una copia de seguridad."));
+    sh.appendChild(av);
+    var acc=el("div",{class:"acciones"});
+    var bc=el("button",{class:"btn sec"},"Hacer antes una copia de seguridad");
+    bc.addEventListener("click",function(){exportarCopia();});
+    var bb=el("button",{class:"btn"},"Borrar todo");
+    bb.addEventListener("click",function(){
+      if(!confirm("¿Seguro? Se borrarán todas las tareas y manuales.")) return;
+      var ts=state.tareas.map(function(x){return x.id;}),ms=state.manuales.map(function(x){return x.id;});
+      state.tareas=[];state.manuales=[];Store.escribir();
+      ts.forEach(function(id){Sync.marcar("tareas",id,true);});
+      ms.forEach(function(id){Sync.marcar("manuales",id,true);});
+      cerrarSheet();state.vista="hoy";irAHoy();toast("Todo borrado.");
+    });
+    var c=el("button",{class:"btn sec"},"Cancelar");c.addEventListener("click",cerrarSheet);
+    acc.appendChild(bc);acc.appendChild(bb);acc.appendChild(c);sh.appendChild(acc);
+  });
+}
+function cargarPrueba(){
+  cerrarSheet();
+  var manuales=[
+    {titulo:"Revisión de expedientes de matrícula",categoria:"Matriculación",
+     descripcion:"Comprobar que los expedientes del mes están completos y bien archivados.",
+     cuando:"Revisión mensual",
+     pasos:["Sacar el listado de matrículas del mes desde la aplicación de gestión.","Comprobar que cada expediente tiene toda la documentación.","Anotar los expedientes incompletos y avisar a las familias.","Archivar los expedientes ya completos por orden alfabético."],
+     notas:"Los expedientes incompletos se revisan de nuevo a los 15 días."},
+    {titulo:"Solicitud de certificados de notas",categoria:"Documentación oficial",
+     descripcion:"Atender las peticiones de certificados académicos que llegan a secretaría.",
+     cuando:"Todo el curso",
+     pasos:["Registrar la solicitud de entrada con fecha y solicitante.","Comprobar la identidad de quien lo pide.","Extraer las notas desde la aplicación de gestión.","Redactar el certificado con la plantilla del centro.","Pasarlo a dirección para firma y sello.","Entregarlo y archivar copia."],
+     notas:"Plazo interno de respuesta: tres días hábiles."},
+    {titulo:"Preparación de la reunión de claustro",categoria:"Órganos colegiados",
+     descripcion:"Organizar la documentación y el orden del día antes de cada claustro.",
+     cuando:"Antes de cada convocatoria",
+     pasos:["Recoger los puntos del orden del día de jefatura de estudios.","Redactar y enviar la convocatoria con antelación.","Preparar las actas anteriores por si hay que consultarlas.","Imprimir el listado de asistencia.","Reservar el espacio y comprobar que todo funciona."],
+     notas:"Enviar la convocatoria con al menos 48 horas de antelación."},
+    {titulo:"Gestión de bajas de material inventariable",categoria:"Inventario y compras",
+     descripcion:"Dar de baja en el inventario el material roto o obsoleto.",
+     cuando:"Cuando se detecta material para retirar",
+     pasos:["Recoger el parte de baja firmado por el responsable del aula o departamento.","Fotografiar el material antes de retirarlo.","Actualizar el libro de inventario.","Archivar el justificante de baja."],
+     notas:"Sin el parte firmado no se da de baja ningún material."},
+    {titulo:"Cierre de caja mensual",categoria:"Económico",
+     descripcion:"Cuadrar los ingresos y gastos del mes antes de enviarlos a administración.",
+     cuando:"Últimos días de cada mes",
+     pasos:["Reunir todos los justificantes de ingresos y gastos del mes.","Cuadrar el libro de caja con los movimientos bancarios.","Preparar el resumen mensual.","Enviarlo a dirección y a la titularidad para su visto bueno."],
+     notas:"Si no cuadra, revisar primero los pagos en efectivo antes que los recibos."}
+  ];
+  manuales.forEach(function(m){m.id=uid();m.actualizado=hoyISO();m.prueba=true;Store.guardar("manuales",m);});
+  var idx={}; manuales.forEach(function(m,i){idx[i]=m.id;});
+
+  var tareas=[
+    {tipo:"tarea",dias:2,titulo:"Enviar la circular de inicio de mes a las familias",manual:null},
+    {tipo:"reunion",dias:3,titulo:"Coordinación de secretaría",hora:"10:00",horaFin:"11:00",lugar:"Sala de reuniones",asistentes:"Dirección, administración",notas:"Revisión de tareas de la semana.\nEstado de matrículas pendientes."},
+    {tipo:"tarea",dias:5,diasFin:10,titulo:"Revisar expedientes de matrícula del mes",manual:0},
+    {tipo:"tarea",dias:8,titulo:"Actualizar el inventario de material informático",manual:3},
+    {tipo:"reunion",dias:12,titulo:"Claustro de profesores",hora:"17:00",horaFin:"19:00",lugar:"Salón de actos",asistentes:"Todo el profesorado",notas:"Evaluación del trimestre.\nCalendario de exámenes.",manual:2},
+    {tipo:"tarea",dias:15,titulo:"Cierre de caja del mes",manual:4},
+    {tipo:"tarea",dias:18,titulo:"Tramitar certificados de notas pendientes",manual:1},
+    {tipo:"tarea",dias:20,diasFin:25,titulo:"Periodo de recogida de solicitudes de comedor",manual:null},
+    {tipo:"reunion",dias:22,titulo:"Consejo Escolar",hora:"18:00",horaFin:"20:00",lugar:"Sala de profesores",asistentes:"Dirección, profesorado, familias, alumnado",notas:"Aprobación de cuentas.\nCalendario del próximo curso."},
+    {tipo:"tarea",dias:28,titulo:"Preparar la memoria mensual de secretaría",manual:null},
+    {tipo:"tarea",dias:30,titulo:"Revisar tareas pendientes de fin de mes",manual:null}
+  ];
+  tareas.forEach(function(x){
+    var o={id:uid(),tipo:x.tipo,titulo:x.titulo,fecha:fechaMas(x.dias),
+      fechaFin:x.tipo==="tarea"?fechaMas(x.diasFin!=null?x.diasFin:x.dias):"",
+      hora:x.hora||"",horaFin:x.horaFin||"",lugar:x.lugar||"",asistentes:x.asistentes||"",
+      repite:"none",manualId:(x.manual!=null?idx[x.manual]:""),notas:x.notas||"",
+      hechas:{},progreso:{}};
+    o.prueba=true;
+    Store.guardar("tareas",o);
+  });
+  toast("Prueba cargada: "+manuales.length+" manuales y "+tareas.length+" tareas/reuniones en el próximo mes.");
+}
+
+/* ---------- eventos ---------- */
+document.addEventListener("click",function(e){
+  var v=e.target.closest("[data-vista]");
+  if(v){if(v.dataset.vista==="hoy"&&state.vista==="hoy"){irAHoy();return;}state.vista=v.dataset.vista;window.scrollTo(0,0);render();return;}
+  var a=e.target.closest("[data-action]");if(!a)return;
+  var k=a.dataset.action;
+  if(k==="crear"){
+    if(state.vista==="manuales") formManual();
+    else if(state.vista==="tareas") formTarea(null,hoyISO(),null,"tarea");
+    else abrirCreador(state.vista==="calendario"?state.diaSel:(state.vista==="hoy"?(state.diaHoy||hoyISO()):hoyISO()));
+  }
+  if(k==="mes-prev"){state.mes=new Date(state.mes.getFullYear(),state.mes.getMonth()-1,1);render();}
+  if(k==="mes-next"){state.mes=new Date(state.mes.getFullYear(),state.mes.getMonth()+1,1);render();}
+  if(k==="mes-hoy"){state.mes=new Date();state.diaSel=hoyISO();render();}
+  if(k==="tema") ponerTema(temaActual()==="dark"?"light":"dark");
+  if(k==="panico") botonPanico();
+  if(k==="chat"){ if(state.vista!=="chat"){state.vistaAntesChat=state.vista;state.vista="chat";window.scrollTo(0,0);render();setTimeout(function(){var t=$("#chat-txt");if(t&&!esTablet())t.blur();},0);} }
+  if(k==="chat-enviar") enviarChat();
+  if(k==="chat-borrar") borrarChat();
+  if(k==="chat-mic"){ window.__destinoDictado="chat"; iniciarDictado(); }
+  if(k==="voz") iniciarDictado();
+  if(k==="dia-prev") moverDia(-1);
+  if(k==="dia-next") moverDia(1);
+});
+$("#overlay").addEventListener("click",function(e){if(e.target===this)cerrarSheet();});
+if(MQ_TABLET){var alCambiar=function(){render();};if(MQ_TABLET.addEventListener)MQ_TABLET.addEventListener("change",alCambiar);else if(MQ_TABLET.addListener)MQ_TABLET.addListener(alCambiar);}
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!$("#overlay").hidden)cerrarSheet();});
+$("#q").addEventListener("input",function(){state.q=this.value;render();});
+/* deslizar el dedo a izquierda/derecha en Hoy para cambiar de día */
+(function(){var x0=null,y0=null,vh=$("#v-hoy");
+  vh.addEventListener("touchstart",function(e){if(e.touches.length!==1){x0=null;return;}x0=e.touches[0].clientX;y0=e.touches[0].clientY;},{passive:true});
+  vh.addEventListener("touchend",function(e){if(x0==null)return;var t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0;x0=null;
+    if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*1.8) moverDia(dx<0?1:-1);},{passive:true});
+})();
+$("#chat-txt").addEventListener("input",ajustarChatTxt);
+$("#chat-txt").addEventListener("keydown",function(e){if(e.key==="Enter"&&!e.shiftKey&&esTablet()){e.preventDefault();enviarChat();}});
+$("#qt").addEventListener("input",function(){state.qt=this.value;render();});
+
+try{var vq=new URLSearchParams(location.search).get("vista");if(vq&&TITULOS[vq]&&vq!=="chat")state.vista=vq;}catch(e){}
+try{var tm=localStorage.getItem("cs_tema");if(tm)document.documentElement.setAttribute("data-theme",tm);}catch(e){}
+render();
+Store.init(function(){intentarBarridoLunes();render();});
+intentarBarridoLunes();
+setInterval(function(){intentarBarridoLunes();},60000);
+})();
+</script>
+</body>
+</html>
