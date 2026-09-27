@@ -658,6 +658,40 @@ body.en-chat .cuerpo{background-color:var(--wa-fondo);background-image:
 .tarea.admsec > *{position:relative;z-index:1}
 .tarea.admsec.hecha::after{opacity:.06}
 
+
+/* festivos */
+.festivo-aviso{display:flex;gap:.7rem;align-items:center;padding:.8rem 1rem;margin:0 0 .8rem;border-radius:14px;background:linear-gradient(100deg,rgba(255,179,71,.18),rgba(255,107,107,.14));border:1px solid rgba(234,100,80,.35)}
+.festivo-aviso .festivo-ico{font-size:1.6rem}
+.festivo-aviso b{display:block;color:var(--ink)}
+.festivo-aviso span{font-size:.86rem;color:var(--muted)}
+.dia.festivo:not(.sel):not(.hoy){background:linear-gradient(135deg,rgba(255,179,71,.24),rgba(255,107,107,.18))}
+.dia.festivo > span:first-child{color:var(--red);font-weight:700}
+.dia.festivo.hoy > span:first-child,.dia.festivo.sel > span:first-child{color:inherit}
+.leyenda-festivo{display:inline-block;width:.9rem;height:.9rem;border-radius:4px;margin-right:.3rem;vertical-align:-.1em;background:linear-gradient(135deg,rgba(255,179,71,.55),rgba(255,107,107,.45))}
+.festivo-linea{margin:.2rem 0 .6rem;color:var(--red);font-weight:600;font-size:.9rem}
+
+.festivo-aviso{flex-wrap:wrap}
+.festivo-aviso > div{flex:1;min-width:10rem}
+.festivo-trabajo{margin-left:auto;font:inherit;font-size:.8rem;font-weight:600;padding:.4rem .7rem;border-radius:99px;border:1px solid rgba(234,100,80,.45);background:var(--bg);color:var(--ink);cursor:pointer}
+.btn-festivos{margin-top:.6rem;width:100%}
+.lista-festivos{list-style:none;margin:0 0 .6rem;padding:0;display:grid;gap:.45rem}
+.lista-festivos li{display:flex;align-items:center;gap:.4rem;border:1px solid var(--line);border-radius:12px;background:linear-gradient(100deg,rgba(255,179,71,.12),rgba(255,107,107,.08))}
+.lista-festivos li.pasado{opacity:.55}
+.lista-festivos .fest-info{flex:1;text-align:left;background:none;border:0;font:inherit;color:var(--ink);padding:.6rem .8rem;cursor:pointer}
+.lista-festivos .fest-info strong{display:block;font-size:.95rem}
+.lista-festivos .fest-info small{color:var(--muted);font-size:.82rem}
+.lista-festivos .fest-borrar{background:none;border:0;color:var(--muted);font-size:1rem;padding:.6rem .8rem;cursor:pointer}
+.lista-festivos .vacio-fest{padding:.8rem;color:var(--muted);justify-content:center}
+.fila2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:.6rem}
+.fila2 .campo,.fila2 input{min-width:0;width:100%;box-sizing:border-box}
+
+/* avance de las instrucciones: barra fina en el borde inferior */
+.tarea.con-barra{position:relative;overflow:hidden}
+.tarea.con-barra > .barra-pasos{position:absolute!important;left:0;right:0;bottom:0;height:5px;z-index:2!important;background:rgba(47,179,107,.14);pointer-events:none}
+.barra-pasos i{display:block;height:100%;background:linear-gradient(90deg,#34C77B,#2E9E5E);border-radius:0 5px 5px 0;transition:width .4s ease}
+.tarea.pasos-completos .barra-pasos i{border-radius:0}
+.tarea.pasos-completos .meta{color:#2E9E5E;font-weight:600}
+
 </style>
 </head>
 <body>
@@ -770,7 +804,7 @@ function toast(m){var t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(
 function curso(d){var y=d.getFullYear(),ini=d.getMonth()>=8?y:y-1;var s=Math.floor((d-new Date(ini,8,1))/604800000)+1;
   return {etiqueta:"Curso "+ini+"/"+String(ini+1).slice(2),semana:s};}
 
-var state={diaHoy:null,siguiendoHoy:true,diasPasados:0,manuales:[],tareas:[],vista:"hoy",mes:new Date(),diaSel:hoyISO(),q:"",cat:null,qt:"",filtroT:"pendientes"};
+var state={diaHoy:null,siguiendoHoy:true,diasPasados:0,manuales:[],tareas:[],festivos:[],vista:"hoy",mes:new Date(),diaSel:hoyISO(),q:"",cat:null,qt:"",filtroT:"pendientes"};
 
 /* ---------- almacenamiento local + sincronización con Supabase ---------- */
 var SUPA_URL="https://fwehlxpahjxzpfpjoexv.supabase.co";
@@ -784,11 +818,12 @@ var Store={
   modo:"local",
   async init(onChange){
     this.leer(); onChange(); pintarEstado();
+    if(!Sync.conectado()) sembrarFestivos();
     Sync.arrancar();
   },
   datosListos(){ return true; },
-  leer(){state.manuales=lsGet("cs_manuales",[]);state.tareas=lsGet("cs_tareas",[]);},
-  escribir(){lsSet("cs_manuales",state.manuales);lsSet("cs_tareas",state.tareas);},
+  leer(){state.manuales=lsGet("cs_manuales",[]);state.tareas=lsGet("cs_tareas",[]);state.festivos=lsGet("cs_festivos",[]);recalcFestivos();},
+  escribir(){lsSet("cs_manuales",state.manuales);lsSet("cs_tareas",state.tareas);lsSet("cs_festivos",state.festivos);recalcFestivos();},
   async guardar(col,obj){
     obj._mod=new Date().toISOString();
     var l=state[col],i=-1;for(var k=0;k<l.length;k++) if(l[k].id===obj.id) i=k;
@@ -937,6 +972,7 @@ var Sync={
         if(!r||r.length<lote) break; desde+=lote;
       }
       this._aplicar(remotos);
+      if(!festivosSembrados()) sembrarFestivos();
       this.ultima=new Date().toISOString();lsSet("cs_ultima_sync",this.ultima);
       this.estado="ok";
     }catch(e){
@@ -949,12 +985,12 @@ var Sync={
   },
   _aplicar(remotos){
     var p=this.pendientes(),vistos={},cambios=false;
-    var nuevo={manuales:state.manuales.slice(),tareas:state.tareas.slice()};
+    var nuevo={manuales:state.manuales.slice(),tareas:state.tareas.slice(),festivos:(state.festivos||[]).slice()};
     function idx(l,id){for(var i=0;i<l.length;i++) if(l[i].id===id) return i;return -1;}
     remotos.forEach(function(r){
       vistos[r.id]=true;
       if(p[r.id]) return;                 /* hay un cambio local más reciente sin subir */
-      var col=r.coleccion==="manuales"?"manuales":"tareas",l=nuevo[col],i=idx(l,r.id);
+      var col=r.coleccion==="manuales"?"manuales":(r.coleccion==="festivos"?"festivos":"tareas"),l=nuevo[col],i=idx(l,r.id);
       if(r.borrado){ if(i>=0){l.splice(i,1);cambios=true;} return; }
       var o=r.datos||{};o.id=r.id;
       if(i<0){l.push(o);cambios=true;}
@@ -962,11 +998,11 @@ var Sync={
     });
     /* lo que existe aquí pero no en la nube (y no está pendiente) se vuelve a subir */
     var falta=false;
-    ["manuales","tareas"].forEach(function(col){nuevo[col].forEach(function(o){
+    ["manuales","tareas","festivos"].forEach(function(col){nuevo[col].forEach(function(o){
       if(!vistos[o.id]&&!p[o.id]){p[o.id]={c:col,b:false,n:"re"};falta=true;}
     });});
     if(falta){lsSet("cs_pendientes",p);this.programar(500);}
-    if(cambios){state.manuales=nuevo.manuales;state.tareas=nuevo.tareas;Store.escribir();render();}
+    if(cambios){state.manuales=nuevo.manuales;state.tareas=nuevo.tareas;state.festivos=nuevo.festivos;Store.escribir();render();}
   }
 };
 
@@ -1024,6 +1060,34 @@ function duracionTarea(t){ var f=finTarea(t); return f?Math.max(0,diasEntre(t.fe
    - "diaria": solo días laborables (lunes a viernes).
    - semanal / mensual / trimestral / anual: si la fecha cae en sábado o domingo,
      se adelanta al viernes anterior. */
+/* Días que no se trabaja (editables en Más → Días de fiesta; se sincronizan como la colección "festivos").
+   Lista inicial: curso 2026/27 en Carmona. */
+var FESTIVOS_INI=[
+  ["2026-10-12","2026-10-12","Fiesta Nacional de España"],["2026-11-02","2026-11-02","Todos los Santos"],
+  ["2026-12-07","2026-12-07","Día de la Constitución"],["2026-12-08","2026-12-08","Inmaculada Concepción"],
+  ["2026-12-24","2027-01-08","Vacaciones de Navidad"],["2027-02-26","2027-02-26","Día de la Comunidad Educativa"],
+  ["2027-03-01","2027-03-01","Día de Andalucía"],["2027-03-22","2027-03-28","Semana Santa"],
+  ["2027-05-01","2027-05-01","Fiesta del Trabajo"]];
+var FESTIVOS={};
+function listaFestivos(){return (state.festivos||[]).filter(function(x){return !x.marcador&&x.desde;}).sort(function(a,b){return a.desde<b.desde?-1:a.desde>b.desde?1:0;});}
+function recalcFestivos(){
+  var F={};
+  listaFestivos().forEach(function(x){var d=parseISO(x.desde),fin=parseISO(x.hasta||x.desde),n=0;
+    while(d<=fin&&n<400){F[iso(d)]=x.nombre||"Festivo";d=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1);n++;}});
+  FESTIVOS=F;
+}
+function festivosSembrados(){return (state.festivos||[]).some(function(x){return x.id==="fest-sembrado";});}
+function sembrarFestivos(){
+  if(festivosSembrados()) return;
+  state.festivos=state.festivos||[];
+  var nuevos=FESTIVOS_INI.map(function(a){return {id:"fest-"+a[0],desde:a[0],hasta:a[1],nombre:a[2]};});
+  nuevos.push({id:"fest-sembrado",marcador:true});
+  nuevos.forEach(function(o){o._mod=new Date().toISOString();if(!state.festivos.some(function(x){return x.id===o.id;}))state.festivos.push(o);});
+  Store.escribir();nuevos.forEach(function(o){Sync.marcar("festivos",o.id,false);});
+  render();
+}
+function festivoDe(f){return FESTIVOS[f]||null;}
+function noLaborable(t,d){return esFinde(d)||(t.ambito!=="unomas"&&!!FESTIVOS[iso(d)]);}
 function esFinde(d){var w=d.getDay();return w===0||w===6;}
 function patronNominal(t,candidatoISO){
   if(candidatoISO<t.fecha) return false;
@@ -1039,22 +1103,22 @@ function patronCoincide(t,candidatoISO){
   if(!t.fecha) return false;
   if(!t.repite||t.repite==="none") return candidatoISO===t.fecha;
   var b=parseISO(candidatoISO);
-  if(t.repite==="diaria") return candidatoISO>=t.fecha&&!esFinde(b);
-  if(esFinde(b)) return false;                         /* nunca cae en fin de semana */
+  if(t.repite==="diaria") return candidatoISO>=t.fecha&&!noLaborable(t,b);
+  if(noLaborable(t,b)) return false;                   /* nunca cae en fin de semana ni en festivo */
   if(patronNominal(t,candidatoISO)) return true;
-  if(b.getDay()===5){                                  /* viernes: recoge el sábado y el domingo siguientes */
-    for(var k=1;k<=2;k++){
-      var n=iso(new Date(b.getFullYear(),b.getMonth(),b.getDate()+k));
-      if(patronNominal(t,n)) return true;
-    }
+  /* último día de trabajo antes de un fin de semana o festivos: recoge los días no laborables siguientes */
+  for(var k=1;k<=20;k++){
+    var nd=new Date(b.getFullYear(),b.getMonth(),b.getDate()+k);
+    if(!noLaborable(t,nd)) break;
+    if(patronNominal(t,iso(nd))) return true;
   }
   return false;
 }
 function primeraOcurrencia(t){
   if(!t.repite||t.repite==="none") return t.fecha;
   var d=parseISO(t.fecha);
-  if(t.repite==="diaria"){while(esFinde(d)) d=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1);return iso(d);}
-  while(esFinde(d)) d=new Date(d.getFullYear(),d.getMonth(),d.getDate()-1);
+  if(t.repite==="diaria"){while(noLaborable(t,d)) d=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1);return iso(d);}
+  while(noLaborable(t,d)) d=new Date(d.getFullYear(),d.getMonth(),d.getDate()-1);
   return iso(d);
 }
 /* Fecha de inicio de la ocurrencia (del ciclo de repetición) a la que pertenece f, o null si f no cae en ninguna. */
@@ -1621,6 +1685,18 @@ function itemTarea(t,f,conFecha){
     var m=manualDe(t);
     if(t.hora) bits.push(t.hora);
     var np=(t.pasos||[]).length;if(m) bits.push(m.titulo);else if(np) bits.push(np+" paso"+(np===1?"":"s"));
+    /* la tarjeta se rellena de verde conforme se hacen las instrucciones */
+    var totP=m?(m.pasos||[]).length:np;
+    if(totP&&!estaHecha){
+      var progP=((t.progreso&&t.progreso[claveOcurrencia(t,f)])||[]).filter(function(i){return i<totP;}).length;
+      /* barra fina en el borde inferior de la tarjeta: avance de las instrucciones */
+      var barra=el("div",{class:"barra-pasos","aria-hidden":"true"}),relleno=el("i");
+      relleno.style.width=Math.round(progP*100/totP)+"%";barra.appendChild(relleno);
+      li.classList.add("con-barra");li._barra=barra;
+      if(!m) bits.pop();
+      bits.push(progP>=totP?"✓ Todos los pasos hechos":progP+" de "+totP+" pasos");
+      if(progP>=totP) li.classList.add("pasos-completos");
+    }
     if(noRealizada&&t.fechaOriginalFin){
       var dOrig=parseISO(t.fechaOriginalFin);
       bits.push("vencía el "+dOrig.getDate()+" "+MESES_C[dOrig.getMonth()]);
@@ -1636,6 +1712,7 @@ function itemTarea(t,f,conFecha){
   li.appendChild(b);
   if(estaVencida) li.appendChild(el("span",{class:"pill urg"},"tarde"));
   li.appendChild(el("span",{class:"chev"},"›"));
+  if(li._barra) li.appendChild(li._barra);
   return li;
 }
 function listaTareas(items,conFecha,vacio){
@@ -1645,7 +1722,7 @@ function listaTareas(items,conFecha,vacio){
   return ul;
 }
 function cabeceraDia(f,vacio){
-  var fd=parseISO(f),h=hoyISO(),dif=diasEntre(h,f),finde=(fd.getDay()===0||fd.getDay()===6);
+  var fd=parseISO(f),h=hoyISO(),dif=diasEntre(h,f),finde=(fd.getDay()===0||fd.getDay()===6)||!!festivoDe(f);
   var cab=el("div",{class:"diafecha"+(finde?" finde":"")+(dif===0?" eshoy":"")+(dif<0?" pasado":"")});
   var badge=el("div",{class:"diafecha-badge"});
   badge.appendChild(el("span",{class:"diafecha-dow"},DIAS[(fd.getDay()+6)%7].slice(0,3)));
@@ -1657,7 +1734,7 @@ function cabeceraDia(f,vacio){
   else if(dif===1) nom.appendChild(el("span",{class:"etq-dia"},"Mañana"));
   else if(dif===-1) nom.appendChild(el("span",{class:"etq-dia"},"Ayer"));
   txt.appendChild(nom);
-  txt.appendChild(el("span",{class:"diafecha-t"},fd.getDate()+" de "+MESES[fd.getMonth()]+(vacio?" · sin tareas":"")));
+  txt.appendChild(el("span",{class:"diafecha-t"},fd.getDate()+" de "+MESES[fd.getMonth()]+(festivoDe(f)?" · 🎉 "+festivoDe(f):"")+(vacio?" · sin tareas":"")));
   cab.appendChild(txt);
   return cab;
 }
@@ -1714,6 +1791,15 @@ function renderHoy(){
   hero.classList.toggle("completo",!!items.length&&!pend);
   /* tareas de ese día */
   var cont=$("#hoy-contenido");cont.textContent="";
+  if(festivoDe(f)){
+    var fa=el("div",{class:"festivo-aviso"});
+    fa.appendChild(el("span",{class:"festivo-ico"},"🎉"));
+    var ft=el("div");ft.appendChild(el("b",null,festivoDe(f)));ft.appendChild(el("span",null,dif<0?"No se trabajó este día.":(dif===0?"Hoy no se trabaja. ¡A disfrutar!":"Ese día no se trabaja.")));
+    fa.appendChild(ft);
+    var bst=el("button",{class:"festivo-trabajo",type:"button"},"Este día sí trabajo");
+    bst.addEventListener("click",function(){quitarDiaFestivo(f);});fa.appendChild(bst);
+    cont.appendChild(fa);
+  }
   if(!state.tareas.length&&!state.manuales.length){
     var v=el("div",{class:"vacio"});
     v.appendChild(el("p",null,"AdmSec+ está vacío. Empieza escribiendo tu primer manual o anotando una tarea."));
@@ -1767,7 +1853,7 @@ function renderCal(){
   for(var i=0;i<42;i++){
     var d=new Date(ini.getFullYear(),ini.getMonth(),ini.getDate()+i),f=iso(d);
     var fuera=d.getMonth()!==m.getMonth();
-    var cel=el("button",{class:"dia"+(fuera?" fuera":"")+(f===h?" hoy":"")+(f===state.diaSel?" sel":""),"aria-label":fmtLargo(d)});
+    var cel=el("button",{class:"dia"+(fuera?" fuera":"")+(f===h?" hoy":"")+(f===state.diaSel?" sel":"")+(festivoDe(f)?" festivo":""),"aria-label":fmtLargo(d)+(festivoDe(f)?", "+festivoDe(f):""),title:festivoDe(f)||""});
     cel.appendChild(el("span",null,String(d.getDate())));
     var ts=tareasDe(f);
     if(ts.length){
@@ -1783,13 +1869,16 @@ function renderCal(){
   }
   var ley=$("#cal-leyenda");
   if(!ley){ley=el("div",{class:"cal-leyenda",id:"cal-leyenda"});$("#grid").after(ley);}
-  ley.innerHTML='<span><i class="cnt"></i>tareas pendientes</span><span><i class="cnt atr"></i>atrasadas</span><span><i class="cnt ok"></i>todo hecho</span>';
+  ley.innerHTML='<span><i class="cnt"></i>tareas pendientes</span><span><i class="cnt atr"></i>atrasadas</span><span><i class="cnt ok"></i>todo hecho</span><span><i class="leyenda-festivo"></i>festivo</span>';
+  var bFe=$("#btn-festivos-cal");
+  if(!bFe){bFe=el("button",{class:"btn sec btn-festivos",id:"btn-festivos-cal",type:"button"},"🎉 Modificar días de fiesta");bFe.addEventListener("click",function(){abrirFestivos();});ley.after(bFe);}
   var det=$("#dia-detalle");det.textContent="";
   var cabD=el("div",{class:"diahead-fila"});
   cabD.appendChild(el("h3",{class:"diahead"},fmtLargo(parseISO(state.diaSel))));
   var bHoy=el("button",{class:"btn-abrir-hoy",type:"button"},"Abrir en Hoy ›");
   bHoy.addEventListener("click",function(){abrirDiaEnHoy(state.diaSel);});
   cabD.appendChild(bHoy);det.appendChild(cabD);
+  if(festivoDe(state.diaSel)) det.appendChild(el("p",{class:"festivo-linea"},"🎉 "+festivoDe(state.diaSel)+" · no se trabaja"));
   det.appendChild(listaTareas(tareasDe(state.diaSel).map(function(t){return{t:t,f:state.diaSel};}),false,"Día libre."));
   var b=el("button",{class:"btn sec"},"Añadir algo este día");
   b.style.marginTop=".7rem";
@@ -1947,6 +2036,71 @@ function renderManuales(){
   });
   cont.appendChild(ul);
 }
+function fmtFest(x){
+  var a=parseISO(x.desde),b=parseISO(x.hasta||x.desde);
+  function c(d){return DIAS[(d.getDay()+6)%7].slice(0,3)+" "+d.getDate()+" "+MESES_C[d.getMonth()]+(d.getFullYear()!==new Date().getFullYear()?" "+d.getFullYear():"");}
+  return (x.hasta&&x.hasta!==x.desde)?c(a)+" – "+c(b):c(a);
+}
+function abrirFestivos(){
+  abrirSheet(function(sh){
+    cabecera(sh,"Días de fiesta");
+    var p=el("p",null,"Días en los que no trabajas. Ese día sale un aviso en Hoy, se marca en el Calendario y las tareas que se repiten de AdmSec se adelantan al día de trabajo anterior.");
+    p.style.cssText="margin:0 0 .8rem;color:var(--muted);font-size:.88rem";sh.appendChild(p);
+    var ul=el("ul",{class:"lista-festivos"}),h=hoyISO(),l=listaFestivos();
+    if(!l.length) ul.appendChild(el("li",{class:"vacio-fest"},"No hay días de fiesta anotados."));
+    l.forEach(function(x){
+      var li=el("li",{class:(x.hasta||x.desde)<h?"pasado":""});
+      var b=el("button",{class:"fest-info",type:"button"});
+      b.appendChild(el("strong",null,x.nombre||"Festivo"));b.appendChild(el("small",null,fmtFest(x)));
+      b.addEventListener("click",function(){formFestivo(x.id);});
+      var d=el("button",{class:"fest-borrar",type:"button","aria-label":"Quitar "+(x.nombre||"festivo")},"✕");
+      d.addEventListener("click",function(){if(confirm("¿Quitar «"+(x.nombre||"Festivo")+"» ("+fmtFest(x)+")? Ese día pasará a ser de trabajo.")){Store.borrar("festivos",x.id);abrirFestivos();toast("Día de fiesta quitado.");}});
+      li.appendChild(b);li.appendChild(d);ul.appendChild(li);
+    });
+    sh.appendChild(ul);
+    var acc=el("div",{class:"acciones"});
+    var ba=el("button",{class:"btn"},"＋ Añadir día de fiesta");ba.addEventListener("click",function(){formFestivo(null);});
+    var bc=el("button",{class:"btn sec"},"Cerrar");bc.addEventListener("click",cerrarSheet);
+    acc.appendChild(ba);acc.appendChild(bc);sh.appendChild(acc);
+  });
+}
+function formFestivo(id){
+  var x=id?listaFestivos().filter(function(o){return o.id===id;})[0]:null;
+  abrirSheet(function(sh){
+    cabecera(sh,x?"Editar día de fiesta":"Nuevo día de fiesta");
+    var nom=el("input",{type:"text",placeholder:"Feria de Carmona"});nom.value=x?(x.nombre||""):"";
+    var de=el("input",{type:"date"});de.value=x?x.desde:(state.diaSel||hoyISO());
+    var ha=el("input",{type:"date"});ha.value=x?(x.hasta||x.desde):de.value;
+    de.addEventListener("change",function(){if(!ha.value||ha.value<de.value)ha.value=de.value;});
+    sh.appendChild(campo("Nombre",nom));
+    var fila=el("div",{class:"fila2"});fila.appendChild(campo("Desde",de));fila.appendChild(campo("Hasta (si son varios días)",ha));sh.appendChild(fila);
+    var acc=el("div",{class:"acciones"});
+    var g=el("button",{class:"btn"},"Guardar");
+    g.addEventListener("click",function(){
+      if(!de.value){toast("Pon la fecha.");return;}
+      var hasta=ha.value&&ha.value>=de.value?ha.value:de.value;
+      var o=x?JSON.parse(JSON.stringify(x)):{id:"fest-"+uid()};
+      o.desde=de.value;o.hasta=hasta;o.nombre=nom.value.trim()||"Día de fiesta";
+      Store.guardar("festivos",o);toast("Día de fiesta guardado.");abrirFestivos();
+    });
+    var c=el("button",{class:"btn sec"},"Volver");c.addEventListener("click",abrirFestivos);
+    acc.appendChild(g);
+    if(x){var bq=el("button",{class:"btn sec peligro"},"Quitar este día de fiesta");bq.addEventListener("click",function(){if(confirm("¿Quitarlo?")){Store.borrar("festivos",x.id);toast("Día de fiesta quitado.");abrirFestivos();}});acc.appendChild(bq);}
+    acc.appendChild(c);sh.appendChild(acc);
+  });
+}
+/* "Este día sí trabajo": quita ese día (si está dentro de un periodo, lo parte en dos) */
+function quitarDiaFestivo(f){
+  var x=listaFestivos().filter(function(o){return o.desde<=f&&(o.hasta||o.desde)>=f;})[0];if(!x)return;
+  var d=parseISO(f),ant=iso(new Date(d.getFullYear(),d.getMonth(),d.getDate()-1)),sig=iso(new Date(d.getFullYear(),d.getMonth(),d.getDate()+1));
+  var hasta=x.hasta||x.desde;
+  if(x.desde===f&&hasta===f){Store.borrar("festivos",x.id);}
+  else if(x.desde===f){var a=JSON.parse(JSON.stringify(x));a.desde=sig;Store.guardar("festivos",a);}
+  else if(hasta===f){var b=JSON.parse(JSON.stringify(x));b.hasta=ant;Store.guardar("festivos",b);}
+  else{var c1=JSON.parse(JSON.stringify(x));c1.hasta=ant;Store.guardar("festivos",c1);
+       Store.guardar("festivos",{id:"fest-"+uid(),desde:sig,hasta:hasta,nombre:x.nombre});}
+  toast("Anotado: ese día trabajas.");
+}
 function renderMas(){
   var ul=$("#ajustes");ul.textContent="";
   function sec(t,clase){ul.appendChild(el("li",{class:"ajustes-sec"+(clase?" "+clase:"")},t));}
@@ -1959,6 +2113,8 @@ function renderMas(){
   var nPend=pendientesAnteriores().length;
   sec("Tareas");
   it("traer","Pasar pendientes a hoy",nPend?(nPend+" tarea"+(nPend===1?"":"s")+" de días anteriores sin hacer"):"No hay nada pendiente de días anteriores",traerPendientesAHoy,nPend?"destacado":"");
+  var nF=listaFestivos().length;
+  it("calendario","Días de fiesta",nF?("Días que no trabajas · "+nF+" anotado"+(nF===1?"":"s")):"Añade los días que no trabajas",abrirFestivos);
   sec("Datos");
   it("copia","Copia de seguridad","Guarda un archivo con todos tus manuales y tareas",exportarCopia);
   it("restaurar","Restaurar copia de seguridad","Recupera manuales y tareas desde un archivo",abrirImportar);
@@ -2173,7 +2329,20 @@ function marcarPaso(id,f,i){
   var c=JSON.parse(JSON.stringify(t));c.progreso=c.progreso||{};
   var a=c.progreso[clave]||[],k=a.indexOf(i);
   if(k>=0)a.splice(k,1);else a.push(i);
-  c.progreso[clave]=a;Store.guardar("tareas",c);
+  c.progreso[clave]=a;
+  /* con todos los pasos hechos, la tarea se marca sola; si se desmarca un paso, vuelve a pendiente */
+  var m=manualDe(t),tot=m?(m.pasos||[]).length:(t.pasos||[]).length;
+  var hechos=a.filter(function(x){return x<tot;}).length;
+  c.hechas=c.hechas||{};c.hechasEn=c.hechasEn||{};
+  var completa=false;
+  if(tot&&hechos>=tot&&!c.hechas[clave]){c.hechas[clave]=true;c.hechasEn[clave]=hoyISO();completa=true;}
+  else if(tot&&hechos<tot&&c.hechas[clave]&&k>=0){delete c.hechas[clave];delete c.hechasEn[clave];}
+  Store.guardar("tareas",c);
+  if(completa){
+    var delDia=tareasDe(f);
+    if(delDia.length&&delDia.every(function(x){return hecha(x,f);})) celebrar();
+    else toast("✓ Todos los pasos hechos: tarea completada.");
+  }
 }
 function formTarea(id,fechaPre,manualPre,tipoPre,voz){
   var t=id?state.tareas.filter(function(x){return x.id===id;})[0]:null;
@@ -2525,7 +2694,7 @@ window.addEventListener("load",function(){ajustarVentana(modoVentana());});
 if("serviceWorker" in navigator && (location.protocol==="https:"||location.hostname==="localhost") && !window.AdmSecAndroid){
   window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});
 }
-window.AdmSecDebug={Sync:Sync,Store:Store,state:state,ocurreEn:ocurreEn,rrule:rrule,primera:primeraOcurrencia};
+window.AdmSecDebug={Sync:Sync,Store:Store,state:state,abrirDia:abrirDiaEnHoy,ocurreEn:ocurreEn,rrule:rrule,primera:primeraOcurrencia};
 /* botón Atrás de Android: devuelve true si la app lo ha gestionado */
 window.admsecAtras=function(){
   if(!$("#overlay").hidden){cerrarSheet();return true;}
