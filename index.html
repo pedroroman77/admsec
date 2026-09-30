@@ -819,6 +819,7 @@ var Store={
   async init(onChange){
     this.leer(); onChange(); pintarEstado();
     if(!Sync.conectado()) sembrarFestivos();
+    repararPasos();
     Sync.arrancar();
   },
   datosListos(){ return true; },
@@ -973,6 +974,7 @@ var Sync={
       }
       this._aplicar(remotos);
       if(!festivosSembrados()) sembrarFestivos();
+      repararPasos();
       this.ultima=new Date().toISOString();lsSet("cs_ultima_sync",this.ultima);
       this.estado="ok";
     }catch(e){
@@ -1187,6 +1189,7 @@ function intentarBarridoLunes(){
     var o=JSON.parse(JSON.stringify(t));
     o.fechaOriginalInicio=o.fechaOriginalInicio||o.fecha;
     o.fechaOriginalFin=o.fechaOriginalFin||finTarea(t);
+    conservarPasos(o,t.fecha,hoy);
     o.fecha=hoy;o.fechaFin=hoy;o.estado="no_realizada";
     Store.guardar("tareas",o);
   });
@@ -1202,6 +1205,22 @@ function pendientesAnteriores(){
   });
 }
 /* botón de Más: pasar a hoy todo lo pendiente de días anteriores */
+/* al cambiar de fecha una tarea sin repetición, los pasos ya hechos se conservan */
+function conservarPasos(o,fechaVieja,fechaNueva){
+  if(!o.progreso||fechaVieja===fechaNueva||(o.repite&&o.repite!=="none")) return;
+  var p=o.progreso[fechaVieja];
+  if(p&&p.length){o.progreso[fechaNueva]=p.slice();delete o.progreso[fechaVieja];}
+}
+/* recupera los pasos de tareas que se pasaron de día antes de este arreglo */
+function repararPasos(){
+  (state.tareas||[]).forEach(function(t){
+    if((t.repite&&t.repite!=="none")||!t.fechaOriginalInicio||!t.progreso) return;
+    var viejo=t.progreso[t.fechaOriginalInicio];
+    if(viejo&&viejo.length&&!(t.progreso[t.fecha]&&t.progreso[t.fecha].length)&&t.fechaOriginalInicio!==t.fecha){
+      var o=JSON.parse(JSON.stringify(t));conservarPasos(o,t.fechaOriginalInicio,t.fecha);Store.guardar("tareas",o);
+    }
+  });
+}
 function traerPendientesAHoy(){
   var lista=pendientesAnteriores().sort(function(a,b){return finTarea(a)<finTarea(b)?-1:1;});
   if(!lista.length){toast("No hay tareas pendientes de días anteriores.");return;}
@@ -1224,6 +1243,7 @@ function traerPendientesAHoy(){
         var o=JSON.parse(JSON.stringify(t));
         o.fechaOriginalInicio=o.fechaOriginalInicio||o.fecha;
         o.fechaOriginalFin=o.fechaOriginalFin||finTarea(t);
+        conservarPasos(o,t.fecha,hoy);
         o.fecha=hoy;o.fechaFin=hoy;o.estado="no_realizada";
         Store.guardar("tareas",o);
       });
@@ -2505,6 +2525,7 @@ function formTarea(id,fechaPre,manualPre,tipoPre,voz){
         if(ff<o.fecha){toast("La fecha de fin no puede ser anterior a la de inicio.");fechaFin.focus();return;}
         o.fechaFin=ff;
       }
+      if(t) conservarPasos(o,t.fecha,o.fecha);
       Store.guardar("tareas",o);cerrarSheet();toast(tipoActual==="reunion"?(ambito==="unomas"?"Fecha importante guardada.":"Reunión guardada."):"Tarea guardada.");
     });
     var c=el("button",{class:"btn sec"},"Cancelar");c.addEventListener("click",cerrarSheet);
