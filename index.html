@@ -956,13 +956,26 @@ var Sync={
         var datos={};if(obj) for(var k in obj) if(k!=="id") datos[k]=obj[k];
         filas.push({id:id,user_id:s.user_id,coleccion:x.c,datos:datos,borrado:!obj,actualizado:new Date().toISOString()});
       });
-      for(var a=0;a<filas.length;a+=200){
-        await this._api("/rest/v1/"+TABLA+"?on_conflict=user_id,id",{method:"POST",body:filas.slice(a,a+200),
+      /* primero tareas y manuales; los días de fiesta van aparte, para que un fallo con ellos
+         nunca deje sin sincronizar las tareas */
+      var base=filas.filter(function(f){return f.coleccion!=="festivos";}),extra=filas.filter(function(f){return f.coleccion==="festivos";});
+      var subidos={};
+      for(var a=0;a<base.length;a+=200){
+        await this._api("/rest/v1/"+TABLA+"?on_conflict=user_id,id",{method:"POST",body:base.slice(a,a+200),
           headers:{"Prefer":"resolution=merge-duplicates,return=minimal"}});
+        base.slice(a,a+200).forEach(function(f){subidos[f.id]=true;});
+      }
+      this.fallaFestivos=false;
+      if(extra.length){
+        try{
+          await this._api("/rest/v1/"+TABLA+"?on_conflict=user_id,id",{method:"POST",body:extra,
+            headers:{"Prefer":"resolution=merge-duplicates,return=minimal"}});
+          extra.forEach(function(f){subidos[f.id]=true;});
+        }catch(eF){ if(eF instanceof TypeError) throw eF; this.fallaFestivos=true; }
       }
       /* quitar de pendientes solo lo que ya se subió (y no ha cambiado mientras tanto) */
       var p2=this.pendientes();
-      ids.forEach(function(id){ if(p2[id]&&p2[id].n===p[id].n) delete p2[id]; });
+      ids.forEach(function(id){ if(subidos[id]&&p2[id]&&p2[id].n===p[id].n) delete p2[id]; });
       lsSet("cs_pendientes",p2);
 
       /* descargar */
@@ -1050,7 +1063,8 @@ function pintarEstado(){
   if(Sync.estado==="sincronizando") t+="Sincronizando…";
   else if(Sync.estado==="sin-conexion") t+="Sin conexión: los cambios se guardan aquí y se subirán al volver internet"+(np?" ("+np+" pendientes).":".");
   else if(Sync.estado==="error") t+="No se pudo sincronizar"+(Sync._detalle?" ("+Sync._detalle+")":"")+". Se reintentará solo.";
-  else if(Sync.ultima){var d=new Date(Sync.ultima);t+="Sincronizado a las "+z(d.getHours())+":"+z(d.getMinutes())+(np?" · "+np+" cambios por subir.":".");}
+  else if(Sync.ultima){var d=new Date(Sync.ultima);t+="Sincronizado a las "+z(d.getHours())+":"+z(d.getMinutes())+(np&&!Sync.fallaFestivos?" · "+np+" cambios por subir.":".");
+    if(Sync.fallaFestivos) t+=" Los días de fiesta solo se guardan en este dispositivo (falta un ajuste en Supabase).";}
   else t+="Pendiente de sincronizar.";
   e2.textContent=t;
 }
