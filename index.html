@@ -692,6 +692,88 @@ body.en-chat .cuerpo{background-color:var(--wa-fondo);background-image:
 .tarea.pasos-completos .barra-pasos i{border-radius:0}
 .tarea.pasos-completos .meta{color:#2E9E5E;font-weight:600}
 
+/* facturas */
+.f-res{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.4rem;margin:.1rem 0 .8rem}
+.f-res button{border:1px solid var(--line);background:var(--bg);border-radius:14px;padding:.55rem .2rem;text-align:center;font:inherit;color:var(--ink);cursor:pointer}
+.f-res b{display:block;font-size:1.35rem;line-height:1.1}
+.f-res small{font-size:.66rem;color:var(--muted);line-height:1.15;display:block}
+.f-res .f-t-solicitar b{color:#C2410C}.f-res .f-t-escanear b{color:#7C3AED}.f-res .f-t-subir b{color:#1A73E8}.f-res .f-t-abonar b{color:#0F8A5F}
+.f-res button.on{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.f-lista{list-style:none;padding:0;margin:0}
+.fact{border:1px solid var(--line);border-radius:14px;margin:0 0 .55rem;background:var(--bg);box-shadow:0 1px 2px rgba(32,48,58,.06);overflow:hidden}
+.fact-btn{display:block;width:100%;text-align:left;background:none;border:0;font:inherit;color:inherit;padding:.75rem .85rem;cursor:pointer}
+.fact .fila{display:flex;gap:.6rem;align-items:center}
+.fila2.f-prov{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}
+.fact .ico{flex:none;width:2.3rem;height:2.3rem;border-radius:10px;display:grid;place-items:center;background:rgba(26,115,232,.1);font-size:1.15rem}
+.fact.unomas-f .ico{background:rgba(234,100,80,.12)}
+.fact .info{flex:1;min-width:0}
+.fact .prov{font-weight:700;font-size:.98rem;color:var(--ink)}
+.fact .con{font-size:.84rem;color:var(--muted);margin-top:.1rem}
+.f-um{color:#EA6450}
+.fact .imp{font-weight:700;white-space:nowrap;font-size:.95rem;color:var(--ink)}
+.fact .pasosf{display:flex;gap:.35rem;margin-top:.55rem;flex-wrap:wrap}
+.pf{display:inline-flex;align-items:center;font-size:.74rem;font-weight:600;padding:.22rem .55rem;border-radius:99px;border:1px solid var(--line);color:var(--muted);background:var(--surface)}
+.pf.ok{background:rgba(47,179,107,.14);border-color:transparent;color:#1F7A48}
+.pf.act{background:rgba(234,88,12,.12);border-color:rgba(234,88,12,.4);color:#C2410C}
+.fact.tarde{border-left:4px solid var(--naranja)}
+.fact .aviso{font-size:.75rem;color:#C2410C;font-weight:600;margin-top:.4rem}
+.fact .aviso.suave{color:var(--muted);font-weight:500}
+.fact.hecha{background:var(--verde-soft)}
+.fact.hecha .prov{text-decoration:line-through;color:var(--muted)}
+.f-sec{font-size:.78rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:1rem .1rem .5rem}
+.f-nada{text-align:center;color:var(--muted);padding:1.5rem 0}
+.chk3{display:grid;gap:.45rem}
+.chk3-op{display:flex;align-items:center;gap:.6rem;border:1px solid var(--line);border-radius:12px;padding:.55rem .75rem;font:inherit;font-size:.95rem;background:var(--bg);color:var(--ink);text-align:left;cursor:pointer}
+.chk3-op.on{border-color:#2FB36B;background:rgba(47,179,107,.08)}
+.chk3-op .box{flex:none;width:1.35rem;height:1.35rem;border-radius:6px;border:2px solid var(--muted);display:grid;place-items:center;font-size:.85rem;color:transparent}
+.chk3-op.on .box{background:#2FB36B;border-color:#2FB36B;color:#fff}
+.chk3-op small{display:block;color:var(--muted);font-size:.78rem}
+.dstep{display:flex;gap:.7rem;align-items:center;width:100%;padding:.7rem .2rem;border:0;border-bottom:1px solid var(--line-soft);background:none;font:inherit;color:var(--ink);text-align:left;cursor:pointer}
+.dstep .c{flex:none;width:2rem;height:2rem;border-radius:8px;border:2px solid var(--muted);display:grid;place-items:center;color:#fff;font-weight:800}
+.dstep.ok .c{background:#2FB36B;border-color:#2FB36B}
+.dstep b{display:block}.dstep small{color:var(--muted)}
+.btn-drive{display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;margin-top:.9rem;padding:.75rem;border-radius:12px;border:1px solid var(--line);background:var(--bg);font:inherit;font-weight:600;color:var(--ink);cursor:pointer}
+.f-link{display:block;margin:.4rem auto 0;background:none;border:0;color:var(--muted);font:inherit;font-size:.8rem;text-decoration:underline;cursor:pointer}
+.f-det-sub{margin:0 0 .6rem;color:var(--muted)}
+.f-det-sub b{color:var(--ink)}
+.f-banner{display:flex;gap:.7rem;align-items:center;width:100%;text-align:left;font:inherit;color:var(--ink);border:1px solid rgba(26,115,232,.3);background:rgba(26,115,232,.07);border-radius:14px;padding:.7rem .9rem;margin:0 0 .8rem;cursor:pointer}
+.f-banner.tarde{border-color:rgba(234,88,12,.45);background:rgba(234,88,12,.08)}
+.f-banner-ico{font-size:1.5rem}
+.f-banner b{display:block}.f-banner span{font-size:.84rem;color:var(--muted)}
+.f-banner .chev{margin-left:auto;font-size:1.2rem}
+
+/* Hoy / Todas las tareas */
+.seg-hoyt{margin:0 0 .75rem}
+.seg-hoyt button{font-size:.9rem;font-weight:600}
+/* compras */
+.f-res.dos{grid-template-columns:repeat(2,minmax(0,1fr))}
+.f-res .f-t-pedir b{color:#C2410C}.f-res .f-t-recibir b{color:#7C3AED}
+.fact .ico.c-ico{background:rgba(15,138,95,.12)}
+/* tareas automáticas */
+.tarea.t-virt{position:relative;overflow:hidden;cursor:pointer}
+.t-virt-facturas{border-color:rgba(26,115,232,.45)!important;background:linear-gradient(100deg,rgba(26,115,232,.09),transparent 75%),var(--bg)!important}
+.t-virt-compras{border-color:rgba(15,138,95,.45)!important;background:linear-gradient(100deg,rgba(15,138,95,.09),transparent 75%),var(--bg)!important}
+.t-virt .virt-ico{display:grid;place-items:center;font-size:1.05rem;border-style:dashed!important;background:transparent!important;color:inherit!important;opacity:1!important}
+.t-virt-facturas .virt-ico{border-color:rgba(26,115,232,.6)!important}
+.t-virt-compras .virt-ico{border-color:rgba(15,138,95,.6)!important}
+.t-virt .t{font-weight:700}
+.t-virt .meta{white-space:normal}
+.pill.v-cnt{color:#fff;margin-left:.4rem;font-weight:700}
+.t-virt-facturas .v-cnt{background:#1A73E8}.t-virt-compras .v-cnt{background:#0F8A5F}
+.t-virt > .v-barra{position:absolute;left:0;right:0;bottom:0;height:5px}
+.t-virt-facturas .v-barra{background:rgba(26,115,232,.14)}.t-virt-facturas .v-barra i{background:#1A73E8}
+.t-virt-compras .v-barra{background:rgba(15,138,95,.14)}.t-virt-compras .v-barra i{background:#0F8A5F}
+.tareas-virt{margin-bottom:.55rem}
+
+.cab-mas{flex:0 0 auto;width:2.6rem;height:2.6rem;border-radius:50%;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);display:grid;place-items:center;cursor:pointer;padding:0}
+.cab-mas svg{width:1.35rem;height:1.35rem}
+.cab-mas[aria-current="true"]{background:var(--pri-soft,rgba(19,45,96,.1));border-color:var(--pri-line,var(--line))}
+
+.trasl-lista .tarea.trasl{cursor:pointer;user-select:none}
+.trasl-lista .tarea.no-elegida{opacity:.5;border-left-color:var(--line)!important;background:var(--bg)!important}
+.trasl-lista .check[aria-pressed="false"]{color:transparent;background:transparent}
+.trasl-todas{margin:0 0 .5rem auto;display:block}
+
 </style>
 </head>
 <body>
@@ -701,6 +783,7 @@ body.en-chat .cuerpo{background-color:var(--wa-fondo);background-image:
     <h1 id="cab-titulo">Hoy<span class="sub" id="cab-sub"></span></h1>
     <button class="cab-chat" data-action="chat" aria-label="Chatear con Don Bosco"><span class="bosco-av"></span></button>
     <button class="panico" data-action="panico" aria-label="Botón del pánico">SOS</button>
+    <button class="cab-mas" data-vista="mas" aria-label="Más: ajustes y copias"><span data-ico="mas"></span></button>
   </header>
 
   <div class="cuerpo">
@@ -738,6 +821,20 @@ body.en-chat .cuerpo{background-color:var(--wa-fondo);background-image:
       <div id="lista-tareas-todas"></div>
     </section>
 
+    <section class="view" id="v-facturas" hidden>
+      <div class="f-res" id="f-res"></div>
+      <div class="buscar"><input id="qf" type="search" placeholder="Buscar proveedor, importe o mes" aria-label="Buscar facturas"></div>
+      <div class="cats" id="filtros-facturas"></div>
+      <div id="lista-facturas"></div>
+    </section>
+
+    <section class="view" id="v-compras" hidden>
+      <div class="f-res dos" id="c-res"></div>
+      <div class="buscar"><input id="qc" type="search" placeholder="Buscar artículo o empresa" aria-label="Buscar compras"></div>
+      <div class="cats" id="filtros-compras"></div>
+      <div id="lista-compras"></div>
+    </section>
+
     <section class="view" id="v-manuales" hidden>
       <div class="buscar"><input id="q" type="search" placeholder="Buscar procedimiento, paso o nota" aria-label="Buscar manuales"></div>
       <div class="cats" id="cats"></div>
@@ -771,8 +868,9 @@ body.en-chat .cuerpo{background-color:var(--wa-fondo);background-image:
   <button data-vista="tareas"><span class="gl" data-ico="tareas"></span>Tareas</button>
   <button data-vista="hoy" aria-current="true"><span class="gl" data-ico="hoy"></span>Hoy</button>
   <button data-vista="calendario"><span class="gl" data-ico="calendario"></span>Calendario</button>
+  <button data-vista="facturas"><span class="gl" data-ico="factura"></span>Facturas</button>
+  <button data-vista="compras"><span class="gl" data-ico="compra"></span>Compras</button>
   <button data-vista="manuales"><span class="gl" data-ico="manuales"></span>Manuales</button>
-  <button data-vista="mas"><span class="gl" data-ico="mas"></span>Más</button>
 </nav>
 <button class="fab-voz" data-action="voz" aria-label="Crear tarea por voz"><span data-ico="micro"></span></button>
 <button class="fab" data-action="crear" aria-label="Crear"><span data-ico="nuevo"></span></button>
@@ -790,7 +888,7 @@ var MESES_C=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","
 var DIAS=["lunes","martes","miércoles","jueves","viernes","sábado","domingo"];
 var CATEGORIAS=["Matriculación","Becas y ayudas","Alumnado","Personal","Documentación oficial","Inventario y compras","Comunicación","Órganos colegiados","Económico","Otros"];
 var REPS={none:"No se repite",diaria:"Cada día laborable (lunes a viernes)",semanal:"Cada semana",mensual:"Cada mes",trimestral:"Cada trimestre",anual:"Cada curso"};
-var TITULOS={chat:"Chat",hoy:"Agenda",calendario:"Calendario",tareas:"Tareas",manuales:"Manuales",mas:"Más"};
+var TITULOS={chat:"Chat",hoy:"Agenda",calendario:"Calendario",tareas:"Tareas",facturas:"Facturas",compras:"Compras",manuales:"Manuales",mas:"Más"};
 
 function $(s,c){return (c||document).querySelector(s);}
 function el(t,a,txt){var e=document.createElement(t);if(a)for(var k in a){if(k==="class")e.className=a[k];else e.setAttribute(k,a[k]);}if(txt!=null)e.textContent=txt;return e;}
@@ -804,7 +902,7 @@ function toast(m){var t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(
 function curso(d){var y=d.getFullYear(),ini=d.getMonth()>=8?y:y-1;var s=Math.floor((d-new Date(ini,8,1))/604800000)+1;
   return {etiqueta:"Curso "+ini+"/"+String(ini+1).slice(2),semana:s};}
 
-var state={diaHoy:null,siguiendoHoy:true,diasPasados:0,manuales:[],tareas:[],festivos:[],vista:"hoy",mes:new Date(),diaSel:hoyISO(),q:"",cat:null,qt:"",filtroT:"pendientes"};
+var state={diaHoy:null,siguiendoHoy:true,diasPasados:0,manuales:[],tareas:[],festivos:[],facturas:[],compras:[],qf:"",filtroF:"pendientes",pasoF:null,qc:"",filtroC:"pendientes",pasoC:null,vista:"hoy",mes:new Date(),diaSel:hoyISO(),q:"",cat:null,qt:"",filtroT:"pendientes"};
 
 /* ---------- almacenamiento local + sincronización con Supabase ---------- */
 var SUPA_URL="https://fwehlxpahjxzpfpjoexv.supabase.co";
@@ -823,8 +921,8 @@ var Store={
     Sync.arrancar();
   },
   datosListos(){ return true; },
-  leer(){state.manuales=lsGet("cs_manuales",[]);state.tareas=lsGet("cs_tareas",[]);state.festivos=lsGet("cs_festivos",[]);recalcFestivos();},
-  escribir(){lsSet("cs_manuales",state.manuales);lsSet("cs_tareas",state.tareas);lsSet("cs_festivos",state.festivos);recalcFestivos();},
+  leer(){state.manuales=lsGet("cs_manuales",[]);state.tareas=lsGet("cs_tareas",[]);state.festivos=lsGet("cs_festivos",[]);state.facturas=lsGet("cs_facturas",[]);state.compras=lsGet("cs_compras",[]);recalcFestivos();},
+  escribir(){lsSet("cs_manuales",state.manuales);lsSet("cs_tareas",state.tareas);lsSet("cs_festivos",state.festivos);lsSet("cs_facturas",state.facturas);lsSet("cs_compras",state.compras);recalcFestivos();},
   async guardar(col,obj){
     obj._mod=new Date().toISOString();
     var l=state[col],i=-1;for(var k=0;k<l.length;k++) if(l[k].id===obj.id) i=k;
@@ -958,20 +1056,21 @@ var Sync={
       });
       /* primero tareas y manuales; los días de fiesta van aparte, para que un fallo con ellos
          nunca deje sin sincronizar las tareas */
-      var base=filas.filter(function(f){return f.coleccion!=="festivos";}),extra=filas.filter(function(f){return f.coleccion==="festivos";});
+      var base=filas.filter(function(f){return f.coleccion==="tareas"||f.coleccion==="manuales";}),extra=filas.filter(function(f){return f.coleccion!=="tareas"&&f.coleccion!=="manuales";});
       var subidos={};
       for(var a=0;a<base.length;a+=200){
         await this._api("/rest/v1/"+TABLA+"?on_conflict=user_id,id",{method:"POST",body:base.slice(a,a+200),
           headers:{"Prefer":"resolution=merge-duplicates,return=minimal"}});
         base.slice(a,a+200).forEach(function(f){subidos[f.id]=true;});
       }
-      this.fallaFestivos=false;
-      if(extra.length){
+      this.fallaFestivos=false;this.fallanCol=[];
+      var self=this,cols={};extra.forEach(function(f){(cols[f.coleccion]=cols[f.coleccion]||[]).push(f);});
+      for(var cn in cols){
         try{
-          await this._api("/rest/v1/"+TABLA+"?on_conflict=user_id,id",{method:"POST",body:extra,
+          await this._api("/rest/v1/"+TABLA+"?on_conflict=user_id,id",{method:"POST",body:cols[cn],
             headers:{"Prefer":"resolution=merge-duplicates,return=minimal"}});
-          extra.forEach(function(f){subidos[f.id]=true;});
-        }catch(eF){ if(eF instanceof TypeError) throw eF; this.fallaFestivos=true; }
+          cols[cn].forEach(function(f){subidos[f.id]=true;});
+        }catch(eF){ if(eF instanceof TypeError) throw eF; self.fallanCol.push(cn); if(cn==="festivos") self.fallaFestivos=true; }
       }
       /* quitar de pendientes solo lo que ya se subió (y no ha cambiado mientras tanto) */
       var p2=this.pendientes();
@@ -988,7 +1087,8 @@ var Sync={
       this._aplicar(remotos);
       if(!festivosSembrados()) sembrarFestivos();
       repararPasos();
-      this.ultima=new Date().toISOString();lsSet("cs_ultima_sync",this.ultima);
+      this.ultima=new Date().toISOString();
+      setTimeout(avisoDiarioPendientes,300);lsSet("cs_ultima_sync",this.ultima);
       this.estado="ok";
     }catch(e){
       if(e&&e.message==="sin-sesion"){this.estado="";}
@@ -1000,12 +1100,12 @@ var Sync={
   },
   _aplicar(remotos){
     var p=this.pendientes(),vistos={},cambios=false;
-    var nuevo={manuales:state.manuales.slice(),tareas:state.tareas.slice(),festivos:(state.festivos||[]).slice()};
+    var nuevo={manuales:state.manuales.slice(),tareas:state.tareas.slice(),festivos:(state.festivos||[]).slice(),facturas:(state.facturas||[]).slice(),compras:(state.compras||[]).slice()};
     function idx(l,id){for(var i=0;i<l.length;i++) if(l[i].id===id) return i;return -1;}
     remotos.forEach(function(r){
       vistos[r.id]=true;
       if(p[r.id]) return;                 /* hay un cambio local más reciente sin subir */
-      var col=r.coleccion==="manuales"?"manuales":(r.coleccion==="festivos"?"festivos":"tareas"),l=nuevo[col],i=idx(l,r.id);
+      var col=(r.coleccion==="manuales"||r.coleccion==="festivos"||r.coleccion==="facturas"||r.coleccion==="compras")?r.coleccion:"tareas",l=nuevo[col],i=idx(l,r.id);
       if(r.borrado){ if(i>=0){l.splice(i,1);cambios=true;} return; }
       var o=r.datos||{};o.id=r.id;
       if(i<0){l.push(o);cambios=true;}
@@ -1013,11 +1113,11 @@ var Sync={
     });
     /* lo que existe aquí pero no en la nube (y no está pendiente) se vuelve a subir */
     var falta=false;
-    ["manuales","tareas","festivos"].forEach(function(col){nuevo[col].forEach(function(o){
+    ["manuales","tareas","festivos","facturas","compras"].forEach(function(col){nuevo[col].forEach(function(o){
       if(!vistos[o.id]&&!p[o.id]){p[o.id]={c:col,b:false,n:"re"};falta=true;}
     });});
     if(falta){lsSet("cs_pendientes",p);this.programar(500);}
-    if(cambios){state.manuales=nuevo.manuales;state.tareas=nuevo.tareas;state.festivos=nuevo.festivos;Store.escribir();render();}
+    if(cambios){state.manuales=nuevo.manuales;state.tareas=nuevo.tareas;state.festivos=nuevo.festivos;state.facturas=nuevo.facturas;state.compras=nuevo.compras;Store.escribir();render();}
   }
 };
 
@@ -1063,8 +1163,8 @@ function pintarEstado(){
   if(Sync.estado==="sincronizando") t+="Sincronizando…";
   else if(Sync.estado==="sin-conexion") t+="Sin conexión: los cambios se guardan aquí y se subirán al volver internet"+(np?" ("+np+" pendientes).":".");
   else if(Sync.estado==="error") t+="No se pudo sincronizar"+(Sync._detalle?" ("+Sync._detalle+")":"")+". Se reintentará solo.";
-  else if(Sync.ultima){var d=new Date(Sync.ultima);t+="Sincronizado a las "+z(d.getHours())+":"+z(d.getMinutes())+(np&&!Sync.fallaFestivos?" · "+np+" cambios por subir.":".");
-    if(Sync.fallaFestivos) t+=" Los días de fiesta solo se guardan en este dispositivo (falta un ajuste en Supabase).";}
+  else if(Sync.ultima){var d=new Date(Sync.ultima);t+="Sincronizado a las "+z(d.getHours())+":"+z(d.getMinutes())+(np&&!(Sync.fallanCol&&Sync.fallanCol.length)?" · "+np+" cambios por subir.":".");
+    if(Sync.fallanCol&&Sync.fallanCol.length) t+=" "+Sync.fallanCol.map(function(c){return c==="festivos"?"Los días de fiesta":c==="facturas"?"Las facturas":c==="compras"?"Las compras":c;}).join(" y ")+" solo se guardan en este dispositivo (falta un ajuste en Supabase).";}
   else t+="Pendiente de sincronizar.";
   e2.textContent=t;
 }
@@ -1235,25 +1335,38 @@ function repararPasos(){
     }
   });
 }
-function traerPendientesAHoy(){
+function traerPendientesAHoy(diario){
   var lista=pendientesAnteriores().sort(function(a,b){return finTarea(a)<finTarea(b)?-1:1;});
-  if(!lista.length){toast("No hay tareas pendientes de días anteriores.");return;}
+  if(!lista.length){if(!diario)toast("No hay tareas pendientes de días anteriores.");return;}
+  var elegidas={};lista.forEach(function(t){elegidas[t.id]=true;});
   abrirSheet(function(sh){
-    cabecera(sh,"Pasar pendientes a hoy");
-    var p=el("p",null,(lista.length===1?"Esta tarea de un día anterior sigue sin marcar como hecha. Se moverá":"Estas "+lista.length+" tareas de días anteriores siguen sin marcar como hechas. Se moverán")+" a hoy ("+fmtLargo(new Date())+") y "+(lista.length===1?"quedará marcada":"quedarán marcadas")+" como «no realizada», guardando su fecha original. Las reuniones y las tareas que se repiten no se mueven.");
-    p.style.cssText="margin:0 0 .8rem;color:var(--muted);font-size:.9rem";sh.appendChild(p);
-    var ul=el("ul",{class:"tareas"});
+    cabecera(sh,diario?"Buenos días: tienes tareas pendientes":"Pasar pendientes a hoy");
+    var p=el("p",null,(lista.length===1?"Esta tarea de días anteriores sigue sin hacer.":"Estas "+lista.length+" tareas de días anteriores siguen sin hacer.")+" Marca las que quieres pasar a hoy; las demás se quedan donde están.");
+    p.style.cssText="margin:0 0 .6rem;color:var(--muted);font-size:.9rem";sh.appendChild(p);
+    var todas=el("button",{class:"f-link trasl-todas",type:"button"},"Desmarcar todas");sh.appendChild(todas);
+    var ul=el("ul",{class:"tareas trasl-lista"}),ok;
+    function contar(){var n=lista.filter(function(t){return elegidas[t.id];}).length;
+      ok.textContent=n?("Pasar "+n+" a hoy"):"Elige alguna tarea";ok.disabled=!n;
+      todas.textContent=n===lista.length?"Desmarcar todas":"Marcar todas";}
+    var filas=[];
     lista.forEach(function(t){
-      var li=el("li",{class:"tarea vencida"}),d=parseISO(finTarea(t)),c=el("div",{class:"fecha-col"});
-      c.appendChild(el("div",{class:"d"},String(d.getDate())));c.appendChild(el("div",{class:"m"},MESES_C[d.getMonth()]));
-      li.appendChild(c);var tx=el("div",{class:"txtb"});tx.appendChild(el("span",{class:"t"},t.titulo));li.appendChild(tx);ul.appendChild(li);
+      var li=el("li",{class:"tarea vencida trasl"+(t.ambito==="unomas"?" unomas":"")}),d=parseISO(finTarea(t));
+      var ck=el("button",{class:"check","aria-pressed":"true","aria-label":"Pasar a hoy"},"✓");
+      var tx=el("div",{class:"txtb"});var tt=el("span",{class:"t"},t.titulo);
+      if(t.prioridad==="alta"){tt.insertBefore(el("span",{class:"pill alta"},"¡Ojo cuidao!"),tt.firstChild);}
+      tx.appendChild(tt);tx.appendChild(el("span",{class:"meta"},"era para el "+fmtLargo(d)+(t.ambito==="unomas"?" · CJ Uno Más":"")));
+      li.appendChild(ck);li.appendChild(tx);
+      function pintar(){ck.setAttribute("aria-pressed",String(!!elegidas[t.id]));li.classList.toggle("no-elegida",!elegidas[t.id]);}
+      li.addEventListener("click",function(){elegidas[t.id]=!elegidas[t.id];pintar();contar();});
+      filas.push(pintar);ul.appendChild(li);
     });
     sh.appendChild(ul);
+    todas.addEventListener("click",function(){var all=lista.every(function(t){return elegidas[t.id];});lista.forEach(function(t){elegidas[t.id]=!all;});filas.forEach(function(f){f();});contar();});
     var acc=el("div",{class:"acciones"});
-    var ok=el("button",{class:"btn"},"Pasar "+lista.length+" a hoy");
+    ok=el("button",{class:"btn"},"");
     ok.addEventListener("click",function(){
-      var hoy=hoyISO();
-      lista.forEach(function(t){
+      var hoy=hoyISO(),sel=lista.filter(function(t){return elegidas[t.id];});if(!sel.length)return;
+      sel.forEach(function(t){
         var o=JSON.parse(JSON.stringify(t));
         o.fechaOriginalInicio=o.fechaOriginalInicio||o.fecha;
         o.fechaOriginalFin=o.fechaOriginalFin||finTarea(t);
@@ -1261,12 +1374,24 @@ function traerPendientesAHoy(){
         o.fecha=hoy;o.fechaFin=hoy;o.estado="no_realizada";
         Store.guardar("tareas",o);
       });
-      cerrarSheet();state.vista="hoy";window.scrollTo(0,0);render();
-      toast(lista.length+" tarea"+(lista.length===1?"":"s")+" pasada"+(lista.length===1?"":"s")+" a hoy.");
+      cerrarSheet();state.vista="hoy";state.diaHoy=hoy;state.siguiendoHoy=true;window.scrollTo(0,0);render();
+      toast(sel.length+" tarea"+(sel.length===1?"":"s")+" pasada"+(sel.length===1?"":"s")+" a hoy.");
     });
-    var c=el("button",{class:"btn sec"},"Cancelar");c.addEventListener("click",cerrarSheet);
-    acc.appendChild(ok);acc.appendChild(c);sh.appendChild(acc);
+    var c=el("button",{class:"btn sec"},diario?"Ahora no":"Cancelar");c.addEventListener("click",cerrarSheet);
+    acc.appendChild(ok);acc.appendChild(c);sh.appendChild(acc);contar();
   });
+}
+/* una vez al día, desde las 8:00 (al abrir la app, o a las 8 si ya está abierta): preguntar qué pendientes pasar a hoy */
+var HORA_AVISO=8;
+function avisoDiarioPendientes(){
+  var hoy=hoyISO(),ya=null;try{ya=localStorage.getItem("cs_aviso_traer");}catch(e){}
+  if(ya===hoy) return;
+  if(new Date().getHours()<HORA_AVISO) return;
+  if(!$("#overlay").hidden||state.vista==="chat") return;
+  if(Sync.conectado()&&!Sync.ultima) return;              /* esperar a tener los datos de la nube */
+  if(!pendientesAnteriores().length) return;
+  try{localStorage.setItem("cs_aviso_traer",hoy);}catch(e){}
+  traerPendientesAHoy(true);
 }
 function avisoBarridoPendiente(){
   try{var raw=localStorage.getItem("cs_aviso_barrido");return raw?JSON.parse(raw):null;}catch(e){return null;}
@@ -1275,6 +1400,8 @@ function descartarAvisoBarrido(){try{localStorage.removeItem("cs_aviso_barrido")
 
 /* ---------- iconos (dibujados, iguales en todos los móviles) ---------- */
 var ICONOS={
+  factura:'<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h3"/>',
+  compra:'<path d="M3 4h2.2l2.3 11.2a1.6 1.6 0 0 0 1.6 1.3h8.3a1.6 1.6 0 0 0 1.6-1.2L21 8H6.1"/><circle cx="9.5" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/>',
   tareas:'<rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M8 12.3l2.7 2.7L16.2 9.5"/>',
   hoy:'<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/><circle cx="12" cy="15.2" r="1.9" fill="currentColor" stroke="none"/>',
   calendario:'<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M8 13.6h.01M12 13.6h.01M16 13.6h.01M8 17.2h.01M12 17.2h.01" stroke-width="2.6"/>',
@@ -1668,21 +1795,23 @@ function borrarChat(){
 /* ---------- render ---------- */
 function render(){
   pintarIconos();pintarAvatares();
-  document.querySelectorAll(".nav button").forEach(function(b){b.setAttribute("aria-current",String(b.dataset.vista===state.vista));});
-  ["hoy","calendario","tareas","manuales","mas","chat"].forEach(function(v){$("#v-"+v).hidden=(v!==state.vista);});
+  document.querySelectorAll(".nav button,.cab-mas").forEach(function(b){b.setAttribute("aria-current",String(b.dataset.vista===state.vista));});
+  ["hoy","calendario","tareas","facturas","compras","manuales","mas","chat"].forEach(function(v){$("#v-"+v).hidden=(v!==state.vista);});
   document.body.classList.toggle("en-chat",state.vista==="chat");
   $("#cab-titulo").firstChild.nodeValue=TITULOS[state.vista];
   $("#cab-sub").textContent = state.vista==="hoy"?(function(){var c=curso(parseISO(state.diaHoy||hoyISO()));return c.etiqueta+(c.semana>0&&c.semana<53?" · semana "+c.semana:"");})()
     : state.vista==="manuales"?(state.manuales.length+" procedimientos guardados")
     : state.vista==="calendario"?"Doble toque en un día: abrir en Hoy"
-    : state.vista==="tareas"?(state.tareas.length+" en total"):state.vista==="chat"?"Don Bosco · IA de Gemini":"Ajustes y copias";
+    : state.vista==="tareas"?(state.tareas.length+" en total"):state.vista==="compras"?(function(){var l=listaCompras(),p=l.filter(function(x){return !compraCompleta(x);}).length;return p?(p+" pendiente"+(p===1?"":"s")+" · "+l.length+" en total"):(l.length+" en total");})():state.vista==="facturas"?(function(){var l=listaFacturas(),p=l.filter(function(x){return !facturaCompleta(x);}).length;return p?(p+" pendiente"+(p===1?"":"s")+" · "+l.length+" en total"):(l.length+" en total");})():state.vista==="chat"?"Don Bosco · IA de Gemini":"Ajustes y copias";
   $(".fab").hidden = (state.vista==="mas"||state.vista==="chat");
-  $(".fab-voz").hidden = (state.vista==="mas"||state.vista==="manuales"||state.vista==="chat");
+  $(".fab-voz").hidden = (state.vista==="mas"||state.vista==="manuales"||state.vista==="chat"||state.vista==="facturas"||state.vista==="compras");
   if(state.vista==="chat") renderChat();
   if(state.vista==="hoy") renderHoy();
   if(state.vista==="calendario") renderCal();
   if(state.vista==="tareas") renderTareas();
   if(state.vista==="manuales") renderManuales();
+  if(state.vista==="facturas") renderFacturas();
+  if(state.vista==="compras") renderCompras();
   if(state.vista==="mas") renderMas();
   actualizarPanel();
 }
@@ -1815,14 +1944,15 @@ function renderHoy(){
     if(px!==py) return px-py;
     return (x.hora||"99")<(y.hora||"99")?-1:(x.hora||"99")>(y.hora||"99")?1:0;
   });
-  var pend=items.filter(function(t){return !hecha(t,f);}).length,hechas=items.length-pend;
-  $("#curso").textContent=!items.length?"":(hechas+" de "+items.length+" hecha"+(items.length===1?"":"s"));
-  var txt=!items.length?"No hay nada anotado este día.":
+  var virt=dif===0?tareasVirtuales():[];
+  var pend=items.filter(function(t){return !hecha(t,f);}).length+virt.length,total=items.length+virt.length,hechas=total-pend;
+  $("#curso").textContent=!total?"":(hechas+" de "+total+" hecha"+(total===1?"":"s"));
+  var txt=!total?"No hay nada anotado este día.":
     (pend?"<b>"+pend+"</b> pendiente"+(pend===1?"":"s"):"💃 "+MSG_OLE);
   $("#resumen").innerHTML=txt;
-  $("#progreso").hidden=!items.length;
-  $("#progreso-barra").style.width=(items.length?Math.round(hechas*100/items.length):0)+"%";
-  hero.classList.toggle("completo",!!items.length&&!pend);
+  $("#progreso").hidden=!total;
+  $("#progreso-barra").style.width=(total?Math.round(hechas*100/total):0)+"%";
+  hero.classList.toggle("completo",!!total&&!pend);
   /* tareas de ese día */
   var cont=$("#hoy-contenido");cont.textContent="";
   if(festivoDe(f)){
@@ -1834,6 +1964,7 @@ function renderHoy(){
     bst.addEventListener("click",function(){quitarDiaFestivo(f);});fa.appendChild(bst);
     cont.appendChild(fa);
   }
+  if(virt.length){var ulV=el("ul",{class:"tareas tareas-virt"});virt.forEach(function(v){ulV.appendChild(itemVirtual(v));});cont.appendChild(ulV);}
   if(!state.tareas.length&&!state.manuales.length){
     var v=el("div",{class:"vacio"});
     v.appendChild(el("p",null,"AdmSec+ está vacío. Empieza escribiendo tu primer manual o anotando una tarea."));
@@ -1844,6 +1975,7 @@ function renderHoy(){
     b2.addEventListener("click",function(){abrirCreador(f);});v.appendChild(b2);
     cont.appendChild(v);return;
   }
+  if(!items.length&&virt.length) return;
   if(!items.length){
     var vd=el("div",{class:"dia-lista-vacia"});
     vd.appendChild(el("p",null,dif<0?"Este día no tuvo tareas.":"Día libre."));
@@ -1963,12 +2095,12 @@ function renderTareas(){
     if(m){var y=m.getBoundingClientRect().top+window.scrollY-(document.querySelector(".cab").offsetHeight+8);window.scrollTo(0,Math.max(0,y));}
     else window.scrollTo(0,0);
   },0);}
-  if(!state.tareas.length){
+  if(!state.tareas.length&&!(state.filtroT==="pendientes"&&tareasVirtuales().length)){
     var v0=el("div",{class:"vacio"});v0.appendChild(el("p",null,"Todavía no has anotado ninguna tarea ni reunión."));
     var b0=el("button",{class:"btn"},"Crear la primera");b0.addEventListener("click",function(){abrirCreador(hoyISO());});v0.appendChild(b0);
     lista.appendChild(v0);return;
   }
-  if(state.filtroT==="pendientes"){ renderPendientes(lista,q); return; }
+  if(state.filtroT==="pendientes"){ var vt=q?[]:tareasVirtuales(); if(vt.length){var ulT=el("ul",{class:"tareas tareas-virt"});vt.forEach(function(v){ulT.appendChild(itemVirtual(v));});lista.appendChild(ulT);} renderPendientes(lista,q); return; }
   if(state.filtroT==="importantes"){ renderPendientes(lista,q,true); return; }
   if(state.filtroT==="unomas"){ renderPendientes(lista,q,false,true); return; }
   var tareasQ=state.tareas.filter(function(t){return coincideBusqueda(t,q);});
@@ -2135,6 +2267,327 @@ function quitarDiaFestivo(f){
        Store.guardar("festivos",{id:"fest-"+uid(),desde:sig,hasta:hasta,nombre:x.nombre});}
   toast("Anotado: ese día trabajas.");
 }
+
+/* ================= FACTURAS ================= */
+var PASOS_F=[["solicitar","Solicitar","Solicitada","Pedírsela al proveedor"],["escanear","Escanear","Escaneada","Si llega en papel"],["subir","Subir a Drive","Subida a Drive","A la carpeta de facturas"],["abonar","Abonar","Abonada","Pagarla al proveedor"]];
+function listaFacturas(){return (state.facturas||[]).filter(function(x){return !x.ajustes;});}
+function ajustesFacturas(){return (state.facturas||[]).filter(function(x){return x.id==="fact-ajustes";})[0]||null;}
+function pasosDeFactura(x){return PASOS_F.filter(function(p){return x.pasos&&x.pasos[p[0]];});}
+function facturaCompleta(x){var ps=pasosDeFactura(x);return ps.length>0&&ps.every(function(p){return x.hechos&&x.hechos[p[0]];});}
+function siguientePasoF(x){var ps=pasosDeFactura(x);for(var i=0;i<ps.length;i++) if(!(x.hechos&&x.hechos[ps[i][0]])) return ps[i][0];return null;}
+function facturaFalta(x,paso){return !!(x.pasos&&x.pasos[paso]&&!(x.hechos&&x.hechos[paso]));}
+function facturaTarde(x){return !facturaCompleta(x)&&x.aviso&&x.aviso<hoyISO();}
+function fmtMesF(m){if(!m)return "";var p=m.split("-");return MESES[(+p[1])-1]+" "+p[0];}
+function fmtCorto(f){var d=parseISO(f);return d.getDate()+" "+MESES_C[d.getMonth()];}
+function bannerFacturas(cont){
+  var pend=listaFacturas().filter(function(x){return !facturaCompleta(x);});if(!pend.length) return;
+  var partes=[];PASOS_F.forEach(function(p){var n=pend.filter(function(x){return facturaFalta(x,p[0]);}).length;if(n)partes.push(n+" por "+p[1].toLowerCase().replace("subir a drive","subir a Drive"));});
+  var tarde=pend.filter(facturaTarde).length;
+  var b=el("button",{class:"f-banner"+(tarde?" tarde":""),type:"button"});
+  b.appendChild(el("span",{class:"f-banner-ico"},"🧾"));
+  var d=el("div");d.appendChild(el("b",null,pend.length+" factura"+(pend.length===1?"":"s")+" por gestionar"+(tarde?" · "+tarde+" con retraso":"")));d.appendChild(el("span",null,partes.join(" · ")));
+  b.appendChild(d);b.appendChild(el("span",{class:"chev"},"›"));
+  b.addEventListener("click",function(){state.vista="facturas";state.filtroF="pendientes";state.pasoF=null;window.scrollTo(0,0);render();});
+  cont.appendChild(b);
+}
+function renderFacturas(){
+  var l=listaFacturas(),pend=l.filter(function(x){return !facturaCompleta(x);});
+  var res=$("#f-res");res.textContent="";
+  PASOS_F.forEach(function(p){
+    var n=pend.filter(function(x){return facturaFalta(x,p[0]);}).length;
+    var b=el("button",{type:"button",class:"f-t-"+p[0]+(state.pasoF===p[0]?" on":"")});
+    b.appendChild(el("b",null,String(n)));b.appendChild(el("small",null,"Por "+p[1].charAt(0).toLowerCase()+p[1].slice(1)));
+    b.addEventListener("click",function(){state.pasoF=state.pasoF===p[0]?null:p[0];if(state.pasoF)state.filtroF="pendientes";renderFacturas();});
+    res.appendChild(b);
+  });
+  var cont=$("#filtros-facturas");cont.textContent="";
+  [["pendientes","Pendientes"],["admsec","AdmSec"],["unomas","Uno Más"],["completadas","Completadas"],["todas","Todas"]].forEach(function(f){
+    var b=el("button",{class:"cat","aria-pressed":String(state.filtroF===f[0])},f[1]);
+    b.addEventListener("click",function(){state.filtroF=f[0];if(f[0]!=="pendientes")state.pasoF=null;renderFacturas();});cont.appendChild(b);
+  });
+  var q=(state.qf||"").toLowerCase().trim();
+  var items=l.filter(function(x){
+    if(q&&[x.proveedor,x.importe,fmtMesF(x.mes)].join(" ").toLowerCase().indexOf(q)<0) return false;
+    var c=facturaCompleta(x);
+    if(state.filtroF==="pendientes"&&c) return false;
+    if(state.filtroF==="completadas"&&!c) return false;
+    if(state.filtroF==="admsec"&&x.ambito==="unomas") return false;
+    if(state.filtroF==="unomas"&&x.ambito!=="unomas") return false;
+    if(state.pasoF&&!facturaFalta(x,state.pasoF)) return false;
+    return true;
+  });
+  var lista=$("#lista-facturas");lista.textContent="";
+  if(!l.length){
+    var v=el("div",{class:"vacio"});v.appendChild(el("p",null,"Aquí llevas el control de tus facturas: las que tienes que solicitar, escanear, subir a Drive o abonar."));
+    var bn=el("button",{class:"btn"},"＋ Añadir una factura");bn.addEventListener("click",function(){formFactura(null);});v.appendChild(bn);lista.appendChild(v);return;
+  }
+  if(!items.length){lista.appendChild(el("p",{class:"f-nada"},q?"Nada coincide con la búsqueda.":"No hay facturas aquí. 👌"));return;}
+  var ordenP=function(a,b){var ta=facturaTarde(a)?0:1,tb=facturaTarde(b)?0:1;if(ta!==tb)return ta-tb;var fa=a.aviso||"9999",fb=b.aviso||"9999";if(fa!==fb)return fa<fb?-1:1;return (a.creada||"")<(b.creada||"")?1:-1;};
+  var pe=items.filter(function(x){return !facturaCompleta(x);}).sort(ordenP);
+  var co=items.filter(facturaCompleta).sort(function(a,b){return (a.completada||"")<(b.completada||"")?1:-1;});
+  function seccion(t,arr){if(!arr.length)return;lista.appendChild(el("div",{class:"f-sec"},t+" ("+arr.length+")"));var ul=el("ul",{class:"f-lista"});arr.forEach(function(x){ul.appendChild(itemFactura(x));});lista.appendChild(ul);}
+  seccion("Pendientes",pe);seccion("Completadas",co);
+}
+function itemFactura(x){
+  var c=facturaCompleta(x),sig=siguientePasoF(x);
+  var li=el("li",{class:"fact"+(c?" hecha":"")+(facturaTarde(x)?" tarde":"")+(x.ambito==="unomas"?" unomas-f":"")});
+  var b=el("button",{class:"fact-btn",type:"button"});
+  var fila=el("div",{class:"fila"});
+  fila.appendChild(el("div",{class:"ico"},c?"✅":"🧾"));
+  var info=el("div",{class:"info"});info.appendChild(el("div",{class:"prov"},x.proveedor||"Factura"));
+  var conF=el("div",{class:"con"},x.mes?fmtMesF(x.mes):"");
+  if(x.ambito==="unomas"){if(x.mes)conF.appendChild(document.createTextNode(" · "));conF.appendChild(el("b",{class:"f-um"},"Uno Más"));}
+  if(x.mes||x.ambito==="unomas") info.appendChild(conF);
+  fila.appendChild(info);
+  if(x.importe) fila.appendChild(el("div",{class:"imp"},fmtImporte(x.importe)));
+  b.appendChild(fila);
+  if(!c){
+    var ps=el("div",{class:"pasosf"}),n=0;
+    pasosDeFactura(x).forEach(function(p){n++;var ok=x.hechos&&x.hechos[p[0]];
+      ps.appendChild(el("span",{class:"pf"+(ok?" ok":(p[0]===sig?" act":""))},ok?"✓ "+p[2]:n+" · "+p[1]));});
+    b.appendChild(ps);
+    if(facturaTarde(x)){var dd=diasEntre(x.aviso,hoyISO());b.appendChild(el("div",{class:"aviso"},"⏰ Tenía que estar antes del "+fmtCorto(x.aviso)+" · "+dd+" día"+(dd===1?"":"s")+" de retraso"));}
+    else if(x.aviso) b.appendChild(el("div",{class:"aviso suave"},"Aviso el "+fmtCorto(x.aviso)));
+  }else if(x.completada) b.appendChild(el("div",{class:"aviso suave"},"Completada el "+fmtCorto(x.completada)));
+  b.addEventListener("click",function(){abrirFactura(x.id);});
+  li.appendChild(b);return li;
+}
+function fmtImporte(v){var n=parseFloat(String(v).replace(/\./g,"").replace(",","."));if(isNaN(n))return String(v);return n.toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:2})+" €";}
+function marcarPasoFactura(id,paso){
+  var x=listaFacturas().filter(function(o){return o.id===id;})[0];if(!x)return;
+  var o=JSON.parse(JSON.stringify(x));o.hechos=o.hechos||{};
+  if(o.hechos[paso]) delete o.hechos[paso]; else o.hechos[paso]=hoyISO();
+  var antes=facturaCompleta(x),ahora=facturaCompleta(o);
+  if(ahora) o.completada=hoyISO(); else delete o.completada;
+  Store.guardar("facturas",o);
+  if(ahora&&!antes) toast("✓ Factura completada.");
+}
+function abrirFactura(id){
+  var x=listaFacturas().filter(function(o){return o.id===id;})[0];if(!x)return;
+  abrirSheet(function(sh){
+    cabecera(sh,x.proveedor||"Factura");
+    var p=el("p",{class:"f-det-sub"},x.mes?("Factura de "+fmtMesF(x.mes)):"");
+    if(x.importe){p.appendChild(document.createTextNode((x.mes?" · ":"")+"Importe: "));p.appendChild(el("b",null,fmtImporte(x.importe)));}
+    if(x.mes||x.importe) sh.appendChild(p);
+    if(x.ambito==="unomas") sh.appendChild(el("p",{class:"f-det-sub"},"Para: CJ Uno Más"));
+    pasosDeFactura(x).forEach(function(ps){
+      var ok=x.hechos&&x.hechos[ps[0]];
+      var r=el("button",{class:"dstep"+(ok?" ok":""),type:"button"});
+      r.appendChild(el("span",{class:"c"},ok?"✓":""));
+      var d=el("div");d.appendChild(el("b",null,ok?ps[2]:ps[1]));d.appendChild(el("small",null,ok?("El "+fmtCorto(x.hechos[ps[0]])):"Toca para marcarlo como hecho"));
+      r.appendChild(d);r.addEventListener("click",function(){marcarPasoFactura(x.id,ps[0]);abrirFactura(x.id);});
+      sh.appendChild(r);
+    });
+    var acc=el("div",{class:"acciones"});
+    var be=el("button",{class:"btn sec"},"Editar");be.addEventListener("click",function(){formFactura(x.id);});
+    var bb=el("button",{class:"btn sec peligro"},"Borrar");bb.addEventListener("click",function(){if(confirm("¿Borrar la factura de «"+(x.proveedor||"")+"»?")){Store.borrar("facturas",x.id);cerrarSheet();toast("Factura borrada.");}});
+    acc.appendChild(be);acc.appendChild(bb);sh.appendChild(acc);
+  });
+}
+function formFactura(id){
+  var x=id?listaFacturas().filter(function(o){return o.id===id;})[0]:null;
+  abrirSheet(function(sh){
+    cabecera(sh,x?"Editar factura":"Nueva factura");
+    var prov=el("input",{type:"text",placeholder:"Endesa, Papelería…"});prov.value=x?x.proveedor||"":"";
+    var imp=el("input",{type:"text",inputmode:"decimal",placeholder:"0,00"});imp.value=x?x.importe||"":"";
+    var f2=el("div",{class:"fila2 f-prov"});f2.appendChild(campo("Proveedor",prov));f2.appendChild(campo("Importe (€)",imp));sh.appendChild(f2);
+    var hoyD=new Date(),mesIni=x&&x.mes?x.mes:(hoyD.getFullYear()+"-"+z(hoyD.getMonth()+1));
+    var selM=el("select"),selA=el("select");
+    MESES.forEach(function(n,k){var o=el("option",{value:z(k+1)},n.charAt(0).toUpperCase()+n.slice(1));selM.appendChild(o);});
+    var aIni=+mesIni.slice(0,4);for(var yy=Math.min(aIni,hoyD.getFullYear()-2);yy<=Math.max(aIni,hoyD.getFullYear()+1);yy++) selA.appendChild(el("option",{value:String(yy)},String(yy)));
+    selM.value=mesIni.slice(5,7);selA.value=mesIni.slice(0,4);
+    var f3=el("div",{class:"fila2"});f3.appendChild(campo("Mes de la factura",selM));f3.appendChild(campo("Año",selA));sh.appendChild(f3);
+    var sel=x?JSON.parse(JSON.stringify(x.pasos||{})):{solicitar:true,escanear:false,subir:true,abonar:false};
+    var box=el("div",{class:"chk3"});
+    PASOS_F.forEach(function(p){
+      var lb=el("button",{type:"button",class:"chk3-op"+(sel[p[0]]?" on":"")});
+      lb.appendChild(el("span",{class:"box"},"✓"));var d=el("div");d.appendChild(el("span",null,p[1]==="Subir a Drive"?"Subirla a Drive":p[1]+"la"));d.appendChild(el("small",null,p[3]));lb.appendChild(d);
+      lb.addEventListener("click",function(){sel[p[0]]=!sel[p[0]];lb.classList.toggle("on",!!sel[p[0]]);});
+      box.appendChild(lb);
+    });
+    var cq=el("div",{class:"campo"});cq.appendChild(el("span",null,"¿Qué hay que hacer con ella?"));cq.appendChild(box);sh.appendChild(cq);
+    var ambito=x&&x.ambito==="unomas"?"unomas":"admsec";
+    var segA=el("div",{class:"segmentado seg-ambito"});
+    var aS=el("button",{type:"button"},"AdmSec"),aU=el("button",{type:"button"},"CJ Uno Más");
+    aS.insertBefore(el("span",{class:"logo-adm"}),aS.firstChild);aU.insertBefore(el("span",{class:"logo-unomas"}),aU.firstChild);
+    function pintar(){aS.setAttribute("aria-pressed",String(ambito==="admsec"));aU.setAttribute("aria-pressed",String(ambito==="unomas"));}
+    aS.addEventListener("click",function(){ambito="admsec";pintar();});aU.addEventListener("click",function(){ambito="unomas";pintar();});pintar();
+    segA.appendChild(aS);segA.appendChild(aU);sh.appendChild(campo("Para",segA));
+    var acc=el("div",{class:"acciones"});
+    var g=el("button",{class:"btn"},"Guardar factura");
+    g.addEventListener("click",function(){
+      if(!prov.value.trim()){prov.focus();toast("Pon el proveedor.");return;}
+      if(!PASOS_F.some(function(p){return sel[p[0]];})){toast("Marca al menos una cosa que hacer con ella.");return;}
+      var o=x?JSON.parse(JSON.stringify(x)):{id:"fac-"+uid(),hechos:{},creada:hoyISO()};
+      o.proveedor=prov.value.trim();o.importe=imp.value.trim();o.mes=selA.value+"-"+selM.value;
+      o.pasos={};PASOS_F.forEach(function(p){if(sel[p[0]])o.pasos[p[0]]=true;});
+      o.hechos=o.hechos||{};Object.keys(o.hechos).forEach(function(k){if(!o.pasos[k])delete o.hechos[k];});
+      if(ambito==="unomas")o.ambito="unomas";else delete o.ambito;
+      if(facturaCompleta(o)){o.completada=o.completada||hoyISO();}else delete o.completada;
+      Store.guardar("facturas",o);cerrarSheet();toast("Factura guardada.");
+    });
+    var c=el("button",{class:"btn sec"},"Cancelar");c.addEventListener("click",cerrarSheet);
+    acc.appendChild(g);acc.appendChild(c);sh.appendChild(acc);
+  });
+}
+
+/* ===== tareas automáticas: facturas y compras pendientes ===== */
+function resumenPasos(lista,pasos,falta){var r=[];pasos.forEach(function(p){var n=lista.filter(function(x){return falta(x,p[0]);}).length;if(n)r.push(n+" por "+p[1].charAt(0).toLowerCase()+p[1].slice(1));});return r.join(" · ");}
+function tareasVirtuales(){
+  var v=[];
+  var pf=listaFacturas().filter(function(x){return !facturaCompleta(x);});
+  if(pf.length){var tot=0,hc=0;pf.forEach(function(x){pasosDeFactura(x).forEach(function(p){tot++;if(x.hechos&&x.hechos[p[0]])hc++;});});
+    v.push({tipo:"facturas",ico:"🧾",titulo:"Facturas pendientes",n:pf.length,meta:resumenPasos(pf,PASOS_F,facturaFalta),pct:tot?Math.round(hc*100/tot):0,tarde:pf.some(facturaTarde)});}
+  var pc=listaCompras().filter(function(x){return !compraCompleta(x);});
+  if(pc.length){var tot2=0,hc2=0;pc.forEach(function(x){pasosDeCompra(x).forEach(function(p){tot2++;if(x.hechos&&x.hechos[p[0]])hc2++;});});
+    v.push({tipo:"compras",ico:"🛒",titulo:"Compras pendientes",n:pc.length,meta:resumenPasos(pc,PASOS_C,compraFalta),pct:tot2?Math.round(hc2*100/tot2):0});}
+  return v;
+}
+function itemVirtual(v){
+  var li=el("li",{class:"tarea t-virt t-virt-"+v.tipo});
+  var ck=el("span",{class:"check virt-ico","aria-hidden":"true"},v.ico);li.appendChild(ck);
+  var b=el("button",{class:"txtb",type:"button"});
+  var tt=el("span",{class:"t"},v.titulo);tt.appendChild(el("span",{class:"pill v-cnt"},String(v.n)));b.appendChild(tt);
+  b.appendChild(el("span",{class:"meta"},v.meta));
+  b.addEventListener("click",function(){state.vista=v.tipo;window.scrollTo(0,0);render();});
+  li.appendChild(b);li.appendChild(el("span",{class:"chev"},"›"));
+  var barra=el("div",{class:"barra-pasos v-barra","aria-hidden":"true"}),i=el("i");i.style.width=v.pct+"%";barra.appendChild(i);li.appendChild(barra);
+  li.addEventListener("click",function(e){if(e.target===li||e.target===ck)b.click();});
+  return li;
+}
+/* ================= COMPRAS ================= */
+var PASOS_C=[["pedir","Pedir","Pedida","Hacer el pedido a la empresa"],["recibir","Recibir","Recibida","Comprobar que ha llegado"]];
+function listaCompras(){return state.compras||[];}
+function pasosDeCompra(x){return PASOS_C.filter(function(p){return x.pasos&&x.pasos[p[0]];});}
+function compraCompleta(x){var ps=pasosDeCompra(x);return ps.length>0&&ps.every(function(p){return x.hechos&&x.hechos[p[0]];});}
+function siguientePasoC(x){var ps=pasosDeCompra(x);for(var i=0;i<ps.length;i++) if(!(x.hechos&&x.hechos[ps[i][0]])) return ps[i][0];return null;}
+function compraFalta(x,paso){return !!(x.pasos&&x.pasos[paso]&&!(x.hechos&&x.hechos[paso]));}
+function renderCompras(){
+  var l=listaCompras(),pend=l.filter(function(x){return !compraCompleta(x);});
+  var res=$("#c-res");res.textContent="";
+  PASOS_C.forEach(function(p){
+    var n=pend.filter(function(x){return compraFalta(x,p[0]);}).length;
+    var b=el("button",{type:"button",class:"f-t-"+p[0]+(state.pasoC===p[0]?" on":"")});
+    b.appendChild(el("b",null,String(n)));b.appendChild(el("small",null,"Por "+p[1].toLowerCase()));
+    b.addEventListener("click",function(){state.pasoC=state.pasoC===p[0]?null:p[0];if(state.pasoC)state.filtroC="pendientes";renderCompras();});
+    res.appendChild(b);
+  });
+  var cont=$("#filtros-compras");cont.textContent="";
+  [["pendientes","Pendientes"],["admsec","AdmSec"],["unomas","Uno Más"],["completadas","Recibidas"],["todas","Todas"]].forEach(function(f){
+    var b=el("button",{class:"cat","aria-pressed":String(state.filtroC===f[0])},f[1]);
+    b.addEventListener("click",function(){state.filtroC=f[0];if(f[0]!=="pendientes")state.pasoC=null;renderCompras();});cont.appendChild(b);
+  });
+  var q=(state.qc||"").toLowerCase().trim();
+  var items=l.filter(function(x){
+    if(q&&[x.articulo,x.empresa].join(" ").toLowerCase().indexOf(q)<0) return false;
+    var c=compraCompleta(x);
+    if(state.filtroC==="pendientes"&&c) return false;
+    if(state.filtroC==="completadas"&&!c) return false;
+    if(state.filtroC==="admsec"&&x.ambito==="unomas") return false;
+    if(state.filtroC==="unomas"&&x.ambito!=="unomas") return false;
+    if(state.pasoC&&!compraFalta(x,state.pasoC)) return false;
+    return true;
+  });
+  var lista=$("#lista-compras");lista.textContent="";
+  if(!l.length){
+    var v=el("div",{class:"vacio"});v.appendChild(el("p",null,"Aquí anotas lo que tienes que comprar: qué es, a qué empresa, y si ya está pedido y recibido."));
+    var bn=el("button",{class:"btn"},"＋ Añadir una compra");bn.addEventListener("click",function(){formCompra(null);});v.appendChild(bn);lista.appendChild(v);return;
+  }
+  if(!items.length){lista.appendChild(el("p",{class:"f-nada"},q?"Nada coincide con la búsqueda.":"No hay compras aquí. 👌"));return;}
+  var pe=items.filter(function(x){return !compraCompleta(x);}).sort(function(a,b){return (a.creada||"")<(b.creada||"")?1:-1;});
+  var co=items.filter(compraCompleta).sort(function(a,b){return (a.completada||"")<(b.completada||"")?1:-1;});
+  function seccion(t,arr){if(!arr.length)return;lista.appendChild(el("div",{class:"f-sec"},t+" ("+arr.length+")"));var ul=el("ul",{class:"f-lista"});arr.forEach(function(x){ul.appendChild(itemCompra(x));});lista.appendChild(ul);}
+  seccion("Pendientes",pe);seccion("Recibidas",co);
+}
+function itemCompra(x){
+  var c=compraCompleta(x),sig=siguientePasoC(x);
+  var li=el("li",{class:"fact"+(c?" hecha":"")+(x.ambito==="unomas"?" unomas-f":"")});
+  var b=el("button",{class:"fact-btn",type:"button"});
+  var fila=el("div",{class:"fila"});
+  fila.appendChild(el("div",{class:"ico c-ico"},c?"✅":"🛒"));
+  var info=el("div",{class:"info"});info.appendChild(el("div",{class:"prov"},x.articulo||"Compra"));
+  var con=el("div",{class:"con"},x.empresa||"");
+  if(x.ambito==="unomas"){if(x.empresa)con.appendChild(document.createTextNode(" · "));con.appendChild(el("b",{class:"f-um"},"Uno Más"));}
+  if(x.empresa||x.ambito==="unomas") info.appendChild(con);
+  fila.appendChild(info);b.appendChild(fila);
+  if(!c){
+    var ps=el("div",{class:"pasosf"}),n=0;
+    pasosDeCompra(x).forEach(function(p){n++;var ok=x.hechos&&x.hechos[p[0]];
+      ps.appendChild(el("span",{class:"pf"+(ok?" ok":(p[0]===sig?" act":""))},ok?"✓ "+p[2]+" el "+fmtCorto(x.hechos[p[0]]):n+" · "+p[1]));});
+    b.appendChild(ps);
+  }else if(x.completada) b.appendChild(el("div",{class:"aviso suave"},"Recibida el "+fmtCorto(x.completada)));
+  b.addEventListener("click",function(){abrirCompra(x.id);});
+  li.appendChild(b);return li;
+}
+function marcarPasoCompra(id,paso){
+  var x=listaCompras().filter(function(o){return o.id===id;})[0];if(!x)return;
+  var o=JSON.parse(JSON.stringify(x));o.hechos=o.hechos||{};
+  if(o.hechos[paso]) delete o.hechos[paso]; else o.hechos[paso]=hoyISO();
+  var antes=compraCompleta(x),ahora=compraCompleta(o);
+  if(ahora) o.completada=hoyISO(); else delete o.completada;
+  Store.guardar("compras",o);
+  if(ahora&&!antes) toast("✓ Compra completada.");
+}
+function abrirCompra(id){
+  var x=listaCompras().filter(function(o){return o.id===id;})[0];if(!x)return;
+  abrirSheet(function(sh){
+    cabecera(sh,x.articulo||"Compra");
+    if(x.empresa){var p=el("p",{class:"f-det-sub"},"Empresa: ");p.appendChild(el("b",null,x.empresa));sh.appendChild(p);}
+    if(x.ambito==="unomas") sh.appendChild(el("p",{class:"f-det-sub"},"Para: CJ Uno Más"));
+    pasosDeCompra(x).forEach(function(ps){
+      var ok=x.hechos&&x.hechos[ps[0]];
+      var r=el("button",{class:"dstep"+(ok?" ok":""),type:"button"});
+      r.appendChild(el("span",{class:"c"},ok?"✓":""));
+      var d=el("div");d.appendChild(el("b",null,ok?ps[2]:ps[1]));d.appendChild(el("small",null,ok?("El "+fmtCorto(x.hechos[ps[0]])):"Toca para marcarlo como hecho"));
+      r.appendChild(d);r.addEventListener("click",function(){marcarPasoCompra(x.id,ps[0]);abrirCompra(x.id);});
+      sh.appendChild(r);
+    });
+    var acc=el("div",{class:"acciones"});
+    var be=el("button",{class:"btn sec"},"Editar");be.addEventListener("click",function(){formCompra(x.id);});
+    var bb=el("button",{class:"btn sec peligro"},"Borrar");bb.addEventListener("click",function(){if(confirm("¿Borrar «"+(x.articulo||"")+"»?")){Store.borrar("compras",x.id);cerrarSheet();toast("Compra borrada.");}});
+    acc.appendChild(be);acc.appendChild(bb);sh.appendChild(acc);
+  });
+}
+function formCompra(id){
+  var x=id?listaCompras().filter(function(o){return o.id===id;})[0]:null;
+  abrirSheet(function(sh){
+    cabecera(sh,x?"Editar compra":"Nueva compra");
+    var art=el("input",{type:"text",placeholder:"Folios A4, tóner, balones…"});art.value=x?x.articulo||"":"";
+    var emp=el("input",{type:"text",placeholder:"Papelería, Amazon, Decathlon…"});emp.value=x?x.empresa||"":"";
+    sh.appendChild(campo("¿Qué hay que comprar?",art));sh.appendChild(campo("Empresa",emp));
+    var sel=x?JSON.parse(JSON.stringify(x.pasos||{})):{pedir:true,recibir:true};
+    var box=el("div",{class:"chk3"});
+    PASOS_C.forEach(function(p){
+      var lb=el("button",{type:"button",class:"chk3-op"+(sel[p[0]]?" on":"")});
+      lb.appendChild(el("span",{class:"box"},"✓"));var d=el("div");d.appendChild(el("span",null,p[1]+"la"));d.appendChild(el("small",null,p[3]));lb.appendChild(d);
+      lb.addEventListener("click",function(){sel[p[0]]=!sel[p[0]];lb.classList.toggle("on",!!sel[p[0]]);});
+      box.appendChild(lb);
+    });
+    var cq=el("div",{class:"campo"});cq.appendChild(el("span",null,"Pasos"));cq.appendChild(box);sh.appendChild(cq);
+    var ambito=x&&x.ambito==="unomas"?"unomas":"admsec";
+    var segA=el("div",{class:"segmentado seg-ambito"});
+    var aS=el("button",{type:"button"},"AdmSec"),aU=el("button",{type:"button"},"CJ Uno Más");
+    aS.insertBefore(el("span",{class:"logo-adm"}),aS.firstChild);aU.insertBefore(el("span",{class:"logo-unomas"}),aU.firstChild);
+    function pintar(){aS.setAttribute("aria-pressed",String(ambito==="admsec"));aU.setAttribute("aria-pressed",String(ambito==="unomas"));}
+    aS.addEventListener("click",function(){ambito="admsec";pintar();});aU.addEventListener("click",function(){ambito="unomas";pintar();});pintar();
+    segA.appendChild(aS);segA.appendChild(aU);sh.appendChild(campo("Para",segA));
+    var acc=el("div",{class:"acciones"});
+    var g=el("button",{class:"btn"},"Guardar compra");
+    g.addEventListener("click",function(){
+      if(!art.value.trim()){art.focus();toast("Pon qué hay que comprar.");return;}
+      if(!PASOS_C.some(function(p){return sel[p[0]];})){toast("Marca al menos un paso.");return;}
+      var o=x?JSON.parse(JSON.stringify(x)):{id:"com-"+uid(),hechos:{},creada:hoyISO()};
+      o.articulo=art.value.trim();o.empresa=emp.value.trim();
+      o.pasos={};PASOS_C.forEach(function(p){if(sel[p[0]])o.pasos[p[0]]=true;});
+      o.hechos=o.hechos||{};Object.keys(o.hechos).forEach(function(k){if(!o.pasos[k])delete o.hechos[k];});
+      if(ambito==="unomas")o.ambito="unomas";else delete o.ambito;
+      if(compraCompleta(o)){o.completada=o.completada||hoyISO();}else delete o.completada;
+      Store.guardar("compras",o);cerrarSheet();toast("Compra guardada.");
+    });
+    var c=el("button",{class:"btn sec"},"Cancelar");c.addEventListener("click",cerrarSheet);
+    acc.appendChild(g);acc.appendChild(c);sh.appendChild(acc);
+  });
+}
 function renderMas(){
   var ul=$("#ajustes");ul.textContent="";
   function sec(t,clase){ul.appendChild(el("li",{class:"ajustes-sec"+(clase?" "+clase:"")},t));}
@@ -2146,7 +2599,7 @@ function renderMas(){
   }
   var nPend=pendientesAnteriores().length;
   sec("Tareas");
-  it("traer","Pasar pendientes a hoy",nPend?(nPend+" tarea"+(nPend===1?"":"s")+" de días anteriores sin hacer"):"No hay nada pendiente de días anteriores",traerPendientesAHoy,nPend?"destacado":"");
+  it("traer","Pasar pendientes a hoy",nPend?(nPend+" tarea"+(nPend===1?"":"s")+" de días anteriores sin hacer"):"No hay nada pendiente de días anteriores",function(){traerPendientesAHoy(false);},nPend?"destacado":"");
   var nF=listaFestivos().length;
   it("calendario","Días de fiesta",nF?("Días que no trabajas · "+nF+" anotado"+(nF===1?"":"s")):"Añade los días que no trabajas",abrirFestivos);
   sec("Datos");
@@ -2745,7 +3198,7 @@ async function exportar(){
 }
 async function exportarCopia(){
   if(!state.tareas.length&&!state.manuales.length){toast("Todavía no hay nada que copiar.");return;}
-  var datos={version:1,fecha:hoyISO(),manuales:state.manuales,tareas:state.tareas};
+  var datos={version:1,fecha:hoyISO(),manuales:state.manuales,tareas:state.tareas,facturas:(state.facturas||[]).filter(function(x){return !x.ajustes;}),compras:state.compras||[]};
   guardarArchivo("admsec-copia-"+hoyISO()+".json","application/json",JSON.stringify(datos,null,2),"Copia de seguridad descargada.");
 }
 function abrirImportar(){
@@ -2933,6 +3386,8 @@ document.addEventListener("click",function(e){
   var k=a.dataset.action;
   if(k==="crear"){
     if(state.vista==="manuales") formManual();
+    else if(state.vista==="facturas") formFactura(null);
+    else if(state.vista==="compras") formCompra(null);
     else if(state.vista==="tareas") formTarea(null,hoyISO(),null,"tarea");
     else abrirCreador(state.vista==="calendario"?state.diaSel:(state.vista==="hoy"?(state.diaHoy||hoyISO()):hoyISO()));
   }
@@ -2962,11 +3417,16 @@ $("#q").addEventListener("input",function(){state.q=this.value;render();});
 $("#chat-txt").addEventListener("input",ajustarChatTxt);
 $("#chat-txt").addEventListener("keydown",function(e){if(e.key==="Enter"&&!e.shiftKey&&esTablet()){e.preventDefault();enviarChat();}});
 $("#qt").addEventListener("input",function(){state.qt=this.value;render();});
+$("#qf").addEventListener("input",function(){state.qf=this.value;renderFacturas();});
+$("#qc").addEventListener("input",function(){state.qc=this.value;renderCompras();});
 
 try{var vq=new URLSearchParams(location.search).get("vista");if(vq&&TITULOS[vq]&&vq!=="chat")state.vista=vq;}catch(e){}
 try{var tm=localStorage.getItem("cs_tema");if(tm)document.documentElement.setAttribute("data-theme",tm);}catch(e){}
 render();
 Store.init(function(){intentarBarridoLunes();render();});
+setTimeout(avisoDiarioPendientes,900);
+setInterval(function(){if(!document.hidden)avisoDiarioPendientes();},60000);
+document.addEventListener("visibilitychange",function(){if(!document.hidden)setTimeout(avisoDiarioPendientes,900);});
 intentarBarridoLunes();
 setInterval(function(){intentarBarridoLunes();},60000);
 })();
