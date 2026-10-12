@@ -1048,6 +1048,24 @@ var Sync={
     this._enCurso=true;this.estado="sincronizando";pintarEstado();
     try{
       var s=this.sesion(),p=this.pendientes(),ids=Object.keys(p),filas=[];
+      /* antes de subir tareas cambiadas aquí, mirar si en la nube cambiaron desde otro dispositivo:
+         si es así, se juntan los pasos y las marcas de hecho para no perder nada */
+      var tIds=ids.filter(function(id){return p[id].c==="tareas"&&!p[id].b;});
+      if(tIds.length){
+        try{
+          var rem=[];
+          for(var a0=0;a0<tIds.length;a0+=80){var r0=await this._api("/rest/v1/"+TABLA+"?select=id,datos,borrado&id=in.("+tIds.slice(a0,a0+80).join(",")+")");rem=rem.concat(r0||[]);}
+          var fus=false;
+          rem.forEach(function(r){
+            if(r.borrado||!r.datos||!p[r.id]) return;
+            var l=state.tareas;for(var i=0;i<l.length;i++) if(l[i].id===r.id){
+              var loc=l[i];
+              if(r.datos._mod&&r.datos._mod!==loc._base&&r.datos._mod!==loc._mod){l[i]=fusionarTarea(loc,r.datos);fus=true;}
+            }
+          });
+          if(fus) Store.escribir();
+        }catch(eM){ if(eM instanceof TypeError) throw eM; }
+      }
       ids.forEach(function(id){
         var x=p[id],obj=null;
         if(!x.b){var l=state[x.c]||[];for(var i=0;i<l.length;i++) if(l[i].id===id) obj=l[i];}
@@ -1074,8 +1092,9 @@ var Sync={
       }
       /* quitar de pendientes solo lo que ya se subió (y no ha cambiado mientras tanto) */
       var p2=this.pendientes();
-      ids.forEach(function(id){ if(subidos[id]&&p2[id]&&p2[id].n===p[id].n) delete p2[id]; });
-      lsSet("cs_pendientes",p2);
+      ids.forEach(function(id){ if(subidos[id]&&p2[id]&&p2[id].n===p[id].n){ delete p2[id];
+        var lc=state[p[id].c]||[];for(var j=0;j<lc.length;j++) if(lc[j].id===id) lc[j]._base=lc[j]._mod; } });
+      lsSet("cs_pendientes",p2);Store.escribir();
 
       /* descargar */
       var remotos=[],desde=0,lote=1000;
@@ -1087,6 +1106,7 @@ var Sync={
       this._aplicar(remotos);
       if(!festivosSembrados()) sembrarFestivos();
       repararPasos();
+      this.okSesion=true;
       this.ultima=new Date().toISOString();
       setTimeout(avisoDiarioPendientes,300);lsSet("cs_ultima_sync",this.ultima);
       this.estado="ok";
@@ -1107,7 +1127,7 @@ var Sync={
       if(p[r.id]) return;                 /* hay un cambio local más reciente sin subir */
       var col=(r.coleccion==="manuales"||r.coleccion==="festivos"||r.coleccion==="facturas"||r.coleccion==="compras")?r.coleccion:"tareas",l=nuevo[col],i=idx(l,r.id);
       if(r.borrado){ if(i>=0){l.splice(i,1);cambios=true;} return; }
-      var o=r.datos||{};o.id=r.id;
+      var o=r.datos||{};o.id=r.id;o._base=o._mod;
       if(i<0){l.push(o);cambios=true;}
       else if(JSON.stringify(l[i])!==JSON.stringify(o)){l[i]=o;cambios=true;}
     });
@@ -1320,6 +1340,21 @@ function pendientesAnteriores(){
 }
 /* botón de Más: pasar a hoy todo lo pendiente de días anteriores */
 /* al cambiar de fecha una tarea sin repetición, los pasos ya hechos se conservan */
+/* junta los cambios de la misma tarea hechos en dos dispositivos */
+function fusionarTarea(loc,rem){
+  var o=JSON.parse(JSON.stringify(loc)),norep=!o.repite||o.repite==="none";
+  o.progreso=o.progreso||{};var rp=rem.progreso||{};
+  Object.keys(rp).forEach(function(k){
+    var dest=(norep&&!(k in o.progreso))?o.fecha:k;
+    var a=(o.progreso[dest]||[]).slice();
+    (rp[k]||[]).forEach(function(i){if(a.indexOf(i)<0)a.push(i);});
+    if(a.length) o.progreso[dest]=a;
+  });
+  o.hechas=o.hechas||{};var rh=rem.hechas||{};
+  Object.keys(rh).forEach(function(k){var dk=(norep&&k!==o.fecha)?o.fecha:k;if(rh[k]&&!o.hechas[dk]){o.hechas[dk]=true;if(rem.hechasEn&&rem.hechasEn[k]){o.hechasEn=o.hechasEn||{};o.hechasEn[dk]=rem.hechasEn[k];}}});
+  o._base=rem._mod;
+  return o;
+}
 function conservarPasos(o,fechaVieja,fechaNueva){
   if(!o.progreso||fechaVieja===fechaNueva||(o.repite&&o.repite!=="none")) return;
   var p=o.progreso[fechaVieja];
@@ -1364,8 +1399,12 @@ function traerPendientesAHoy(diario){
     todas.addEventListener("click",function(){var all=lista.every(function(t){return elegidas[t.id];});lista.forEach(function(t){elegidas[t.id]=!all;});filas.forEach(function(f){f();});contar();});
     var acc=el("div",{class:"acciones"});
     ok=el("button",{class:"btn"},"");
-    ok.addEventListener("click",function(){
-      var hoy=hoyISO(),sel=lista.filter(function(t){return elegidas[t.id];});if(!sel.length)return;
+    ok.addEventListener("click",async function(){
+      var hoy=hoyISO(),ids=lista.filter(function(t){return elegidas[t.id];}).map(function(t){return t.id;});if(!ids.length)return;
+      /* antes de mover, traer lo último de la nube para no pisar pasos marcados en otro dispositivo */
+      if(Sync.conectado()){ok.disabled=true;ok.textContent="Comprobando…";try{await Sync.sincronizar();}catch(e){}}
+      var sel=ids.map(function(id){return state.tareas.filter(function(x){return x.id===id;})[0];})
+        .filter(function(t){return t&&!hecha(t,t.fecha)&&t.fecha!==hoy;});
       sel.forEach(function(t){
         var o=JSON.parse(JSON.stringify(t));
         o.fechaOriginalInicio=o.fechaOriginalInicio||o.fecha;
@@ -1375,6 +1414,7 @@ function traerPendientesAHoy(diario){
         Store.guardar("tareas",o);
       });
       cerrarSheet();state.vista="hoy";state.diaHoy=hoy;state.siguiendoHoy=true;window.scrollTo(0,0);render();
+      if(!sel.length){toast("Esas tareas ya estaban al día.");return;}
       toast(sel.length+" tarea"+(sel.length===1?"":"s")+" pasada"+(sel.length===1?"":"s")+" a hoy.");
     });
     var c=el("button",{class:"btn sec"},diario?"Ahora no":"Cancelar");c.addEventListener("click",cerrarSheet);
@@ -1388,7 +1428,7 @@ function avisoDiarioPendientes(){
   if(ya===hoy) return;
   if(new Date().getHours()<HORA_AVISO) return;
   if(!$("#overlay").hidden||state.vista==="chat") return;
-  if(Sync.conectado()&&!Sync.ultima) return;              /* esperar a tener los datos de la nube */
+  if(Sync.conectado()&&!Sync.okSesion) return;            /* esperar a tener los datos de la nube de hoy (si no, se pisarían los pasos hechos en otro dispositivo) */
   if(!pendientesAnteriores().length) return;
   try{localStorage.setItem("cs_aviso_traer",hoy);}catch(e){}
   traerPendientesAHoy(true);
