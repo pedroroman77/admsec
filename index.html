@@ -1195,6 +1195,15 @@ function pintarEstado(){
 }
 
 /* ---------- repeticiones y rango de fechas ---------- */
+/* reuniones de varios días: el primer día empieza a la hora de inicio, los del medio son todo el día
+   y el último termina a la hora de fin */
+function horarioReunion(t,f){
+  var ini=claveOcurrencia(t,f),fin=finOcurrencia(t,f);
+  if(fin<=ini) return t.hora?t.hora+(t.horaFin?"–"+t.horaFin:""):"";
+  if(f<=ini) return t.hora?"desde las "+t.hora:"primer día";
+  if(f>=fin) return t.horaFin?"hasta las "+t.horaFin:"último día";
+  return "todo el día";
+}
 function finTarea(t){ return t.fechaFin||t.fecha; }
 function duracionTarea(t){ var f=finTarea(t); return f?Math.max(0,diasEntre(t.fecha,f)):0; }
 /* Repeticiones:
@@ -1886,9 +1895,9 @@ function itemTarea(t,f,conFecha){
   b.appendChild(tt);
   var bits=[];
   if(esReunion){
-    if(t.hora) bits.push(t.hora+(t.horaFin?"–"+t.horaFin:""));
+    var hR=horarioReunion(t,f);if(hR) bits.push(hR);
     if(t.lugar) bits.push(t.lugar);
-    if(t.fechaFin&&t.fechaFin!==t.fecha){var dFr=parseISO(finOcurrencia(t,f));bits.push("hasta "+dFr.getDate()+" "+MESES_C[dFr.getMonth()]);}
+    if(t.fechaFin&&t.fechaFin!==t.fecha&&f<finOcurrencia(t,f)){var dFr=parseISO(finOcurrencia(t,f));bits.push("termina el "+dFr.getDate()+" "+MESES_C[dFr.getMonth()]);}
   }else{
     var m=manualDe(t);
     if(t.hora) bits.push(t.hora);
@@ -2917,7 +2926,11 @@ function abrirTarea(id,f){
       dato(sh,"Fecha",cuando);
     }
     if(esReunion){
-      dato(sh,"Hora",t.hora?(t.hora+(t.horaFin?" a "+t.horaFin:"")):"Sin hora fijada");
+      if(finOcurrencia(t,f)>claveOcurrencia(t,f)){
+        var dI=parseISO(claveOcurrencia(t,f)),dF=parseISO(finOcurrencia(t,f));
+        dato(sh,"Horario",(t.hora?"Empieza el "+fmtLargo(dI)+" a las "+t.hora:"Desde el "+fmtLargo(dI))+(t.horaFin?" y termina el "+fmtLargo(dF)+" a las "+t.horaFin:" hasta el "+fmtLargo(dF))+". Los días intermedios, todo el día.");
+        dato(sh,"Este día",horarioReunion(t,f)||"todo el día");
+      }else dato(sh,"Hora",t.hora?(t.hora+(t.horaFin?" a "+t.horaFin:"")):"Sin hora fijada");
       if(t.lugar) dato(sh,"Lugar",t.lugar);
       if(t.asistentes) dato(sh,"Asistentes",t.asistentes);
     }else if(t.hora){
@@ -3075,7 +3088,7 @@ function formTarea(id,fechaPre,manualPre,tipoPre,voz){
     var campoTitulo=campo("Qué hay que hacer",titulo);
     sh.appendChild(campoTitulo);
     var campoFechaIni=campo("Fecha",fecha);
-    var fila=el("div",{class:"fila"});fila.appendChild(campoFechaIni);fila.appendChild(campo("Hora",hora));sh.appendChild(fila);
+    var campoHora=campo("Hora",hora);var fila=el("div",{class:"fila"});fila.appendChild(campoFechaIni);fila.appendChild(campoHora);sh.appendChild(fila);
 
     var grupoTarea=el("div");
     var campoFechaFin=campo("Fecha de fin",fechaFin);
@@ -3084,7 +3097,8 @@ function formTarea(id,fechaPre,manualPre,tipoPre,voz){
     bPlazo.addEventListener("click",function(){tienePlazo=true;pintarPlazo();fechaFin.focus();});
     var bQuitar=el("button",{type:"button",class:"btn-plazo quitar"},"Quitar fecha de fin");
     bQuitar.addEventListener("click",function(){tienePlazo=false;fechaFin.value=fecha.value;pintarPlazo();});
-    function pintarPlazo(){campoFechaFin.style.display=tienePlazo?"":"none";bQuitar.style.display=tienePlazo?"":"none";bPlazo.style.display=tienePlazo?"none":"";notaRango.style.display=tienePlazo?"":"none";}
+    function pintarPlazo(){campoFechaFin.style.display=tienePlazo?"":"none";bQuitar.style.display=tienePlazo?"":"none";bPlazo.style.display=tienePlazo?"none":"";notaRango.style.display=tienePlazo?"":"none";
+      if(typeof campoHoraFin!=="undefined"){var r=tipoActual==="reunion"&&tienePlazo;campoHora.querySelector("span").textContent=r?"Hora de inicio (primer día)":"Hora";campoHoraFin.querySelector("span").textContent=r?"Hora de fin (último día)":"Hora de fin";}}
     fecha.addEventListener("change",function(){if(!tienePlazo||fechaFin.value<fecha.value)fechaFin.value=fecha.value;});
     grupoTarea.appendChild(bPlazo);
     grupoTarea.appendChild(campoFechaFin);
@@ -3094,7 +3108,7 @@ function formTarea(id,fechaPre,manualPre,tipoPre,voz){
 
     var grupoReunion=el("div");
     var filaR=el("div",{class:"fila"});
-    filaR.appendChild(campo("Hora de fin",horaFin));
+    var campoHoraFin=campo("Hora de fin",horaFin);filaR.appendChild(campoHoraFin);
     filaR.appendChild(campo("Lugar",lugar));
     grupoReunion.appendChild(filaR);
     grupoReunion.appendChild(campo("Asistentes",asistentes));
@@ -3147,7 +3161,8 @@ function formTarea(id,fechaPre,manualPre,tipoPre,voz){
       bPlazo.textContent=esR?(fi?"＋ Añadir más días (varios días)":"＋ Añadir más días (reunión de varios días)"):"＋ Añadir fecha de fin (plazo de varios días)";
       bQuitar.textContent=esR?"Solo un día":"Quitar fecha de fin";
       campoFechaFin.querySelector("span").textContent=esR?"Último día":"Fecha de fin";
-      notaRango.textContent=esR?(fi?"La fecha importante":"La reunión")+" aparecerá cada día de ese periodo, con el mismo horario.":"La tarea aparecerá cada día de ese periodo.";
+      notaRango.textContent=esR?(fi?"La fecha importante":"La reunión")+" empieza el primer día a la hora de inicio y termina el último día a la hora de fin; los días de en medio aparece como «todo el día».":"La tarea aparecerá cada día de ese periodo.";
+      pintarPlazo();
       campoFechaIni.querySelector("span").textContent=tipoActual==="reunion"?"Fecha":"Fecha de inicio";
       titulo.placeholder=tipoActual==="reunion"?(fi?"Campamento de verano":"Reunión de coordinación de ciclo"):"Enviar la matrícula a Delegación";
       campoNotas.querySelector("span").textContent=tipoActual==="reunion"&&!fi?"Orden del día":"Notas";
