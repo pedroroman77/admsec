@@ -926,13 +926,17 @@ var Store={
   async guardar(col,obj){
     obj._mod=new Date().toISOString();
     var l=state[col],i=-1;for(var k=0;k<l.length;k++) if(l[k].id===obj.id) i=k;
+    var antes=i>=0?l[i]:null;
     if(i>=0) l[i]=obj; else l.push(obj);
     this.escribir(); Sync.marcar(col,obj.id,false);
+    if(col==="tareas") Gcal.cambio(antes,obj);
     render();
   },
   async borrar(col,id){
+    var antes=(state[col]||[]).filter(function(o){return o.id===id;})[0]||null;
     state[col]=state[col].filter(function(o){return o.id!==id;});
     this.escribir(); Sync.marcar(col,id,true);
+    if(col==="tareas") Gcal.cambio(antes,null);
     render();
   }
 };
@@ -1035,7 +1039,7 @@ var Sync={
     try{await this.sincronizar();}catch(e){}
     var s=this.sesion();
     if(s){try{await this._fetch("/auth/v1/logout",{method:"POST",token:s.access_token});}catch(e){}}
-    lsSet("cs_sesion",null);lsSet("cs_pendientes",{});lsSet("cs_ultima_sync",null);
+    lsSet("cs_sesion",null);lsSet("cs_pendientes",{});lsSet("cs_ultima_sync",null);lsSet("cs_gcal",null);lsSet("cs_gcal_pend",{});
     lsSet("cs_sin_cuenta",true);
     this.estado="";this.ultima=null;
     render();pintarEstado();
@@ -1107,6 +1111,7 @@ var Sync={
       if(!festivosSembrados()) sembrarFestivos();
       repararPasos();
       this.okSesion=true;
+      if(!Gcal._comprobado) Gcal.comprobar(); else Gcal.programar(100);
       this.ultima=new Date().toISOString();
       setTimeout(avisoDiarioPendientes,300);lsSet("cs_ultima_sync",this.ultima);
       this.estado="ok";
@@ -2308,6 +2313,143 @@ function quitarDiaFestivo(f){
   toast("Anotado: ese día trabajas.");
 }
 
+
+/* ================= GOOGLE CALENDAR (reuniones, en los dos sentidos) ================= */
+var Gcal={
+  _aplicando:false,_enCurso:false,_otra:false,_timer:null,_comprobado:false,
+  info(){return lsGet("cs_gcal",{});},
+  activo(){return Sync.conectado()&&!!this.info().conectado;},
+  pend(){return lsGet("cs_gcal_pend",{});},
+  async llamar(cuerpo){return await Sync._api("/functions/v1/gcal",{method:"POST",body:cuerpo});},
+  idEvento(t){if(t.gcalId)return t.gcalId;var h="";new TextEncoder().encode(t.id).forEach(function(b){h+=(b<16?"0":"")+b.toString(16);});return "adm"+h;},
+  idDesdeEvento(evId){
+    if(/^adm([0-9a-f]{2})+$/.test(evId)){try{var h=evId.slice(3),b=new Uint8Array(h.length/2);for(var i=0;i<b.length;i++)b[i]=parseInt(h.substr(i*2,2),16);return {id:new TextDecoder().decode(b),deApp:true};}catch(e){}}
+    return {id:"gc"+evId,deApp:false};
+  },
+  esReunion(t){return !!(t&&t.tipo==="reunion");},
+  cambio(antes,despues){
+    if(this._aplicando||!this.activo()) return;
+    var p=this.pend();
+    if(this.esReunion(despues)) p[despues.id]={a:"guardar"};
+    else if(this.esReunion(antes)) p[antes.id]={a:"borrar",g:this.idEvento(antes)};
+    else return;
+    lsSet("cs_gcal_pend",p);this.programar(800);
+  },
+  programar(ms){var self=this;clearTimeout(this._timer);this._timer=setTimeout(function(){self.sincronizar();},ms||0);},
+  /* ---- reunión → evento de Google ---- */
+  evento(t){
+    var mas1=function(f){var d=parseISO(f);return iso(new Date(d.getFullYear(),d.getMonth(),d.getDate()+1));};
+    var ev={id:this.idEvento(t),summary:t.titulo||"Reunión",location:t.lugar||"",
+      description:(t.asistentes?"Asistentes: "+t.asistentes+(t.notas?"\n\n":""):"")+(t.notas||""),
+      extendedProperties:{private:{admsec:t.id}}};
+    var fin=t.fechaFin&&t.fechaFin>t.fecha?t.fechaFin:t.fecha;
+    if(t.hora){
+      var hf=t.horaFin||(function(){var p=t.hora.split(":");var h=Math.min(23,+p[0]+1);return z(h)+":"+p[1];})();
+      ev.start={dateTime:t.fecha+"T"+t.hora+":00",timeZone:"Europe/Madrid"};
+      ev.end={dateTime:fin+"T"+hf+":00",timeZone:"Europe/Madrid"};
+      if(ev.end.dateTime<=ev.start.dateTime) ev.end.dateTime=t.fecha+"T"+t.hora+":00";
+    }else{ev.start={date:t.fecha};ev.end={date:mas1(fin)};}
+    ev.recurrence=(t.repite&&t.repite!=="none")?["RRULE:"+rrule(t)]:[];
+    return ev;
+  },
+  /* ---- evento de Google → campos de reunión ---- */
+  enMadrid(dt){
+    if(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(dt)&&/(\+0[12]:00)$/.test(dt)) return {f:dt.slice(0,10),h:dt.slice(11,16)};
+    var d=new Date(dt);if(isNaN(d)) return {f:dt.slice(0,10),h:dt.slice(11,16)};
+    var p={};new Intl.DateTimeFormat("en-CA",{timeZone:"Europe/Madrid",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).formatToParts(d).forEach(function(x){p[x.type]=x.value;});
+    return {f:p.year+"-"+p.month+"-"+p.day,h:(p.hour==="24"?"00":p.hour)+":"+p.minute};
+  },
+  campos(ev){
+    var c={titulo:(ev.summary||"(sin título)").trim(),lugar:ev.location||"",asistentes:"",notas:ev.description||"",hora:"",horaFin:"",repite:"none"};
+    var m=/^Asistentes: ([^\n]*)\n?\n?/.exec(c.notas);if(m){c.asistentes=m[1];c.notas=c.notas.slice(m[0].length);}
+    c.notas=c.notas.replace(/<br\s*\/?>/gi,"\n").replace(/<[^>]+>/g,"");
+    if(ev.start&&ev.start.dateTime){var a=this.enMadrid(ev.start.dateTime),b=this.enMadrid((ev.end&&ev.end.dateTime)||ev.start.dateTime);
+      c.fecha=a.f;c.hora=a.h;c.horaFin=b.h;c.fechaFin=b.f>a.f?b.f:a.f;}
+    else if(ev.start&&ev.start.date){c.fecha=ev.start.date;var e=ev.end&&ev.end.date?parseISO(ev.end.date):parseISO(ev.start.date);
+      var ult=iso(new Date(e.getFullYear(),e.getMonth(),e.getDate()-1));c.fechaFin=ult>c.fecha?ult:c.fecha;}
+    var r=(ev.recurrence||[]).filter(function(x){return /^RRULE:/.test(x);})[0]||"";
+    if(r){var fq=(/FREQ=(\w+)/.exec(r)||[])[1],iv=+((/INTERVAL=(\d+)/.exec(r)||[])[1]||1);
+      if(fq==="DAILY"||(fq==="WEEKLY"&&/BYDAY=MO,TU,WE,TH,FR(;|$)/.test(r))) c.repite="diaria";
+      else if(fq==="WEEKLY") c.repite="semanal";
+      else if(fq==="MONTHLY") c.repite=iv===3?"trimestral":"mensual";
+      else if(fq==="YEARLY") c.repite="anual";}
+    return c;
+  },
+  igual(t,c){var ks=["titulo","lugar","asistentes","notas","fecha","fechaFin","hora","horaFin","repite"];
+    return ks.every(function(k){var a=t[k]==null?"":String(t[k]),b=c[k]==null?"":String(c[k]);if(k==="fechaFin"){a=a||t.fecha;b=b||c.fecha;}if(k==="repite"){a=a||"none";}if(k==="horaFin"&&!t.horaFin&&t.hora){return true;}return a===b;});},
+  /* ---- sincronizar ---- */
+  async comprobar(){
+    if(!Sync.conectado()) return;
+    try{
+      var r=await this.llamar({accion:"estado"}),antes=this.info();
+      lsSet("cs_gcal",{conectado:!!r.conectado,email:r.email||""});
+      if(r.conectado&&!antes.conectado){ this.subirTodo(); toast("Google Calendar conectado."); }
+      this._comprobado=true;if(state.vista==="mas")render();
+      if(r.conectado) this.programar(200);
+    }catch(e){}
+  },
+  subirTodo(){
+    var p=this.pend(),self=this,lim=iso(new Date(Date.now()-60*864e5));
+    state.tareas.forEach(function(t){if(self.esReunion(t)&&((t.repite&&t.repite!=="none")||(t.fechaFin||t.fecha)>=lim))p[t.id]={a:"guardar"};});
+    lsSet("cs_gcal_pend",p);
+  },
+  async sincronizar(){
+    if(!this.activo()) return;
+    if(this._enCurso){this._otra=true;return;}
+    this._enCurso=true;
+    try{
+      /* 1) subir lo cambiado aquí */
+      var p=this.pend(),ids=Object.keys(p),self=this;
+      for(var i=0;i<ids.length;i++){
+        var id=ids[i],x=p[id],t=state.tareas.filter(function(o){return o.id===id;})[0];
+        try{
+          if(x.a==="guardar"&&self.esReunion(t)) await self.llamar({accion:"guardar",evento:self.evento(t)});
+          else await self.llamar({accion:"borrar",id:x.g||self.idEvento({id:id})});
+          var p2=self.pend();if(p2[id]&&p2[id].a===x.a){delete p2[id];lsSet("cs_gcal_pend",p2);}
+        }catch(e){ if(e&&e.r&&e.r.status===409){lsSet("cs_gcal",{conectado:false});return;} if(e instanceof TypeError) throw e; }
+      }
+      /* 2) traer lo cambiado en Google */
+      var r=await this.llamar({accion:"cambios"}),pend=this.pend();
+      this._aplicando=true;
+      try{
+        (r.eventos||[]).forEach(function(ev){
+          if(ev.recurringEventId) return;                          /* cambios sueltos de una serie: se ignoran */
+          var dd=self.idDesdeEvento(ev.id);
+          var t=state.tareas.filter(function(o){return o.gcalId===ev.id||o.id===dd.id;})[0];
+          if(t&&pend[t.id]) return;                                /* aquí hay un cambio más nuevo sin subir */
+          if(ev.status==="cancelled"){ if(t&&self.esReunion(t)) Store.borrar("tareas",t.id); return; }
+          if(!ev.start) return;
+          var c=self.campos(ev);
+          if(!t){ if(dd.deApp) return;                            /* reunión de la app que aún no ha llegado aquí */
+            var o={id:dd.id,gcalId:ev.id,tipo:"reunion",hechas:{},progreso:{},manualId:"",pasos:[]};
+            for(var k in c) o[k]=c[k];
+            Store.guardar("tareas",o); return; }
+          if(t.tipo!=="reunion"||self.igual(t,c)) return;
+          var n=JSON.parse(JSON.stringify(t));for(var k2 in c) n[k2]=c[k2];if(!n.gcalId&&!dd.deApp)n.gcalId=ev.id;
+          Store.guardar("tareas",n);
+        });
+      }finally{this._aplicando=false;}
+    }catch(e){
+      if(e&&e.r&&e.r.status===409){lsSet("cs_gcal",{conectado:false});if(state.vista==="mas")render();}
+    }
+    this._enCurso=false;
+    if(this._otra){this._otra=false;this.programar(300);}
+  },
+  async conectar(){
+    if(!Sync.conectado()){toast("Primero entra con tu cuenta de AdmSec+.");return;}
+    try{
+      var r=await this.llamar({accion:"empezar"});
+      if(!r||!r.url){toast("No se ha podido empezar la conexión.");return;}
+      toast("Se abre Google: elige tu cuenta y da permiso. Luego vuelve a la app.");
+      if(window.AdmSecAndroid) location.href=r.url; else window.open(r.url,"_blank");
+    }catch(e){toast(e&&e.r&&e.r.status===404?"Falta instalar la función «gcal» en Supabase.":(e&&e.r&&e.r.json&&e.r.json.error)||"No se ha podido conectar con Google ahora.");}
+  },
+  async desconectar(){
+    if(!confirm("¿Desconectar Google Calendar? Las reuniones que ya están en Google se quedan allí, pero dejarán de sincronizarse."))return;
+    try{await this.llamar({accion:"desconectar"});}catch(e){}
+    lsSet("cs_gcal",{conectado:false});lsSet("cs_gcal_pend",{});render();toast("Google Calendar desconectado.");
+  }
+};
 /* ================= FACTURAS ================= */
 var PASOS_F=[["solicitar","Solicitar","Solicitada","Pedírsela al proveedor"],["escanear","Escanear","Escaneada","Si llega en papel"],["subir","Subir a Drive","Subida a Drive","A la carpeta de facturas"],["abonar","Abonar","Abonada","Pagarla al proveedor"]];
 function listaFacturas(){return (state.facturas||[]).filter(function(x){return !x.ajustes;});}
@@ -2628,6 +2770,19 @@ function formCompra(id){
     acc.appendChild(g);acc.appendChild(c);sh.appendChild(acc);
   });
 }
+function abrirGcal(){
+  abrirSheet(function(sh){
+    cabecera(sh,"Google Calendar");
+    var i=Gcal.info(),np=Object.keys(Gcal.pend()).length;
+    var p=el("p",null,"Conectado"+(i.email?" con "+i.email:"")+". Tus reuniones están en el calendario «AdmSec+ Reuniones» de Google: lo que cambies aquí aparece allí al momento, y lo que cambies allí llega a la app en unos segundos con la app abierta."+(np?" Hay "+np+" cambio"+(np===1?"":"s")+" por enviar.":""));
+    p.style.cssText="margin:0 0 .9rem;color:var(--muted);font-size:.9rem";sh.appendChild(p);
+    var acc=el("div",{class:"acciones"});
+    var b1=el("button",{class:"btn"},"Sincronizar ahora");b1.addEventListener("click",async function(){b1.disabled=true;b1.textContent="Sincronizando…";await Gcal.sincronizar();toast("Google Calendar al día.");abrirGcal();});
+    var b2=el("button",{class:"btn sec"},"Volver a subir todas las reuniones");b2.addEventListener("click",function(){Gcal.subirTodo();Gcal.programar(0);toast("Subiendo reuniones a Google…");});
+    var b3=el("button",{class:"btn sec peligro"},"Desconectar");b3.addEventListener("click",function(){cerrarSheet();Gcal.desconectar();});
+    acc.appendChild(b1);acc.appendChild(b2);acc.appendChild(b3);sh.appendChild(acc);
+  });
+}
 function renderMas(){
   var ul=$("#ajustes");ul.textContent="";
   function sec(t,clase){ul.appendChild(el("li",{class:"ajustes-sec"+(clase?" "+clase:"")},t));}
@@ -2642,6 +2797,10 @@ function renderMas(){
   it("traer","Pasar pendientes a hoy",nPend?(nPend+" tarea"+(nPend===1?"":"s")+" de días anteriores sin hacer"):"No hay nada pendiente de días anteriores",function(){traerPendientesAHoy(false);},nPend?"destacado":"");
   var nF=listaFestivos().length;
   it("calendario","Días de fiesta",nF?("Días que no trabajas · "+nF+" anotado"+(nF===1?"":"s")):"Añade los días que no trabajas",abrirFestivos);
+  sec("Google Calendar");
+  if(!Sync.conectado()) it("calendario","Conectar Google Calendar","Entra antes con tu cuenta de AdmSec+",abrirLogin);
+  else if(Gcal.info().conectado) it("calendario","Google Calendar conectado",(Gcal.info().email?Gcal.info().email+" · ":"")+"calendario «AdmSec+ Reuniones»",abrirGcal);
+  else it("calendario","Conectar Google Calendar","Tus reuniones en Google, en los dos sentidos",function(){Gcal.conectar();});
   sec("Datos");
   it("copia","Copia de seguridad","Guarda un archivo con todos tus manuales y tareas",exportarCopia);
   it("restaurar","Restaurar copia de seguridad","Recupera manuales y tareas desde un archivo",abrirImportar);
@@ -3222,7 +3381,7 @@ window.addEventListener("load",function(){ajustarVentana(modoVentana());});
 if("serviceWorker" in navigator && (location.protocol==="https:"||location.hostname==="localhost") && !window.AdmSecAndroid){
   window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});
 }
-window.AdmSecDebug={Sync:Sync,Store:Store,state:state,abrirDia:abrirDiaEnHoy,ocurreEn:ocurreEn,rrule:rrule,primera:primeraOcurrencia};
+window.AdmSecDebug={Sync:Sync,Store:Store,state:state,Gcal:Gcal,abrirDia:abrirDiaEnHoy,ocurreEn:ocurreEn,rrule:rrule,primera:primeraOcurrencia};
 /* botón Atrás de Android: devuelve true si la app lo ha gestionado */
 window.admsecAtras=function(){
   if(!$("#overlay").hidden){cerrarSheet();return true;}
@@ -3466,7 +3625,7 @@ render();
 Store.init(function(){intentarBarridoLunes();render();});
 setTimeout(avisoDiarioPendientes,900);
 setInterval(function(){if(!document.hidden)avisoDiarioPendientes();},60000);
-document.addEventListener("visibilitychange",function(){if(!document.hidden)setTimeout(avisoDiarioPendientes,900);});
+document.addEventListener("visibilitychange",function(){if(!document.hidden){setTimeout(avisoDiarioPendientes,900);if(Sync.conectado())Gcal.comprobar();}});
 intentarBarridoLunes();
 setInterval(function(){intentarBarridoLunes();},60000);
 })();
